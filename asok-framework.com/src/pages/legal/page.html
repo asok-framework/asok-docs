@@ -1,0 +1,242 @@
+{% extends "html/base.html" %}
+
+{% block title %}
+Mentions Légales | Asok Framework
+{% endblock %}
+
+{% block main %}
+<div class="pt-32 pb-20">
+    <div class="max-w-7xl mx-auto px-6 flex gap-4">
+        <!-- Main Content -->
+        <div class="flex-1 min-w-0 max-w-5xl">
+            <header class="mb-12">
+                <h1 class="text-5xl md:text-6xl font-black tracking-tighter mb-4" style="color: var(--text-primary)">
+                    Mentions Légales
+                </h1>
+                <p class="text-lg md:text-xl mb-6" style="color: var(--text-secondary)">
+                    Informations légales conformément à la législation française
+                </p>
+            </header>
+
+            <article class="prose prose-lg max-w-none space-y-8 px-6 md:px-8 lg:px-8">
+                <section id="editeur" class="space-y-4">
+                    <h2 class="text-3xl font-black tracking-tight mt-12 mb-6" style="color: var(--text-primary)">
+                        1. Éditeur du Site
+                    </h2>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Le site <strong>asok-framework.com</strong> est édité par <strong>Mpia Mimpiya
+                            PULUDISU</strong>.
+                    </p>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        <strong>Statut :</strong> Particulier<br>
+                        <strong>Responsable de publication :</strong> Mpia Mimpiya PULUDISU<br>
+                        <strong>Contact :</strong> via notre <a href="https://github.com/asok-framework/asok/issues"
+                            target="_blank" rel="noopener noreferrer" class="font-semibold hover:underline"
+                            style="color: var(--accent-primary)">dépôt GitHub (Issues)</a>
+                    </p>
+                </section>
+
+                <section id="hebergeur" class="space-y-4">
+                    <h2 class="text-3xl font-black tracking-tight mt-12 mb-6" style="color: var(--text-primary)">
+                        2. Hébergement
+                    </h2>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Le site est hébergé par :<br>
+                        <strong>IONOS SARL</strong><br>
+                        7, Place de la Gare<br>
+                        BP 70109<br>
+                        57201 Sarreguemines Cedex<br>
+                        France
+                    </p>
+                </section>
+
+                <section id="propriete" class="space-y-4">
+                    <h2 class="text-3xl font-black tracking-tight mt-12 mb-6" style="color: var(--text-primary)">
+                        3. Propriété Intellectuelle
+                    </h2>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Le framework Asok est distribué sous licence MIT. Vous êtes libre de l'utiliser, le modifier et
+                        le distribuer conformément aux termes de cette licence.
+                    </p>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Sauf mention contraire, le contenu du site (documentation, textes, graphismes, logo, icônes) est
+                        la propriété du projet Asok Framework.
+                    </p>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Toute reproduction, distribution, modification ou utilisation du contenu du site à des fins
+                        commerciales est interdite sans autorisation préalable, sauf pour le code source distribué sous
+                        licence MIT.
+                    </p>
+                </section>
+
+                <section id="donnees" class="space-y-4">
+                    <h2 class="text-3xl font-black tracking-tight mt-12 mb-6" style="color: var(--text-primary)">
+                        4. Données Personnelles
+                    </h2>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Conformément au RGPD et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de
+                        rectification, de suppression et d'opposition aux données vous concernant.
+                    </p>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Pour plus d'informations, consultez notre
+                        <a href="/privacy" data-block="main,title" data-push-url class="font-semibold hover:underline"
+                            style="color: var(--accent-primary)">
+                            Politique de Confidentialité
+                        </a>.
+                    </p>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Pour exercer vos droits, contactez-nous via
+                        <a href="https://github.com/asok-framework/asok/issues" target="_blank"
+                            rel="noopener noreferrer" class="font-semibold hover:underline"
+                            style="color: var(--accent-primary)">
+                            notre dépôt GitHub
+                        </a>.
+                    </p>
+                </section>
+
+                <section id="cookies" class="space-y-4">
+                    <h2 class="text-3xl font-black tracking-tight mt-12 mb-6" style="color: var(--text-primary)">
+                        5. Cookies
+                    </h2>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Le site utilise des cookies strictement nécessaires à son fonctionnement (ex : préférences de
+                        thème) et peut utiliser, si activés, des cookies d'analyse respectueux de la vie privée.
+                    </p>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Vous pouvez configurer votre navigateur pour refuser les cookies.
+                    </p>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Pour plus d'informations, consultez notre
+                        <a href="/privacy#cookies" data-block="main,title" data-push-url
+                            class="font-semibold hover:underline" style="color: var(--accent-primary)">
+                            Politique de Confidentialité
+                        </a>.
+                    </p>
+                </section>
+
+                <section id="cnil" class="space-y-4">
+                    <h2 class="text-3xl font-black tracking-tight mt-12 mb-6" style="color: var(--text-primary)">
+                        6. CNIL
+                    </h2>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Vous pouvez introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr"
+                            target="_blank" rel="noopener noreferrer" class="font-semibold hover:underline"
+                            style="color: var(--accent-primary)">www.cnil.fr</a>).
+                    </p>
+                </section>
+
+                <section id="responsabilite" class="space-y-4">
+                    <h2 class="text-3xl font-black tracking-tight mt-12 mb-6" style="color: var(--text-primary)">
+                        7. Limitation de Responsabilité
+                    </h2>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Les informations fournies sur ce site le sont à titre informatif. Nous nous efforçons d'assurer
+                        leur exactitude sans pouvoir la garantir.
+                    </p>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Nous ne saurions être tenus responsables des dommages directs ou indirects résultant de
+                        l'utilisation du site ou du framework.
+                    </p>
+                </section>
+
+                <section id="liens" class="space-y-4">
+                    <h2 class="text-3xl font-black tracking-tight mt-12 mb-6" style="color: var(--text-primary)">
+                        8. Liens Hypertextes
+                    </h2>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Le site peut contenir des liens vers des sites tiers. Nous déclinons toute responsabilité quant
+                        à leur contenu.
+                    </p>
+                </section>
+
+                <section id="applicable-law" class="space-y-4">
+                    <h2 class="text-3xl font-black tracking-tight mt-12 mb-6" style="color: var(--text-primary)">
+                        9. Droit Applicable
+                    </h2>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        Les présentes mentions légales sont régies par le droit français. En cas de litige et à défaut
+                        d'accord amiable, le litige sera porté devant les tribunaux français conformément aux règles de
+                        compétence en vigueur.
+                    </p>
+                </section>
+
+                <section id="credits" class="space-y-4">
+                    <h2 class="text-3xl font-black tracking-tight mt-12 mb-6" style="color: var(--text-primary)">
+                        10. Crédits
+                    </h2>
+                    <p class="text-base leading-relaxed" style="color: var(--text-secondary)">
+                        <strong>Conception et développement :</strong> Équipe Asok Framework<br>
+                        <strong>Hébergement :</strong> IONOS SARL<br>
+                        <strong>Icônes et graphismes :</strong> Créations originales et ressources open source
+                    </p>
+                </section>
+            </article>
+        </div>
+
+        <!-- Divider -->
+        <div class="hidden xl:block w-px shrink-0 divider"></div>
+
+        <!-- Table of Contents (Right Sidebar) -->
+        <div class="hidden xl:block w-56 shrink-0">
+            <aside class="sticky top-20 h-[calc(100vh-80px)] overflow-y-auto py-8 pl-6">
+                <nav id="toc" class="space-y-1">
+                    <p class="px-3 text-[10px] font-black uppercase tracking-[0.2em] mb-4"
+                        style="color: var(--text-muted)">
+                        Contents
+                    </p>
+                    <a href="#editeur"
+                        class="toc-link toc-link-2 flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-[13px] border border-transparent">
+                        <span class="truncate">Éditeur du Site</span>
+                        <span class="toc-dot w-1 h-1 rounded-full shrink-0"></span>
+                    </a>
+                    <a href="#hebergeur"
+                        class="toc-link toc-link-2 flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-[13px] border border-transparent">
+                        <span class="truncate">Hébergement</span>
+                        <span class="toc-dot w-1 h-1 rounded-full shrink-0"></span>
+                    </a>
+                    <a href="#propriete"
+                        class="toc-link toc-link-2 flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-[13px] border border-transparent">
+                        <span class="truncate">Propriété Intellectuelle</span>
+                        <span class="toc-dot w-1 h-1 rounded-full shrink-0"></span>
+                    </a>
+                    <a href="#donnees"
+                        class="toc-link toc-link-2 flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-[13px] border border-transparent">
+                        <span class="truncate">Données Personnelles</span>
+                        <span class="toc-dot w-1 h-1 rounded-full shrink-0"></span>
+                    </a>
+                    <a href="#cookies"
+                        class="toc-link toc-link-2 flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-[13px] border border-transparent">
+                        <span class="truncate">Cookies</span>
+                        <span class="toc-dot w-1 h-1 rounded-full shrink-0"></span>
+                    </a>
+                    <a href="#cnil"
+                        class="toc-link toc-link-2 flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-[13px] border border-transparent">
+                        <span class="truncate">CNIL</span>
+                        <span class="toc-dot w-1 h-1 rounded-full shrink-0"></span>
+                    </a>
+                    <a href="#responsabilite"
+                        class="toc-link toc-link-2 flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-[13px] border border-transparent">
+                        <span class="truncate">Responsabilité</span>
+                        <span class="toc-dot w-1 h-1 rounded-full shrink-0"></span>
+                    </a>
+                    <a href="#liens"
+                        class="toc-link toc-link-2 flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-[13px] border border-transparent">
+                        <span class="truncate">Liens Hypertextes</span>
+                        <span class="toc-dot w-1 h-1 rounded-full shrink-0"></span>
+                    </a>
+                    <a href="#applicable-law"
+                        class="toc-link toc-link-2 flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-[13px] border border-transparent">
+                        <span class="truncate">Droit Applicable</span>
+                        <span class="toc-dot w-1 h-1 rounded-full shrink-0"></span>
+                    </a>
+                    <a href="#credits"
+                        class="toc-link toc-link-2 flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-[13px] border border-transparent">
+                        <span class="truncate">Crédits</span>
+                        <span class="toc-dot w-1 h-1 rounded-full shrink-0"></span>
+                    </a>
+                </nav>
+            </aside>
+        </div>
+    </div>
+</div>
+{% endblock %}

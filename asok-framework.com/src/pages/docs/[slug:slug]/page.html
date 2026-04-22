@@ -1,0 +1,148 @@
+{% extends "html/base.html" %}
+
+{% block title %}{{ title }} | Asok Framework{% endblock %}
+
+{% block main %}
+<div class="max-w-7xl mx-auto px-6 flex gap-4">
+    {% include "html/docs_sidebar.html" %}
+    <!-- Divider -->
+    <div class="hidden lg:block w-px shrink-0 divider"></div>
+    <!-- Content -->
+    <div id="article_content" class="flex-1 min-w-0 max-w-5xl">
+        {% block article_content %}
+        <article class="py-12 px-6 md:px-8 lg:px-8">
+            <!-- Edit on GitHub & Metadata -->
+            <div class="flex justify-between items-center mb-8">
+                <div class="flex items-center gap-4 text-xs" style="color: var(--text-muted);">
+                    {% if last_updated %}
+                    <span class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Updated {{ last_updated }}
+                    </span>
+                    {% endif %}
+                    <span class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        {{ reading_time }} min read
+                    </span>
+                </div>
+                <a href="https://github.com/asok-framework/asok-docs/edit/main/docs/{{ slug }}.md"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="edit-github-btn inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all"
+                   style="color: var(--text-secondary); border-color: var(--border-primary);">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    Edit on GitHub
+                </a>
+            </div>
+
+            {{ content | safe }}
+
+            <!-- Feedback Section -->
+            <div class="mt-16 pt-8 pb-8" style="border-top: 1px solid var(--border-primary)">
+                <div id="feedback-box" class="feedback-box">
+                    <p class="text-sm font-semibold mb-4" style="color: var(--text-primary)">Was this page helpful?</p>
+                    <div class="flex gap-3">
+                        <button id="feedback-yes" class="feedback-btn feedback-yes flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-all"
+                                style="color: var(--text-secondary); border-color: var(--border-primary);">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+                            </svg>
+                            Yes
+                        </button>
+                        <a href="https://github.com/asok-framework/asok-docs/issues/new?title=Feedback:%20{{ slug }}&labels=feedback&body=**Page:**%20{{ slug }}%0A%0A**Issue:**%0A"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="feedback-btn feedback-no flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-all"
+                           style="color: var(--text-secondary); border-color: var(--border-primary);">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"/>
+                            </svg>
+                            No
+                        </a>
+                    </div>
+                    <div id="feedback-thanks" class="feedback-thanks hidden mt-4 p-4 rounded-lg" style="background: var(--accent-bg); border: 1px solid var(--accent-border);">
+                        <p class="text-sm font-medium flex items-center gap-2" style="color: var(--accent-primary);">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Thanks for your feedback!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="mt-16 pt-8 flex items-stretch justify-between gap-4"
+                style="border-top: 1px solid var(--border-primary)">
+                {% if prev_page %}
+                <a href="/docs/{{ prev_page.slug }}" data-block="article_content,title,docs_menu,toc_sidebar" data-push-url
+                    data-trigger="click" class="group flex flex-col gap-1.5 p-5 rounded-xl glass-card flex-1 min-w-0">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.15em]"
+                        style="color: var(--text-muted)">Previous</span>
+                    <span class="font-bold transition-colors flex items-center gap-2 text-sm"
+                        style="color: var(--accent-primary)">
+                        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform shrink-0" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span class="truncate">{{ prev_page.title }}</span>
+                    </span>
+                </a>
+                {% else %}
+                <div class="flex-1"></div>
+                {% endif %}
+
+                {% if next_page %}
+                <a href="/docs/{{ next_page.slug }}" data-block="article_content,title,docs_menu,toc_sidebar" data-push-url
+                    data-trigger="click"
+                    class="group flex flex-col gap-1.5 p-5 rounded-xl glass-card flex-1 min-w-0 text-right items-end">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.15em]"
+                        style="color: var(--text-muted)">Next</span>
+                    <span class="font-bold transition-colors flex items-center gap-2 text-sm"
+                        style="color: var(--accent-primary)">
+                        <span class="truncate">{{ next_page.title }}</span>
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </span>
+                </a>
+                {% endif %}
+            </div>
+        </article>
+        {% endblock %}
+    </div>
+
+    <!-- Divider -->
+    <div class="hidden xl:block w-px shrink-0 divider"></div>
+
+    <!-- Table of Contents (Right Sidebar) -->
+    <div id="toc_sidebar" class="hidden xl:block w-56 shrink-0">
+        {% block toc_sidebar %}
+        {% if toc_tokens and toc_tokens|length > 0 %}
+        <aside class="sticky top-20 h-[calc(100vh-80px)] overflow-y-auto py-8 pl-6">
+            <nav id="toc" class="space-y-1">
+                <p class="px-3 text-[10px] font-black uppercase tracking-[0.2em] mb-4" style="color: var(--text-muted)">
+                    On This Page
+                </p>
+                {% for item in toc_tokens %}
+                    <a href="#{{ item.id }}"
+                       class="toc-link toc-link-{{ item.level }} flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-[13px] border border-transparent">
+                        <span class="truncate">{{ item.name }}</span>
+                        <span class="toc-dot w-1 h-1 rounded-full shrink-0"></span>
+                    </a>
+                {% endfor %}
+            </nav>
+        </aside>
+        {% endif %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}
