@@ -58,5 +58,23 @@ request.session.clear()
 
 All mutating operations automatically set `session.modified = True`.
 
+## Production Persistence
+
+> [!IMPORTANT]
+> In production environments using multi-worker servers like **Gunicorn**, you **must** use the `file` backend. 
+> 
+> The default `memory` backend stores sessions in the RAM of the specific worker process. Since requests are distributed across multiple workers, a user will "lose" their session as soon as their request is handled by a different worker.
+
+### Configuring for Gunicorn
+
+To ensure persistence across workers, configure the `file` backend in your `wsgi.py` (before application startup):
+
+```python
+app.config["SESSION_BACKEND"] = "file"
+app.config["SESSION_PATH"] = "/run/asok/sessions" # Using SystemD RuntimeDirectory
+```
+
+For RHEL/AlmaLinux servers, see the [Deployment](35-deployment.md) guide for handling SELinux permissions.
+
 ---
 [← Previous: Advanced Authentication](16-advanced-authentication.md) | [Documentation](README.md) | [Next: Security Headers →](18-security-headers.md)

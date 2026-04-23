@@ -46,12 +46,36 @@ sudo certbot --nginx -d yourdomain.com
 ### Static Asset Hash
 To ensure users always see the latest version of your CSS/JS after an update, Asok supports asset hashing. This is enabled automatically in production (`DEBUG=false`).
 
-## 4. Performance Checklist
+## 5. RHEL / AlmaLinux (SELinux)
 
-Before deploying, ensure you have:
-- Ran `asok assets --minify` to enable CSS/JS minification.
-- Ran `asok image --optimize` to convert all assets to WebP.
-- Configured `DEBUG=false` in your production environment.
+Deploying on RHEL-based systems like **AlmaLinux** or **Rocky Linux** requires handling **SELinux** (Security-Enhanced Linux). If your app fails to write sessions or cache, you will likely see `PermissionError: [Errno 13] Permission denied` in your logs.
+
+### The Problem: init_t vs httpd_sys_rw_content_t
+By default, Gunicorn runs in the `init_t` domain. Even if you set your folder to `httpd_sys_rw_content_t`, the system may block the write operations.
+
+### Recommended Solution: SystemD RuntimeDirectory
+Instead of fighting with manual SELinux labels, use the **native SystemD way** to handle ephemeral state. This automatically grants correct permissions and SELinux contexts.
+
+1. **Update your `.service` file**:
+```ini
+[Service]
+RuntimeDirectory=asok
+RuntimeDirectoryMode=0775
+```
+
+2. **Update your `wsgi.py`**:
+```python
+# Use the auto-generated systemd path
+SESSION_DIR = "/run/asok/sessions"
+app._session_store = SessionStore(backend="file", path=SESSION_DIR)
+```
+
+### Alternative: Custom SELinux Policy
+If you must use a directory inside `/var/www`, you can generate a custom policy from the audit logs:
+```bash
+sudo ausearch -m avc -ts recent | audit2allow -M asok_fix
+sudo semodule -i asok_fix.pp
+```
 
 ---
 [← Previous: CLI Reference](34-cli-reference.md) | [Documentation](README.md) | [Next: Testing →](36-testing.md)
