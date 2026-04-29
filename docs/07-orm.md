@@ -20,6 +20,16 @@ class Post(Model):
     deleted_at = Field.SoftDelete()
 ```
 
+### Custom table name
+
+By default, the table name is the pluralized model name (`Post` → `posts`, `Category` → `categories`). To override:
+
+```python
+class Category(Model):
+    __tablename__ = "categories"  # Explicit table name
+    name = Field.String()
+```
+
 ## Field types
 
 | Field | SQLite | Notes |
@@ -167,14 +177,14 @@ class Post(Model):
 | `BelongsTo('User')` | single or `None` | `<target>_id` on self |
 | `BelongsToMany('Role')` | list | pivot table `<a>_<b>` (alphabetical) |
 
-Access them as methods:
+Access them as **properties** (not methods):
 
 ```python
 user = User.find(id=1)
-user.posts()       # list of Post
-user.profile()     # Profile or None
-user.roles()       # list of Role
-post.author()      # User or None
+user.posts       # list of Post (property, no parentheses)
+user.profile     # Profile or None
+user.roles       # list of Role
+post.author      # User or None
 ```
 
 ### Custom keys
@@ -191,7 +201,7 @@ Avoid N+1 queries by pre-loading relations:
 ```python
 posts = Post.query().with_('author').limit(20).get()
 for p in posts:
-    p.author()  # served from cache, no extra query
+    p.author  # served from cache, no extra query
 ```
 
 ### BelongsToMany: attach / detach / sync

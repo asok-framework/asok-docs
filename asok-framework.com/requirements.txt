@@ -1,4 +1,4 @@
-asok==0.1.1
+asok==0.1.2
 Markdown==3.10.2
 Pygments==2.20.0
 gunicorn==25.3.0

@@ -159,7 +159,8 @@ class Post(Model):
         list_display = ['title', 'author', 'published', 'created_at']
         search_fields = ['title', 'body']
         list_filter = ['published', 'author_id']
-        readonly_fields = ['slug', 'created_at']
+        readonly_fields = ['created_at']
+        form_exclude = ['slug']  # Hide from create/edit forms
         fieldsets = [
             ('Content', ['title', 'slug', 'body']),
             ('Publishing', ['published', 'author_id']),
@@ -173,10 +174,31 @@ class Post(Model):
         cls.where('id', 'in', ids).update(published=True)
 ```
 
+### Field visibility control
+
+Control which fields appear in forms:
+
+```python
+class Category(Model):
+    name = Field.String()
+    slug = Field.Slug(populate_from='name')
+    created_at = Field.CreatedAt()
+
+    class Admin:
+        form_exclude = ['slug', 'created_at']  # Completely hidden from forms
+        readonly_fields = ['created_at']       # Shown but not editable
+```
+
+**Difference:**
+- `form_exclude` — Field is **completely hidden** from create/edit forms
+- `readonly_fields` — Field is **shown but disabled** (useful for auto-generated fields)
+
+Use `form_exclude` for fields that auto-populate (like slugs) or timestamps. Use `readonly_fields` when you want users to see the value but not change it.
+
 ### All options
 
 | Option | Type | Description |
-|---|---|---|
+|--------|------|-------------|
 | `hidden` | `bool` | Hide this model from admin (`hidden = True`) |
 | `slug` | `str` | URL slug (defaults to table name) |
 | `label` | `str` | Display name in sidebar |
@@ -185,6 +207,7 @@ class Post(Model):
 | `search_fields` | `list` | Fields searched by the search box (multi-field OR-LIKE) |
 | `list_filter` | `list` | Fields exposed as filters in the sidebar |
 | `readonly_fields` | `list` | Fields displayed but not editable |
+| `form_exclude` | `list` | Fields to exclude completely from create/edit forms |
 | `fieldsets` | `list` | Group fields into labeled cards: `[(label, [fields]), ...]` |
 | `per_page` | `int` | Pagination size (default 20) |
 | `inlines` | `list` | Related models to display below the form (`['comments', ...]`) |
