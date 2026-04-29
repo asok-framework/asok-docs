@@ -36,6 +36,7 @@ Welcome to the official Asok Framework documentation. This guide is organized se
 23. [HTML Streaming](23-html-streaming.md) — Optimizing TTFB with chunked delivery.
 24. [Scoped JS & CSS](24-scoped-assets.md) — Page-specific, isolated assets.
 25. [Intelligent Prefetching](25-intelligent-prefetching.md) — Instant-feel navigation.
+46. [Asok Directives](46-asok-directives.md) — Lightweight client-side reactivity.
 
 ## 🛠️ Services & Features
 26. [Admin Interface](26-admin-interface.md) — Auto-generated backoffice for your models.

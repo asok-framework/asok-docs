@@ -34,7 +34,6 @@ To see it in action:
 4. Click the link.
 5. Notice that no new request is made (or a very short one if it wasn't finished), and the page updates instantly.
 
-> [!TIP]
 > Use prefetching combined with `data-indicator` to provide immediate feedback if a pre-fetch hasn't finished yet when the user clicks.
 
 ---

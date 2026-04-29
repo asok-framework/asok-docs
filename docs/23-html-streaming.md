@@ -38,7 +38,6 @@ Streaming respects the global `GZIP` setting:
 GZIP=true
 ```
 
-> [!NOTE]
 > `request.stream()` automatically detects `X-Block` headers (used for partial updates). In such cases, it falls back to standard rendering to ensure the partial fragment is delivered correctly without full page headers.
 
 ---

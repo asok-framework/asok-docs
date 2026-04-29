@@ -74,7 +74,6 @@ class Counter(Component):
         return self.count * 2
 ```
 
-> [!IMPORTANT]
 > Only methods decorated with `@exposed` can be triggered via `ws-click`, `ws-input`, or `ws-submit` directives. This prevents unauthorized access to internal component methods.
 
 ## How it Works
@@ -98,27 +97,27 @@ Asok includes the **Alive** engine, a lightweight (< 2KB) JavaScript runtime tha
 
 ## Automatic State Persistence
  
- Asok components are designed to feel like SPA components. On every interaction (e.g., clicking a `ws-click` button), the framework automatically persists the component's state to the user's session store.
+Asok components are designed to feel like SPA components. On every interaction (e.g., clicking a `ws-click` button), the framework automatically persists the component's state to the user's session store.
  
- ### Benefits
- - **Refresh Protection**: If the user reloads the page, the component restores its exact state from the session.
- - **Navigation Stability**: Navigating between pages or using the browser's back/forward buttons preserves the state of components.
- - **Development Stability**: In development mode (`DEBUG=true`), Asok uses a deterministic development key to ensure state survives server restarts and hot-reloads.
+### Benefits
+
+- **Refresh Protection**: If the user reloads the page, the component restores its exact state from the session.
+- **Navigation Stability**: Navigating between pages or using the browser's back/forward buttons preserves the state of components.
+- **Development Stability**: In development mode (`DEBUG=true`), Asok uses a deterministic development key to ensure state survives server restarts and hot-reloads.
  
- ## Persistent Sessions
+## Persistent Sessions
  
  Components have a `self.session` property that behaves like `request.session`. This is useful for explicit data that must be shared across the entire application.
  
 
- ```python
- def increment(self):
-     self.session["pcount"] = self.session.get("pcount", 0) + 1
-     self.session.modified = True  # Required to persist changes back to the store
- ```
+```python
+def increment(self):
+    self.session["pcount"] = self.session.get("pcount", 0) + 1
+    # Required to persist changes back to the store
+    self.session.modified = True  
+```
  
-
- > [!IMPORTANT]
- > Always set `self.session.modified = True` when updating session data within a component method to ensure the changes are saved to the persistent store.
+> Always set `self.session.modified = True` when updating session data within a component method to ensure the changes are saved to the persistent store.
 
 ---
 [← Previous: Rate Limit](20-rate-limit.md) | [Documentation](README.md) | [Next: Transitions →](22-transitions.md)

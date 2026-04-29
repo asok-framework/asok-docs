@@ -61,4 +61,4 @@ Asok injects custom mathematics functions directly into the SQLite engine.
 Because these calculations happen inside the database engine, they are extremely efficient for thousands of rows, all while maintaining the "Zero Dependency" promise.
 
 ---
-[← Previous: Tailwind CSS](44-tailwind-css.md) | [Documentation](README.md)
+[← Previous: Tailwind CSS](44-tailwind-css.md) | [Documentation](README.md) | [Next: Asok Directives →](46-asok-directives.md)

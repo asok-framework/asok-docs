@@ -6,6 +6,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.1.2] - 2026-04-26
+
+### Added
+- **Asok Directives Engine**: A complete client-side reactive system (< 3KB) for "Zero JS" interactivity.
+    - `asok-state`: Initializes local reactive state scopes.
+    - `asok-text` / `asok-html`: Dynamic content rendering.
+    - `asok-show` / `asok-hide`: Visibility toggling with `data-show-active` support.
+    - `asok-model`: Two-way data binding for all form elements.
+    - `asok-on`: Event handling with modifiers (`.prevent`, `.stop`, `.outside`, `.debounce`).
+    - `asok-bind`: Dynamic attribute binding.
+    - `asok-class`: Conditional CSS class management.
+    - `asok-for`: Reactive loops with index and parent scope access.
+    - `asok-if` / `asok-elif` / `asok-else`: Structural DOM conditioning.
+    - `asok-teleport`: DOM node relocation with persistent reactivity.
+    - `asok-init`: Lifecycle hooks for component initialization.
+    - `asok-ref`: Direct element referencing via `$refs`.
+    - `asok-cloak`: FOUC prevention with automatic style injection.
+- **Deep Reactive Proxies**: Nested state tracking for transparent synchronization across complex objects.
+- **Keyboard Modifiers**: Added `.enter`, `.escape`, `.tab`, and `.space` to `asok-on`.
+- **Automatic CSP Nonce Injection**: Automatic security handling for all `<script>` tags using `strict-dynamic` policies.
+- **Magic Variables**: Introduction of `$el`, `$event`, `$refs`, `$store`, and `$nextTick`.
+- **Global Reactive Store**: Cross-component state synchronization via `window.Asok.store`.
+- **Production Build Engine**: New `asok build` command for generating optimized distributions.
+    - **Bytecode Packaging**: Automatic `.pyc` compilation with recursive `.py` source removal for protected, faster distributions.
+    - **Universal Minification**: Recursive JS and CSS minification across `src/partials` using `esbuild`.
+    - **HTML Template Optimization**: Build-time HTML minification to reduce file size and runtime CPU overhead.
+    - **Smart WebP Conversion**: Automatic project-wide image optimization to WebP (originals removed) during build.
+- **Enhanced CLI Entry Points**: Updated `asok preview` and other commands to support `wsgi.pyc` entry points, allowing projects to run without source files.
+- **Runtime Performance Optimization**: Disabled redundant on-the-fly HTML minification in production mode (when using `dist/`).
+
+### Fixed
+- **Teleport Recursion**: Resolved infinite rendering loops in teleported elements.
+- **Outside Click Race Condition**: Stabilized closure logic for modals and dropdowns.
+- **Cursor Jumping**: Fixed focus/selection loss in two-way bound inputs.
+- **Initial Loop Rendering**: Fixed visibility of text content in newly added loop items.
+
 ## [0.1.1] - 2026-04-22
 
 ### Added
@@ -45,5 +81,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Routing, Templates, and ORM guides.
 - Deployment best practices.
 
+[0.1.2]: https://github.com/asok-framework/asok/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/asok-framework/asok/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/asok-framework/asok/releases/tag/v0.1.0

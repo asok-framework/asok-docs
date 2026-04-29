@@ -91,7 +91,6 @@ ETags are enabled by default for all `200 OK` responses. You can disable them or
 app.config['ETAG'] = True  # Default
 ```
 
-> [!TIP]
 > ETags are highly efficient as they avoid sending large bodies over the network, though it still requires the server to execute your handler logic to generate the body for comparison.
 
 ---

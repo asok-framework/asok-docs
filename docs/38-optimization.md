@@ -2,21 +2,8 @@
 
 Asok features a built-in optimization engine designed to make your application production-ready with zero external dependencies.
 
-## 1. HTML Minification (Standard Library)
-
-In production mode, Asok automatically minifies your HTML output to reduce page weight and improve loading times.
-
-### How it works
-- **Zero Dependencies**: Uses Python's standard `re` module.
-- **Safety**: Automatically protects content inside `<pre>`, `<code>`, `<script>`, `<style>`, and `<textarea>` tags.
-- **Smart Cleaning**: Removes HTML comments and collapses unnecessary whitespace between tags.
-
-### Configuration
-By default, minification is enabled when `DEBUG=false`. You can manually control it in `.env`:
-
-```env
-HTML_MINIFY=true
-```
+### Build-time Optimization
+While Asok can minify HTML at runtime during development, the recommended approach for production is to use the `asok build` command. This performs a one-shot minification of all your templates, allowing the production server to skip this processing entirely, saving CPU cycles on every request.
 
 ## 2. Image Optimization (WebP)
 
@@ -122,14 +109,15 @@ Asok allows you to reduce your global CSS and JS payload by isolating page-speci
 
 See the [Scoped Assets Guide](24-scoped-assets.md) for detailed usage.
 
-## 8. Clean Project Structure (Bytecode/pycache)
+## 8. Production Bytecode (.pyc)
 
-Because Asok uses a file-system based routing system, your project contains many directories and Python files. To keep your workspace clean, Asok automatically disables the generation of `__pycache__` folders by default.
+While Asok disables bytecode generation during development to keep your project structure clean, it leverages full bytecode compilation for production deployments via the `asok build` system.
 
 ### How it works
-- **Automatic Cleanup**: Asok set `sys.dont_write_bytecode = True` globally as soon as the framework is imported.
-- **Cleaner Workspace**: Your routing folders remain free of `.pyc` files and `__pycache__` directories.
-- **Production Efficiency**: While bytecode execution is slightly faster, the overhead of modern Python and the I/O of SSDs makes this cleanup preferred for a better developer experience.
+- **Pre-compilation**: The `asok build` command compiles all `.py` files into optimized `.pyc` files (using `optimize=2`).
+- **Source Protection**: Original `.py` files are removed by default in the `dist/` folder, creating a locked distribution.
+- **Fast Execution**: Pre-compiled bytecode allows for faster module loading and slightly improved runtime performance.
+- **Stealth Mode**: By running entirely from bytecode, your production environment remains clean and free of source code.
 
 ### Configuration
 If you specifically need to enable bytecode generation (e.g. for mission-critical performance in production), set the following environment variable:

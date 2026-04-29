@@ -57,10 +57,10 @@ Asok includes a set of human-friendly formatting filters for common data types:
 
 | Filter | Example | Description |
 |---|---|---|
-| `time_ago` | `{{ user.created_at \| time_ago }}` | "2 hours ago", "just now", "3 days ago" |
-| `filesize` | `{{ file.size \| filesize }}` | "1.2 MB", "450 KB", "0 B" |
-| `intcomma` | `{{ 1200 \| intcomma }}` | "1,200" (adds thousands separators) |
-| `duration` | `{{ seconds \| duration }}` | "5m 20s", "1h 10m", "2d 4h" |
+| `time_ago` | `{{ user.created_at | time_ago }}` | "2 hours ago", "just now", "3 days ago" |
+| `filesize` | `{{ file.size | filesize }}` | "1.2 MB", "450 KB", "0 B" |
+| `intcomma` | `{{ 1200 | intcomma }}` | "1,200" (adds thousands separators) |
+| `duration` | `{{ seconds | duration }}` | "5m 20s", "1h 10m", "2d 4h" |
 
 Chain filters:
 

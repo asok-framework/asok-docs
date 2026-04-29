@@ -60,7 +60,6 @@ All mutating operations automatically set `session.modified = True`.
 
 ## Production Persistence
 
-> [!IMPORTANT]
 > In production environments using multi-worker servers like **Gunicorn**, you **must** use the `file` backend. 
 > 
 > The default `memory` backend stores sessions in the RAM of the specific worker process. Since requests are distributed across multiple workers, a user will "lose" their session as soon as their request is handled by a different worker.

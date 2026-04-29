@@ -19,7 +19,17 @@ Asok will generate a `deployment/` directory containing:
 - `myapp.service`: SystemD unit file configured with your current `SECRET_KEY`.
 - `setup.sh`: A comprehensive installation script for Ubuntu/Debian.
 
-## 2. Server Setup (Ubuntu/Debian)
+## 2. Build Pipeline (Recommended)
+
+Before deploying, it is highly recommended to generate an optimized distribution of your project using the Asok build engine. This will minify your assets, compile your Python source to bytecode, and optimize your images.
+
+```bash
+asok build
+```
+
+This command generates a `dist/` folder. You should deploy the **contents** of this folder to your production server instead of your raw source code. See the [Production Build Guide](47-production-build.md) for more details.
+
+## 3. Server Setup (Ubuntu/Debian)
 
 1. **Upload**: Copy your project (including the `deployment/` folder) to your server (e.g., via `scp` or `git clone`).
 2. **Execute**: Run the setup script as root:

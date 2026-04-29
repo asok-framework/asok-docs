@@ -136,6 +136,20 @@ Scaffold new components:
 - `asok make page Dashboard`
 - `asok make component SearchBar`
 
+### `asok build`
+
+Generate an optimized production distribution in the `dist/` folder:
+
+```bash
+asok build
+```
+
+The build process includes:
+- **Minification**: Recursive JS/CSS and HTML minification.
+- **Bytecode**: Compilation of all Python files to `.pyc` (sources removed).
+- **Images**: Automatic WebP conversion if enabled.
+- **Production Config**: Generation of `.env.production`.
+
 ### `asok preview`
 
 Run the application in production mode locally:
