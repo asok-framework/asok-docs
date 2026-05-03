@@ -42,11 +42,18 @@ else:
 | `email` | `'email'` | Must be a valid email |
 | `min` | `'min:3'` | Minimum character length |
 | `max` | `'max:255'` | Maximum character length |
-| `numeric` | `'numeric'` | Must be a number |
+| `numeric` | `'numeric'` | Must be a numeric value |
+| `digits` | `'digits:5'` | Must be exactly N digits |
+| `boolean` | `'boolean'` | Must be a boolean (true, false, 1, 0, yes, no) |
 | `url` | `'url'` | Must be a valid URL (http/https) |
+| `slug` | `'slug'` | Must be a valid URL slug (a-z, 0-9, dashes) |
+| `uuid` | `'uuid'` | Must be a valid UUID (v4 format) |
 | `date` | `'date'` | Must be a valid date (YYYY-MM-DD) |
+| `between` | `'between:1,10'` | Numeric value between min and max |
 | `in` | `'in:admin,user,guest'` | Must be one of the listed values |
 | `regex` | `'regex:^[A-Z]{3}$'` | Must match a regex pattern |
+| `alpha` | `'alpha'` | Only letters allowed |
+| `alpha_num` | `'alpha_num'` | Letters and numbers allowed |
 | `confirmed` | `'confirmed'` | Field `{name}_confirmation` must match |
 | `same` | `'same:email'` | Must match another field's value |
 | `unique` | `'unique:User,email'` | Must not exist in database (Model,field) |
@@ -125,8 +132,12 @@ Asok looks up locale keys with a `v_` prefix. Add these to your locale files:
   "v_email": "Invalid email address.",
   "v_min": "Minimum {arg} characters.",
   "v_max": "Maximum {arg} characters.",
-  "v_numeric": "Must be a number.",
+  "v_numeric": "Must be a numeric value.",
+  "v_digits": "Must be exactly {arg} digits.",
   "v_url": "Invalid URL.",
+  "v_slug": "Invalid slug format.",
+  "v_uuid": "Invalid UUID format.",
+  "v_boolean": "Must be a boolean value.",
   "v_date": "Invalid date format.",
   "v_confirmed": "Confirmation does not match.",
   "v_unique": "This value is already taken."
@@ -140,8 +151,12 @@ Asok looks up locale keys with a `v_` prefix. Add these to your locale files:
   "v_email": "Adresse email invalide.",
   "v_min": "Minimum {arg} caractères.",
   "v_max": "Maximum {arg} caractères.",
-  "v_numeric": "Doit être un nombre.",
+  "v_numeric": "Doit être une valeur numérique.",
+  "v_digits": "Doit contenir exactement {arg} chiffres.",
   "v_url": "URL invalide.",
+  "v_slug": "Format de slug invalide.",
+  "v_uuid": "Format de UUID invalide.",
+  "v_boolean": "Doit être une valeur booléenne.",
   "v_date": "Format de date invalide.",
   "v_confirmed": "La confirmation ne correspond pas.",
   "v_unique": "Cette valeur est déjà prise."

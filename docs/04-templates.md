@@ -28,6 +28,8 @@ return request.html('page.html', html=SafeString('<b>bold</b>'))
 
 The `escape` (alias `e`) filter forces escaping if needed.
 
+**Security Note**: String literals in template expressions are protected from keyword interference. For example, `{{ t('2FA is Enabled') }}` correctly treats the entire string as a literal, even though it contains the `is` keyword. The template compiler only processes `is` tests (like `user is defined`) outside of quoted strings, preventing accidental keyword matching within your text content.
+
 ## Filters
 
 ```html
@@ -68,6 +70,42 @@ Chain filters:
 {{ name | lower | truncate(20) }}
 ```
 
+### Filter blocks
+
+Apply filters to entire blocks of template content:
+
+```html
+{% filter upper %}
+  This entire block will be uppercased.
+  {{ user.name }} will also be uppercased.
+{% endfilter %}
+
+{% filter truncate(50) | safe %}
+  <p>Long HTML content that will be truncated...</p>
+{% endfilter %}
+```
+
+You can chain multiple filters in a filter block just like inline filters.
+
+## Autoescape control
+
+By default, all template output is automatically HTML-escaped. You can control this behavior for entire blocks:
+
+```html
+{# Disable auto-escape for trusted content #}
+{% autoescape false %}
+  {{ trusted_html_content }}
+  <p>Raw HTML here: {{ user.bio }}</p>
+{% endautoescape %}
+
+{# Re-enable auto-escape (though it's on by default) #}
+{% autoescape true %}
+  {{ user_input }}  {# Will be escaped #}
+{% endautoescape %}
+```
+
+**Security Warning**: Only use `autoescape false` for content you completely trust. Untrusted user input should always be escaped to prevent XSS attacks. Prefer using the `safe` filter for individual variables instead of disabling autoescape for entire blocks.
+
 ## Conditions
 
 ```html
@@ -77,6 +115,58 @@ Chain filters:
     <span>{{ user.name }}</span>
 {% else %}
     <a href="/login">Login</a>
+{% endif %}
+```
+
+### Template tests — `is` operator
+
+Test variables with the `is` operator for common conditions:
+
+```html
+{% if user is defined %}
+    Welcome, {{ user.name }}!
+{% endif %}
+
+{% if items is not defined or items is none %}
+    <p>No items available</p>
+{% endif %}
+
+{% if count is even %}
+    <div class="even-row">{{ count }}</div>
+{% endif %}
+
+{% if status is true %}
+    <span class="active">Active</span>
+{% endif %}
+```
+
+Available tests:
+
+| Test | Description | Example |
+|------|-------------|---------|
+| `defined` | Value exists and is not empty string | `{% if user is defined %}` |
+| `undefined` | Value is None or empty string | `{% if email is undefined %}` |
+| `none` | Value is exactly None | `{% if result is none %}` |
+| `true` | Value is exactly True | `{% if active is true %}` |
+| `false` | Value is exactly False | `{% if disabled is false %}` |
+| `even` | Number is even | `{% if count is even %}` |
+| `odd` | Number is odd | `{% if count is odd %}` |
+| `string` | Value is a string | `{% if name is string %}` |
+| `number` | Value is int or float | `{% if price is number %}` |
+| `boolean` | Value is True or False | `{% if flag is boolean %}` |
+| `integer` | Value is an integer | `{% if age is integer %}` |
+| `float` | Value is a float | `{% if price is float %}` |
+| `sequence` | Value is list or tuple | `{% if items is sequence %}` |
+| `mapping` | Value is a dictionary | `{% if data is mapping %}` |
+| `iterable` | Value can be iterated | `{% if collection is iterable %}` |
+| `lower` | String is all lowercase | `{% if text is lower %}` |
+| `upper` | String is all uppercase | `{% if code is upper %}` |
+
+Negate any test with `is not`:
+
+```html
+{% if user is not defined %}
+    <a href="/login">Please log in</a>
 {% endif %}
 ```
 
@@ -113,12 +203,59 @@ Example:
 </ul>
 ```
 
+### Loop control
+
+You can use `{% break %}` to exit a loop early and `{% continue %}` to skip to the next iteration:
+
+```html
+{% for user in users %}
+    {% if user.is_banned %}{% continue %}{% endif %}
+    <li>{{ user.name }}</li>
+    {% if loop.index == 10 %}{% break %}{% endif %}
+{% endfor %}
+```
+
 ## Variables
+
+### Inline assignment
 
 ```html
 {% set greeting = 'Hello' %}
+{% set total = items | length %}
 <h1>{{ greeting }}, {{ name }}!</h1>
 ```
+
+### Block assignment — capture template content
+
+Capture rendered template content into a variable using block `set`:
+
+```html
+{% set message %}
+  <p>Welcome <strong>{{ user.name }}</strong>!</p>
+  <p>You have {{ notifications | length }} new notifications.</p>
+{% endset %}
+
+<!-- Later in template -->
+<div class="alert">{{ message }}</div>
+
+<!-- Or pass to a macro -->
+{{ card(message, title="User Info") }}
+```
+
+This is useful for:
+- Building complex HTML strings
+- Capturing repeated content blocks
+- Passing template fragments to macros or functions
+
+### Side effects — `do`
+
+Execute an expression without outputting anything to the template. Useful for calling methods that modify state or for complex assignments:
+
+```html
+{% do request.session.set('viewed', True) %}
+{% do my_list.append(item) %}
+```
+
 
 ## Template inheritance
 
@@ -188,6 +325,35 @@ Import and use in any template:
 {{ button("Click me") }}
 {{ button("Delete", "danger") }}
 {{ card("Hello", "World") }}
+
+### Advanced Macros — `call`
+
+The `{% call %}` block allows you to pass a block of template code to a macro, which can then be rendered using the special `caller()` function. This is similar to component slots but for macros.
+
+**Definition:**
+```html
+{% macro card_wrap(title) %}
+<div class="card">
+  <div class="header">{{ title }}</div>
+  <div class="body">
+    {{ caller() }}
+  </div>
+</div>
+{% endmacro %}
+```
+
+**Usage:**
+
+```html
+{% from "macros.html" import card_wrap %}
+
+{% call card_wrap("Advanced Card") %}
+  <p>This content is passed to <strong>caller()</strong>.</p>
+  <ul>
+    <li>Item 1</li>
+    <li>Item 2</li>
+  </ul>
+{% endcall %}
 ```
 
 Output:
@@ -334,6 +500,38 @@ def render(request: Request):
 ```
 
 The framework detects the partial request via the `X-Block` header and you can serve a fragment (`request.block("page.html", "result")`) or the full page — both work. CSRF tokens are rotated automatically and re-injected into the new DOM.
+
+#### Target selector syntax
+
+The `data-block` attribute supports two types of selectors:
+
+- **`data-block="#main"`** — Targets a DOM element by ID (CSS selector)
+
+```html
+<div id="main">Content will be replaced here</div>
+```
+
+- **`data-block="main"`** — Targets a template block (without `#`)
+
+```html
+{% block main %}
+  Content will be replaced here
+{% endblock %}
+```
+
+When using template blocks, the server should return a fragment using `request.block("template.html", "main")`. When using DOM IDs, you can return either the full page or just the fragment for that ID.
+
+**Examples:**
+
+```html
+<!-- Target template block -->
+<form data-block="content" data-url="/update">...</form>
+<!-- Server: return request.block("page.html", "content") -->
+
+<!-- Target DOM element -->
+<form data-block="#result" data-url="/search">...</form>
+<!-- Server: return any HTML, #result will be replaced -->
+```
 
 ### `data-trigger` — fire on different events
 
@@ -535,6 +733,21 @@ Three updates from one round-trip: row removed, flash shown at top, counter refr
 | Any other element with `data-url` | No body — pure fetch |
 
 The runtime auto-includes the CSRF token in the `X-CSRF-Token` header and rotates it transparently after every request.
+
+## Reactive Directives (asok-*)
+
+For more complex client-side interactivity (state, loops, conditional rendering) without writing custom JavaScript, Asok includes an Alpine.js-inspired directive system.
+
+Unlike `data-block` which relies on server round-trips for every update, `asok-*` directives handle reactivity entirely in the browser using a local state.
+
+```html
+<div asok-state="{ count: 0 }">
+  <button asok-on:click="count++">Increment</button>
+  <p>Count: {{ count }}</p>
+</div>
+```
+
+For the full reference of all available directives, see the [Asok Directives](46-asok-directives.md) documentation.
 
 ## WebSocket helper
 

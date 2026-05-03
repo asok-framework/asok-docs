@@ -222,4 +222,6 @@ db.sqlite3-wal
 
 .DS_Store
 
+.asok/
+
 

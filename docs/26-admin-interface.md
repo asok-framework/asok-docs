@@ -141,7 +141,7 @@ Creates a user with `is_admin = True` **and** an `admin` role (with `*` permissi
 Customize how a model appears in admin by adding a nested `Admin` class:
 
 ```python
-from asok import Model, Field
+from asok import Model, Field, ModelAdmin
 
 class Post(Model):
     title = Field.String()
@@ -154,7 +154,7 @@ class Post(Model):
     author = BelongsTo('users')
     tags = BelongsToMany('tags')
 
-    class Admin:
+    class Admin(ModelAdmin):
         label = "Posts"
         list_display = ['title', 'author', 'published', 'created_at']
         search_fields = ['title', 'body']
@@ -174,6 +174,19 @@ class Post(Model):
         cls.where('id', 'in', ids).update(published=True)
 ```
 
+> [!TIP]
+> Use **`asok.ModelAdmin`** as a base class for your inner `Admin` class to get full IDE autocompletion for all configuration options.
+
+```python
+from asok import Model, Field, ModelAdmin
+
+class MyModel(Model):
+    # ...
+    class Admin(ModelAdmin):
+        list_display = ["id", "name"]
+        # Your IDE will now suggest all available options!
+```
+
 ### Field visibility control
 
 Control which fields appear in forms:
@@ -184,7 +197,7 @@ class Category(Model):
     slug = Field.Slug(populate_from='name')
     created_at = Field.CreatedAt()
 
-    class Admin:
+    class Admin(ModelAdmin):
         form_exclude = ['slug', 'created_at']  # Completely hidden from forms
         readonly_fields = ['created_at']       # Shown but not editable
 ```
@@ -247,6 +260,48 @@ class User(Model):
 - **Dark mode** — toggle in the topbar, persisted in localStorage
 - **Empty values** — `—` shown for null/empty cells
 - **Boolean badges** — colored Yes/No badges for boolean columns
+- **Error pages** — beautiful 403, 404, and 500 error pages with admin design
+
+## Error Pages
+
+The admin interface includes beautifully designed error pages that match the admin theme:
+
+### Built-in Error Pages
+
+- **403 Forbidden** — Access denied with login option
+- **404 Not Found** — Page or item not found
+- **500 Internal Server Error** — Server error with retry option
+
+All error pages:
+- Match the admin theme (light/dark mode support)
+- Display contextual icons and messages
+- Provide relevant action buttons (Go Back, Dashboard, Retry, Login)
+- Are fully internationalized (English, French, Spanish)
+- Show helpful messages without exposing sensitive information
+
+### Custom Error Messages
+
+To customize error messages in your admin extensions, use the `_render_error()` method:
+
+```python
+from asok.admin import Admin
+
+class MyAdmin(Admin):
+    def custom_check(self, request):
+        if not some_condition:
+            return self._render_error(
+                request,
+                403,
+                self.t(request, "Custom Access Denied"),
+                self.t(request, "You need special permission for this action."),
+            )
+```
+
+The error page template automatically handles:
+- Error code badge display
+- Appropriate icons per error type
+- Contextual action buttons
+- Multi-language support
 
 ## Templates and static files
 

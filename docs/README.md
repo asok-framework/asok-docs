@@ -1,5 +1,13 @@
 # Asok Documentation
 
+> [!NOTE]
+> **Latest Version: v0.1.3**
+> - Added 7 new validation rules (`url`, `slug`, `uuid`, `numeric`, `digits`, `boolean`, `between`).
+> - Enhanced Admin security: Improved CSRF handling and global error catching.
+> - Improved Developer UX: `ModelAdmin` base class for full IDE autocompletion.
+> - Security hardening: ReDoS protection on all validation regex.
+> - Template Engine: Added `{% break %}`, `{% continue %}`, `{% do %}`, `{% with %}`, and `{% call %}` support.
+
 Welcome to the official Asok Framework documentation. This guide is organized sequentially to take you from a total beginner to an advanced contributor.
 
 ## 🟢 Foundations
@@ -13,6 +21,7 @@ Welcome to the official Asok Framework documentation. This guide is organized se
 ## 📊 Database & ORM
 07. [ORM Basics](07-orm.md) — Models, Migrations, and basic Queries.
 08. [Advanced ORM](08-advanced-orm.md) — Relationships, Joins, and complex filtering.
+45. [Native Vector Search](45-vector-search.md) — AI-ready semantic search with SQLite.
 
 ## 📝 Forms & Data
 09. [Forms](09-forms.md) — Declarative HTML forms and model mapping.
@@ -21,6 +30,7 @@ Welcome to the official Asok Framework documentation. This guide is organized se
 12. [Validation](12-validation.md) — Built-in validation rules and custom logic.
 13. [Serialization](13-serialization.md) — Controlling JSON output with Schemas.
 14. [File Storage](14-file-storage.md) — Handling uploads and serving files.
+48. [Data Tables](48-data-tables.md) — High-performance interactive tables.
 
 ## 🔒 Security & Auth
 15. [Authentication](15-authentication.md) — Sessions, Login, and Register.
@@ -29,6 +39,7 @@ Welcome to the official Asok Framework documentation. This guide is organized se
 18. [Security Headers](18-security-headers.md) — Production hardening (CSP, HSTS, etc.).
 19. [CORS & Gzip](19-cors-gzip.md) — Cross-origin requests and compression.
 20. [Rate Limit](20-rate-limit.md) — Protecting your app from brute-force/abuse.
+39. [Security Audit](39-security-audit.md) — Current state of framework hardening.
 
 ## ✨ Reactive UI
 21. [Reactive Components](21-reactive-components.md) — Stateful WebSocket-powered UI.
@@ -54,12 +65,11 @@ Welcome to the official Asok Framework documentation. This guide is organized se
 36. [Testing](36-testing.md) — Unit and integration testing with TestClient.
 37. [Logging](37-logging.md) — Request and application logs.
 38. [Optimization](38-optimization.md) — Minification, WebP, and performance tips.
-39. [Security Audit](39-security-audit.md) — Current state of framework hardening.
 40. [Static Versioning](40-static-versioning.md) — Cache busting for static assets.
+47. [Production Build](47-production-build.md) — Packaging and obfuscation.
 
 ## 📚 References & Advanced
 41. [Utilities](41-utilities.md) — Humanize, Minifiers, and Helpers.
 42. [Component API](42-component-api.md) — Full reference for Alive Components.
 43. [SEO Management](43-seo-management.md) — Titles, Meta tags, and Social sharing.
 44. [Tailwind CSS](44-tailwind-css.md) — Integrating and customizing Tailwind.
-45. [Native Vector Search](45-vector-search.md) — AI-ready semantic search with SQLite.

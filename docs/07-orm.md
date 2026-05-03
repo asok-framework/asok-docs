@@ -44,11 +44,44 @@ class Category(Model):
 | `Field.Date()` | TEXT | ISO format |
 | `Field.DateTime()` | TEXT | ISO format |
 | `Field.Password()` | TEXT | Auto-hashed (PBKDF2-SHA256, 100k) |
-| `Field.ForeignKey(Model)` | INTEGER | FK to another model |
+| `Field.ForeignKey(Model)` | INTEGER | FK to another model. Use `dropdown=True` for rich select in forms. |
+| `Field.Dropdown(choices)` | TEXT | Fixed choices — renders as a premium searchable dropdown. |
 | `Field.File(upload_to='dir')` | TEXT | Stores filename, files saved under uploads/ |
 | `Field.CreatedAt()` | TEXT | Set once on first save |
 | `Field.UpdatedAt()` | TEXT | Updated on every save |
 | `Field.SoftDelete()` | TEXT | Enables soft delete (see below) |
+| `Field.Dropdown(choices)` | TEXT | List of tuples `(value, label)`. |
+
+### Rich Dropdowns and Selection
+
+You can enable premium, searchable dropdowns directly from the model definition. These are automatically picked up by `Form.from_model()`.
+
+#### Fixed choices with `Field.Dropdown`
+
+```python
+class Ticket(Model):
+    status = Field.Dropdown(
+        label="Ticket Status",
+        choices=[("open", "Open"), ("pending", "Pending"), ("closed", "Closed")],
+        searchable=True
+    )
+```
+
+#### Relationships with `Field.ForeignKey`
+
+Enable `dropdown=True` to replace the standard `<select>` with a rich searchable UI:
+
+```python
+class Post(Model):
+    category_id = Field.ForeignKey(
+        Category, 
+        dropdown=True,
+        dropdown_title="name",      # Field to use as title
+        dropdown_subtitle="desc",   # Optional subtitle field
+        dropdown_image="icon_url",  # Optional image/avatar field
+        dropdown_searchable=True
+    )
+```
 
 ### Choosing the right text field
 
@@ -77,6 +110,76 @@ Field.String(max_length=80, default='draft', unique=True, nullable=False)
 ```
 
 All fields accept `default`, `unique`, and `nullable`. `String` and `Email` additionally accept `max_length`. `Float` accepts `precision`.
+
+#### Labels, rules and custom error messages
+
+Fields can define **labels**, **validation rules**, and **custom error messages** that are automatically used when generating forms with `Form.from_model()`:
+
+```python
+class Contact(Model):
+    __tablename__ = "contacts"
+
+    name = Field.String(
+        max_length=100,
+        nullable=False,
+        label="Full Name",              # Custom label (default: "Name")
+        rules="min:4|alpha_spaces",      # Custom validation rules
+        messages={
+            "required": "Please enter your full name",
+            "min": "Name must be at least 4 characters",
+            "max": "Name cannot exceed 100 characters",
+            "alpha_spaces": "Name can only contain letters and spaces"
+        }
+    )
+
+    email = Field.Email(
+        max_length=100,
+        nullable=False,
+        label="Email Address",
+        messages={
+            "required": "Email is required to contact you",
+            "email": "Please provide a valid email address"
+        }
+    )
+
+    message = Field.Text(
+        nullable=False,
+        label="Your Message",
+        rules="min:10",
+        messages={
+            "required": "Please tell us what you want to say",
+            "min": "Message must be at least 10 characters"
+        }
+    )
+```
+
+When you generate a form from this model:
+
+```python
+form = Form.from_model(Contact, request)
+```
+
+The form will:
+- Use "Full Name" as the label instead of "Name"
+- Apply all validation rules (auto-generated + custom)
+- Display your custom error messages when validation fails
+
+**How rules are combined:**
+
+Asok automatically combines:
+1. **Auto-generated rules** based on field type and constraints:
+   - `required` (if `nullable=False`)
+   - `max:N` (if `max_length=N`)
+   - `email` (if `Field.Email()`)
+   - `tel` (if `Field.Tel()`)
+   - etc.
+
+2. **Your custom rules** (via the `rules` parameter)
+
+For example, the `name` field above will have these combined rules:
+```
+required|max:100|min:4|alpha_spaces
+```
 
 ## CRUD
 

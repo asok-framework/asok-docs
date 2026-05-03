@@ -121,8 +121,19 @@ Form.file('Label', 'rules')
 Form.hidden('rules')
 Form.checkbox('Label', 'rules')
 Form.select('Label', [('val', 'Display'), ...], 'rules')
+Form.dropdown('Label', items, searchable=True)
 Form.radio('Label', [('val', 'Display'), ...], 'rules')
 Form.title('Section Name')   # Renders <h3>, no input
+```
+
+### Dropdown example
+
+A premium, searchable dropdown that handles lists of strings, dicts, or Models.
+
+```python
+form = Form({
+    'fruit': Form.dropdown('Select a fruit', ['Apple', 'Banana', 'Mango'], searchable=True),
+}, request)
 ```
 
 ### Select example
@@ -227,6 +238,72 @@ Form.from_model(
 | `Field.Password()` | `password` input (rules cleared so edits don't force re-entry) |
 
 Validation rules are derived automatically: `nullable=False` adds `required`, `Email` adds `email`, `max_length` adds `max:N`.
+
+### Custom labels, rules and messages
+
+Fields can define **custom labels**, **validation rules**, and **error messages** that are automatically used when generating forms:
+
+```python
+# src/models/contact.py
+class Contact(Model):
+    __tablename__ = "contacts"
+
+    name = Field.String(
+        max_length=100,
+        nullable=False,
+        label="Full Name",              # Custom label
+        rules="min:4|alpha_spaces",      # Custom validation rules
+        messages={
+            "required": "Please enter your full name",
+            "min": "Name must be at least 4 characters",
+            "max": "Name cannot exceed 100 characters",
+            "alpha_spaces": "Only letters and spaces allowed"
+        }
+    )
+
+    email = Field.Email(
+        max_length=100,
+        nullable=False,
+        label="Email Address",
+        messages={
+            "required": "Email is required",
+            "email": "Please provide a valid email"
+        }
+    )
+
+    message = Field.Text(
+        nullable=False,
+        label="Your Message",
+        rules="min:10",
+        messages={
+            "required": "Message is required",
+            "min": "Message must be at least 10 characters"
+        }
+    )
+```
+
+When you generate a form from this model:
+
+```python
+form = Form.from_model(Contact, request)
+```
+
+The form automatically:
+- Uses **custom labels** ("Full Name" instead of "Name")
+- Combines **auto-generated + custom rules** (`required|max:100|min:4|alpha_spaces`)
+- Displays **custom error messages** when validation fails
+
+**Without custom label:**
+```python
+name = Field.String(max_length=100)  # Label will be "Name" (auto-generated from field name)
+```
+
+**With custom label:**
+```python
+name = Field.String(max_length=100, label="Full Name")  # Label will be "Full Name"
+```
+
+See [ORM Basics](07-orm.md#labels-rules-and-custom-error-messages) for more details on defining these at the model level.
 
 ### Auto-excluded fields
 

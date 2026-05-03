@@ -1,222 +1,370 @@
 # Asok Directives
 
-Asok Directives is a lightweight (< 3KB) client-side reactive engine built directly into the framework. It allows you to build interactive UI components (like dropdowns, modals, and tabs) using simple HTML attributes, without writing any custom JavaScript.
+Asok includes Alpine.js-style reactive directives for building interactive UIs without JavaScript. These directives are automatically processed and inject a lightweight runtime (~5KB).
 
-Inspired by Alpine.js, it provides a powerful "Zero JS" approach to frontend interactivity while being fully integrated with Asok's SPA and Component system.
+### State Management
 
-## Basic Usage
+#### `asok-state` — Component state
 
-To create a reactive scope, use the `asok-state` directive. All children of this element can access and mutate the defined state.
+Define reactive local state for a component:
+
+```html
+<div asok-state="{ count: 0, name: 'Alice' }">
+  <p>Count: {{ count }}</p>
+  <p>Name: {{ name }}</p>
+  <button asok-on:click="count = count + 1">Increment</button>
+</div>
+```
+
+State is scoped to the component and its children. Changes trigger automatic re-renders.
+
+#### `$store` — Global state
+
+Access shared state across all components:
+
+```html
+<!-- Component 1 -->
+<div asok-state="{}">
+  <button asok-on:click="$store.theme = 'dark'">Dark Mode</button>
+</div>
+
+<!-- Component 2 (updates automatically) -->
+<div asok-state="{}" asok-class="$store.theme === 'dark' ? 'bg-black text-white' : ''">
+  Theme: {{ $store.theme }}
+</div>
+```
+
+The store uses **dependency tracking** — only components that use a property are updated when it changes (10-20x faster than updating everything).
+
+Access from JavaScript:
+
+```javascript
+window.Asok.store.theme = 'dark';
+window.Asok.store.user = { name: 'Alice', role: 'admin' };
+```
+
+### Display & Visibility
+
+#### `asok-show` / `asok-hide`
+
+Toggle element visibility with `display: none`:
+
+```html
+<div asok-state="{ visible: true }">
+  <div asok-show="visible">I'm visible</div>
+  <div asok-hide="visible">I'm hidden</div>
+  <button asok-on:click="visible = !visible">Toggle</button>
+</div>
+```
+
+#### `asok-text`
+
+Set text content reactively:
 
 ```html
 <div asok-state="{ count: 0 }">
-    <button asok-on:click="count--">-</button>
-    <span asok-text="count"></span>
-    <button asok-on:click="count++">+</button>
+  <p asok-text="'Count: ' + count"></p>
+  <button asok-on:click="count++">+</button>
+</div>
+```
+
+### Class & Attribute Binding
+
+#### `asok-class` — Dynamic classes
+
+Three syntaxes for maximum flexibility:
+
+```html
+<div asok-state="{ isOpen: false, status: 'success' }">
+  <!-- 1. Toggle a single class -->
+  <div asok-class:active="isOpen">Toggle</div>
+
+  <!-- 2. Ternary (like Alpine.js) -->
+  <div asok-class="isOpen ? 'text-blue-500 font-bold' : 'text-red-500'">
+    Conditional classes
+  </div>
+
+  <!-- 3. Object (multiple toggles) -->
+  <div asok-class="{ 'active': isOpen, 'disabled': !enabled, 'success': status === 'success' }">
+    Multiple classes
+  </div>
+</div>
+```
+
+Perfect for Tailwind CSS with long class lists:
+
+```html
+<div asok-class="isOpen ? 'bg-white px-4 py-2 border border-gray-300 rounded-md shadow-sm' : 'bg-gray-100'">
+  ...
+</div>
+```
+
+#### `asok-bind:attr`
+
+Bind any HTML attribute:
+
+```html
+<div asok-state="{ url: '/page', disabled: false }">
+  <a asok-bind:href="url">Link</a>
+  <button asok-bind:disabled="disabled">Button</button>
+  <input asok-bind:placeholder="'Enter ' + fieldName">
+</div>
+```
+
+### Forms & Input
+
+#### `asok-model`
+
+Two-way data binding for form inputs:
+
+```html
+<div asok-state="{ name: '', email: '' }">
+  <input asok-model="name" placeholder="Name">
+  <input type="email" asok-model="email" placeholder="Email">
+
+  <p>Hello {{ name }}! Your email is {{ email }}</p>
+</div>
+```
+
+Works with:
+- Text inputs (`<input type="text">`)
+- Checkboxes (`<input type="checkbox">`)
+- Radio buttons (`<input type="radio">`)
+- Select dropdowns (`<select>`)
+- Textareas (`<textarea>`)
+
+### Event Handling
+
+#### `asok-on:event`
+
+Listen to any DOM event:
+
+```html
+<div asok-state="{ count: 0 }">
+  <button asok-on:click="count++">Clicked {{ count }} times</button>
+  <input asok-on:input="count = $event.target.value.length">
+  <div asok-on:mouseenter="hovered = true">Hover me</div>
+</div>
+```
+
+Event modifiers:
+
+```html
+<!-- Prevent default -->
+<form asok-on:submit.prevent="handleSubmit()">...</form>
+
+<!-- Stop propagation -->
+<button asok-on:click.stop="doSomething()">Click</button>
+
+<!-- Debounce (300ms default) -->
+<input asok-on:input.debounce-500="search()">
+
+<!-- Key filters -->
+<input asok-on:keydown.enter="submit()">
+<input asok-on:keydown.escape="close()">
+
+<!-- Outside clicks -->
+<div asok-on:click.outside="open = false">...</div>
+```
+
+### Conditional Rendering
+
+#### `asok-if` / `asok-elif` / `asok-else`
+
+Conditional rendering (elements are removed from DOM):
+
+```html
+<div asok-state="{ role: 'admin', count: 5 }">
+  <template asok-if="role === 'admin'">
+    <p>Admin panel</p>
+  </template>
+  <template asok-elif="role === 'user'">
+    <p>User dashboard</p>
+  </template>
+  <template asok-else>
+    <p>Guest view</p>
+  </template>
+</div>
+```
+
+### Loops
+
+#### `asok-for`
+
+Iterate over arrays:
+
+```html
+<div asok-state="{ items: ['Apple', 'Banana', 'Cherry'] }">
+  <ul>
+    <template asok-for="item in items">
+      <li>{{ item }} (index: {{ index }})</li>
+    </template>
+  </ul>
+</div>
+```
+
+### Data Fetching
+
+#### `asok-fetch` — Declarative HTTP requests
+
+Fetch JSON data automatically:
+
+```html
+<!-- Auto-fetch on mount -->
+<div asok-state="{ users: null, loading: false, error: null }"
+     asok-fetch="/api/users"
+     asok-fetch-as="users">
+
+  <div asok-show="loading">Loading...</div>
+  <div asok-show="error">Error: {{ error }}</div>
+
+  <div asok-show="users">
+    <p>{{ users.length }} users loaded</p>
+  </div>
+</div>
+
+<!-- Fetch on click -->
+<button asok-fetch="/api/products"
+        asok-fetch-as="products"
+        asok-fetch-on="click">
+  Load Products
+</button>
+```
+
+**Attributes:**
+- `asok-fetch="/url"` — URL to fetch (GET request)
+- `asok-fetch-as="varname"` — Variable name (default: "data")
+- `asok-fetch-on="event"` — Trigger event (default: "load")
+
+Automatically sets `loading` and `error` in the component state.
+
+#### `asok-fetch-async` — Custom async expressions
+
+For more control, use async JavaScript expressions:
+
+```html
+<div asok-state="{ data: null, loading: false, error: null }">
+  <!-- Single fetch -->
+  <button asok-fetch-async="data = await fetch('/api/users').then(r => r.json())">
+    Load
+  </button>
+
+  <!-- Parallel fetches -->
+  <button asok-fetch-async="[users, products] = await Promise.all([
+    fetch('/api/users').then(r => r.json()),
+    fetch('/api/products').then(r => r.json())
+  ])">
+    Load All
+  </button>
+</div>
+```
+
+### Advanced
+
+#### `asok-ref`
+
+Get a reference to an element:
+
+```html
+<div asok-state="{}">
+  <input asok-ref="emailInput">
+  <button asok-on:click="$refs.emailInput.focus()">Focus Email</button>
+</div>
+```
+
+#### `asok-init`
+
+Run code when component initializes:
+
+```html
+<div asok-state="{ time: null }"
+     asok-init="time = new Date().toLocaleTimeString()">
+  Initialized at: {{ time }}
+</div>
+```
+
+#### `asok-teleport`
+
+Render content in a different location:
+
+```html
+<template asok-teleport="#modal-container">
+  <div class="modal">Modal content</div>
+</template>
+
+<!-- Elsewhere in the page -->
+<div id="modal-container"></div>
+```
+
+#### `asok-cloak`
+
+Hide element until directives are initialized (prevents flash of unstyled content):
+
+```html
+<style>
+  [asok-cloak] { display: none; }
+</style>
+
+<div asok-state="{ loaded: false }" asok-cloak>
+  {{ message }}
+</div>
+```
+
+### Special Variables
+
+Inside directive expressions, you have access to:
+
+| Variable | Description |
+|---|---|
+| `$store` | Global store (shared across components) |
+| `$el` | Current element |
+| `$event` | Event object (in event handlers) |
+| `$refs` | Object of referenced elements |
+| `$nextTick(fn)` | Run function after next DOM update |
+
+### Example: Complete Todo App
+
+```html
+<div asok-state="{
+  todos: [],
+  newTodo: '',
+  filter: 'all'
+}">
+  <!-- Add todo -->
+  <form asok-on:submit.prevent="todos.push({text: newTodo, done: false}); newTodo = ''">
+    <input asok-model="newTodo" placeholder="What needs to be done?">
+    <button type="submit">Add</button>
+  </form>
+
+  <!-- Filter -->
+  <div>
+    <button asok-on:click="filter = 'all'"
+            asok-class:active="filter === 'all'">All</button>
+    <button asok-on:click="filter = 'active'"
+            asok-class:active="filter === 'active'">Active</button>
+    <button asok-on:click="filter = 'done'"
+            asok-class:active="filter === 'done'">Done</button>
+  </div>
+
+  <!-- List -->
+  <ul>
+    <template asok-for="todo in todos.filter(t =>
+      filter === 'all' ||
+      (filter === 'active' && !t.done) ||
+      (filter === 'done' && t.done)
+    )">
+      <li asok-class="{ 'line-through': todo.done }">
+        <input type="checkbox" asok-model="todo.done">
+        <span>{{ todo.text }}</span>
+        <button asok-on:click="todos.splice(index, 1)">×</button>
+      </li>
+    </template>
+  </ul>
+
+  <!-- Stats -->
+  <p>{{ todos.filter(t => !t.done).length }} items left</p>
 </div>
 ```
 
 ---
-
-## Core Directives
-
-| Directive | Description | Usage Example |
-| :--- | :--- | :--- |
-| `asok-state` | Defines a local reactive state scope. | `asok-state="{ count: 0 }"` |
-| `asok-text` | Sets the text content of an element. | `asok-text="count"` |
-| `asok-html` | Sets the inner HTML (scripts are stripped). | `asok-html="description"` |
-| `asok-show` | Toggles visibility (sets `display: none` when false). | `asok-show="isOpen"` |
-| `asok-hide` | Hides the element if the expression is truthy. | `asok-hide="isDone"` |
-| `asok-model` | Two-way data binding for form elements. | `asok-model="username"` |
-| `asok-on:[ev]` | Event listeners with modifiers (`.prevent`, `.stop`, `.outside`, etc.). | `asok-on:click="do()"` |
-| `asok-bind:[attr]` | Dynamic HTML attribute binding. | `asok-bind:src="imgUrl"` |
-| `asok-class:[cls]` | Conditional CSS class management. | `asok-class:active="tab === 1"` |
-| `asok-for` | Reactive loops (must be used on `<template>`). | `asok-for="item in items"` |
-| `asok-if` | Structural conditional rendering (must be used on `<template>`). | `asok-if="count > 0"` |
-| `asok-teleport` | Moves content to another DOM node (must be used on `<template>`). | `asok-teleport="body"` |
-| `asok-init` | Lifecycle hook: runs when the element is initialized. | `asok-init="fetch()"` |
-| `asok-ref` | Marks an element for easy access via `$refs`. | `asok-ref="myInput"` |
-| `asok-cloak` | Hides the element until the Asok engine is ready. | `asok-cloak` |
-
----
-
-### `asok-state`
-Initializes a new reactive scope with a JSON object.
-```html
-<div asok-state="{ open: false, title: 'Hello' }">...</div>
-```
-
-### `asok-on:[event]`
-Attaches an event listener to the element. You can use any native DOM event (click, input, submit, change, mouseover, etc.).
-
-**Modifiers:**
-- `.prevent`: Calls `event.preventDefault()`
-- `.stop`: Calls `event.stopPropagation()`
-- `.outside`: Triggers only when clicking outside the element (perfect for modals).
-- `.debounce`: Debounces the execution (default 300ms, or `.debounce-500`).
-- **Keyboard Modifiers**: `.enter`, `.escape`, `.space`, `.tab` (e.g., `asok-on:keydown.enter="add()"`).
-
-```html
-<button asok-on:click.outside="open = false">Close</button>
-<input asok-on:keydown.enter="submitForm()" placeholder="Press Enter to submit">
-```
-
-### `asok-text` & `asok-html`
-Sets the text content or inner HTML of an element.
-```html
-<span asok-text="user.name"></span>
-<div asok-html="formattedBio"></div>
-```
-
-### `asok-show` & `asok-hide`
-Toggles visibility by setting `display: none`.
-- `asok-show`: Visible when the expression is truthy.
-- `asok-hide`: Hidden when the expression is truthy.
-
-> [!TIP]
-> When visible, `asok-show` adds a `data-show-active` attribute, allowing you to trigger CSS transitions or flexbox displays (e.g., `.modal[data-show-active] { display: flex; }`).
-
-### `asok-class:[classname]`
-Conditionally adds/removes a CSS class.
-```html
-<button asok-class:active="tab === 'home'">Home</button>
-```
-
-### `asok-bind:[attribute]`
-Dynamically binds any HTML attribute.
-```html
-<input asok-bind:placeholder="myPlaceholder" asok-bind:disabled="!isFormValid">
-```
-
-### `asok-if`, `asok-elif`, `asok-else`
-Conditionally renders parts of the DOM. These directives **must** be used on a `<template>` tag. They form a linked chain where only one branch is rendered at a time.
-
-```html
-<template asok-if="score > 90">🏆 Champion</template>
-<template asok-elif="score > 50">🥈 Good</template>
-<template asok-else>🥉 Keep trying</template>
-```
-
-### `asok-for`
-Iterates over an array and renders a template for each item. Must be used on a `<template>` tag. 
-Provides access to the item variable (e.g., `item`) and a magic `index` variable.
-
-```html
-<template asok-for="task in tasks">
-    <li>
-        <span asok-text="index + 1"></span>. <span asok-text="task"></span>
-        <button asok-on:click="tasks.splice(index, 1)">x</button>
-    </li>
-</template>
-```
-
-### `asok-model`
-Enables two-way data binding on form elements.
-```html
-<input type="text" asok-model="username">
-```
-
----
-
-## Advanced Features
-
-### Lifecycle Hooks (`asok-init`)
-Execute code as soon as the element is initialized.
-```html
-<div asok-state="{ data: null }" asok-init="data = 'Ready!'">...</div>
-```
-
-### References (`asok-ref`)
-Mark an element to be accessed via the `$refs` magic variable within its parent scope.
-```html
-<input asok-ref="searchField">
-<button asok-on:click="$refs.searchField.focus()">Focus</button>
-```
-
-### Teleportation (`asok-teleport`)
-Moves content to a different part of the DOM while maintaining its reactive connection to the parent state. **Must be used on a `<template>` tag.**
-
-```html
-<template asok-teleport="body">
-    <div class="modal" asok-show="open">...</div>
-</template>
-```
-
-### Cloaking (`asok-cloak`)
-Hides elements until Asok has finished processing them. Asok automatically injects the necessary CSS for `asok-cloak`.
-
-```html
-<div asok-cloak asok-state="{ count: 0 }">...</div>
-```
-
----
-
-## Magic Variables
-
-Inside your expressions, you have access to several "magic" variables:
-
-- **`$el`**: The current element.
-- **`$event`**: The native DOM event object (only in `asok-on`).
-- **`$refs`**: Access to all elements marked with `asok-ref` in the current scope.
-- **`$store`**: Access to the [Global Store](#global-store).
-- **`$nextTick`**: Execute a function after the next DOM update cycle.
-    ```html
-    <button asok-on:click="count++; $nextTick(() => { ... })">Update</button>
-    ```
-
----
-
-## Global Store
-
-Asok provides a global reactive store accessible from any component on the page.
-
-### Registering Store Data
-You can initialize store data via JavaScript:
-```javascript
-window.Asok.store.theme = 'dark';
-window.Asok.store.user = { name: 'Ludo' };
-```
-
-### Using Store Data in HTML
-Access the store using the `$store` prefix in any directive.
-```html
-<body asok-class:dark-mode="$store.theme === 'dark'">
-    <span asok-text="$store.user.name"></span>
-</body>
-```
-
-Updating the store automatically triggers re-renders across all elements using that data.
-
----
-
-[← Previous: Native Vector Search](45-vector-search.md) | [Documentation](README.md)
-
----
-
-## Production Deployment
-
-### `asok build`
-Generates a production-ready, optimized distribution of your project in the `dist/` directory.
-
-```bash
-asok build
-```
-
-**What it does:**
-- Clones your project into `dist/` (ignoring dev files).
-- Minifies JS, CSS, and **HTML** assets in-place.
-- Optimizes Tailwind CSS and removes the source `base.css`.
-- Compiles Python code to bytecode (`.pyc`) and **removes source `.py` files** by default.
-- Generates a `.env.production` template.
-
-**Options:**
-- `--keep-source`: Keeps the original `.py` files alongside the compiled bytecode.
-- `--output [name]`: Custom name for the distribution directory (defaults to `dist`).
-
-### `asok preview`
-Starts a production-like server locally using the built project in `dist/`.
-
-```bash
-cd dist
-asok preview
-```
+[← Previous: Native Vector Search](45-vector-search.md) | [Documentation](README.md) | [Next: Production Build →](47-production-build.md)

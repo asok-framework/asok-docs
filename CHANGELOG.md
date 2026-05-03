@@ -6,6 +6,140 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.1.3] - 2026-05-03
+
+### Added
+- **Admin Error Pages**: Professional error pages (403, 404, 500) with admin design consistency.
+    - Contextual icons per error type (shield-off for 403, search for 404, alert-triangle for 500).
+    - Error code badges with color coding.
+    - Contextual action buttons (Go Back, Dashboard, Retry, Login).
+    - Full internationalization support (English, French, Spanish).
+    - Dark/light theme support matching admin interface.
+- **ModelAdmin Base Class**: Introduced `asok.ModelAdmin` for professional developer experience.
+    - Full IDE autocompletion for inner `Admin` configuration classes in models.
+    - Type hints for all supported admin options (list_display, search_fields, fieldsets, etc.).
+- **Validation Engine Enhancements**: Added 7 new powerful validation rules.
+    - `url`, `slug`, `uuid`, `numeric`, `digits`, `boolean`, `between`.
+    - Integrated corresponding i18n keys for all new rules.
+- **Enhanced Template Engine**: Added several loop control and utility statements.
+    - `{% break %}` and `{% continue %}` for granular loop control.
+    - `{% do %}` statement for executing side-effects without output.
+    - `{% call %}` block for advanced macros with `caller()` support.
+    - `{% with %}` for creating local variable scopes.
+- **CSRF Meta Tag**: Added `<meta name="csrf-token">` to admin base template for SPA-style requests.
+    - Enables JavaScript AJAX requests to access CSRF token from DOM.
+    - Proper integration with admin.js fetch requests.
+- **Template Tests**: Comprehensive `is` operator support with 17 built-in tests.
+    - Existence tests: `defined`, `undefined`, `none`.
+    - Boolean tests: `true`, `false`, `boolean`.
+    - Numeric tests: `even`, `odd`, `number`, `integer`, `float`.
+    - Type tests: `string`, `sequence`, `mapping`, `iterable`.
+    - String case tests: `lower`, `upper`.
+    - Support for negation with `is not`.
+- **Template Block Assignment**: `{% set variable %}...{% endset %}` for capturing template content.
+    - Useful for building complex HTML strings.
+    - Enables template fragment reuse.
+    - Pass captured content to macros.
+- **Filter Blocks**: Apply filters to entire template blocks.
+    - Syntax: `{% filter upper %}content{% endfilter %}`.
+    - Supports filter chaining in blocks.
+- **Autoescape Blocks**: Fine-grained control over HTML escaping.
+    - `{% autoescape false %}` to disable escaping for trusted content.
+    - `{% autoescape true %}` to re-enable (default behavior).
+    - Security warnings in documentation.
+- **Admin `_render_error()` Method**: Centralized error page rendering for custom admin extensions.
+    - Consistent error page design across all admin routes.
+    - Easy integration for custom admin panels.
+- **Data Tables Component**: Powerful, automated table generation with `Table` and `TableColumn` classes.
+    - Auto-detection of columns from ORM models, lists, and dictionaries.
+    - Built-in search functionality across multiple fields.
+    - Dynamic filters with dropdown selects.
+    - Server-side and client-side pagination.
+    - Sortable columns (reactive mode).
+    - Row actions (edit, delete, custom) with URL patterns.
+    - Bulk selection with master checkbox.
+    - Bulk actions (delete multiple items).
+    - AJAX actions without page reload.
+    - Reactive mode using Asok directives (asok-state, asok-for, asok-model).
+    - Custom column rendering with templates or render functions.
+    - Responsive design with empty states.
+- **Rich Dropdown Component**: Premium searchable dropdown for forms with `Field.Dropdown()`.
+    - Fixed choices dropdown with `Field.Dropdown(choices)` for static options.
+    - Rich ForeignKey dropdowns with `dropdown=True` parameter.
+    - Searchable dropdown with instant client-side filtering.
+    - Support for title, subtitle, and image display.
+    - Configurable with `dropdown_title`, `dropdown_subtitle`, `dropdown_image` parameters.
+    - Click-outside-to-close behavior using Asok directives.
+    - Automatic integration with `Form.from_model()`.
+    - Reactive state management (asok-state, asok-show, asok-on).
+
+### Fixed
+- **Template Compilation Security**: Fixed incorrect parsing of `is` keyword within string literals.
+    - Strings like `'2FA is Enabled'` no longer cause compilation errors.
+    - Template compiler now properly distinguishes between `is` tests and quoted text.
+    - String literals are protected from keyword interference.
+- **CSRF Validation**: Resolved CSRF token validation failures in admin forms.
+    - JavaScript now correctly reads CSRF token from meta tag.
+    - Token prioritization: header > form field > JSON body.
+    - Fixed empty header issue when meta tag was missing.
+- **Admin Login CSRF UX**: Fixed a frustration where CSRF expiry showed a 403 page.
+    - Catching `AbortException(403)` specifically in admin login.
+    - Re-rendering login form with a friendly flash message instead of a hard error page.
+- **Admin Dispatch Crash**: Fixed a critical 500 error where `AbortException` bubbled up to WSGI.
+    - Wrapped admin dispatch in a safety `try-except` block in `core.py`.
+    - Ensures security-related aborts are rendered via app's custom error pages.
+
+### Changed
+- **Session Cookie Security**: Enhanced cookie security flags.
+    - Changed `SameSite` from `Lax` to `Strict` for session and CSRF cookies.
+    - Automatic `Secure` flag on HTTPS connections.
+    - `HttpOnly` flag on all sensitive cookies (session, CSRF, flash).
+    - CSRF token rotation after successful validation.
+- **Admin Error Handling**: Replaced raw HTML errors with template-based error pages.
+    - All 404 errors now use `_render_error()`.
+    - All 403 errors now use `_render_error()`.
+    - Trash unavailable errors use proper error page.
+
+### Documentation
+- **Template Documentation**: Comprehensive update to template features guide.
+    - Added block set, filter blocks, autoescape documentation.
+    - Complete template tests reference with all 17 tests.
+    - Clarified `data-block` selector syntax (DOM vs template blocks).
+    - Security notes on string literal protection.
+- **Admin Interface Documentation**: New error pages section.
+    - Error page features and design.
+    - Custom error message examples.
+    - Integration guide for custom admin panels.
+- **Security Audit Documentation**: Expanded comprehensive security review.
+    - Detailed SQL injection protection analysis.
+    - XSS protection mechanisms documented.
+    - CSRF protection with token rotation.
+    - Path traversal prevention details.
+    - Password hashing (PBKDF2-SHA256, 100k iterations).
+    - Session security (HttpOnly, Secure, SameSite flags).
+    - Complete security score table (all categories 9-10/10).
+    - OWASP compliance confirmation.
+- **French & Spanish Translations**: Added error page translations.
+    - "Error", "Access Denied", "Page Not Found", etc.
+    - All error messages fully localized.
+
+- **ReDoS Protection**: Secured all regex-based validation rules.
+    - Enforced `_MAX_REGEX_INPUT_LENGTH` (10,000 characters) on all validation inputs.
+    - Prevents Regular Expression Denial of Service attacks on core validation rules.
+- **Enhanced CSRF Protection**: Multiple layers of CSRF defense.
+    - Token rotation after validation prevents reuse attacks.
+    - HMAC validation with constant-time comparison.
+    - Origin/Referer validation for HTTPS requests.
+    - SameSite=Strict cookies provide additional protection.
+- **Template Security**: Protection against template injection attacks.
+    - Keyword interference prevention in string literals.
+    - Automatic HTML escaping by default.
+    - SafeString class for explicit opt-in to raw HTML.
+- **Path Traversal Prevention**: Absolute path validation with security checks.
+    - `_safe_resolve()` utility ensures paths stay within allowed directories.
+    - 403 Forbidden on escape attempts.
+    - Static file serving validation.
+
 ## [0.1.2] - 2026-04-26
 
 ### Added
@@ -81,6 +215,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Routing, Templates, and ORM guides.
 - Deployment best practices.
 
+[0.1.3]: https://github.com/asok-framework/asok/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/asok-framework/asok/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/asok-framework/asok/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/asok-framework/asok/releases/tag/v0.1.0
