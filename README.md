@@ -40,10 +40,11 @@ This repository is organized into two main parts:
 
 The documentation covers everything you need to master Asok, from your first "Hello World" to complex reactive architectures:
 
-- 🟢 **Getting Started**: Installation, project structure, and basic routing.
-- 🟡 **Core Concepts**: Request/Response, Templates, ORM (AsokDB), and Form validation.
-- 🟠 **Advanced Features**: WebSockets (Alive Engine), Reactive Components, and Streaming.
-- 🔴 **Production**: Security, Optimization, and Deployment guides.
+- 🟢 **Foundations**: Installation, Project Structure, Routing, Request/Response, and Templates.
+- 📊 **Database & Data**: Built-in ORM, Versioned Migrations, Vector Search, and Forms.
+- ✨ **Reactive UI**: Alive Components, WebSockets, Transitions, and HTML Streaming.
+- 🛠️ **Internal Tools**: Admin Interface, API Development, Background Tasks, and Scheduler.
+- 🔴 **Production & Ops**: Security Audit, Deployment, Testing, Logging, and Optimization.
 
 ---
 

@@ -224,4 +224,6 @@ db.sqlite3-wal
 
 .asok/
 
+src/migrations/
+
 

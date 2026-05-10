@@ -42,11 +42,18 @@ def render(request: Request):
     request.browser.os             # "macOS", "Windows", "Linux", "iOS", "Android"
     request.browser.is_mobile      # True or False
 
-    # Geolocation (requires .asok/geo.csv)
-    request.location['city']       # "Paris"
-    request.location['country']    # "France"
-    request.location['lat']        # 48.8566
-    request.location['lon']        # 2.3522
+    # Geolocation & Geographic metadata
+    request.geo['city']            # "Paris"
+    request.geo['country']         # "FR"
+    request.geo['name']            # "France" (Full country name)
+    request.geo['flag']            # "🇫🇷" (Emoji flag)
+    request.geo['currency']        # "EUR"
+    request.geo['timezone']        # "Europe/Paris"
+    request.geo['dial_code']       # "+33"
+    request.geo['lat']             # 48.8566
+    request.geo['lon']             # 2.3522
+    
+    # Note: request.location is a legacy alias for request.geo
 ```
 
 ## Rendering responses
@@ -141,6 +148,8 @@ def render(request: Request):
     # Custom filename
     return request.send_file('/path/to/file.csv', filename='export.csv')
 ```
+
+> **Automatic Streaming**: Asok v0.1.4 automatically uses chunked streaming for files larger than **5 MB**. This ensures that large downloads (videos, archives, large reports) don't consume server RAM, as the file is read and sent in small chunks (64 KB) instead of being loaded entirely in memory.
 
 ## Redirect
 

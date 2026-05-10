@@ -1,6 +1,7 @@
 import os
 import re
 import subprocess
+import json
 import markdown
 from asok import Request
 
@@ -47,6 +48,12 @@ def render(request: Request):
     # Calculate estimated reading time (assuming ~200 words per minute)
     word_count = len(md_text.split())
     reading_time = max(1, round(word_count / 200))
+
+    # Extract first paragraph for meta description (before processing)
+    first_para = re.search(r'^(?:#[^\n]*\n+)?([^\n#]+)', md_text)
+    raw_desc = first_para.group(1).strip() if first_para else "Asok Framework documentation"
+    # Clean markdown syntax from description
+    description = re.sub(r'\*\*([^*]+)\*\*', r'\1', raw_desc)[:160]
 
     # 1. Strip out the manual GitHub navigation bar
     md_text = _NAV_RE.sub('', md_text).rstrip()
@@ -107,13 +114,43 @@ def render(request: Request):
     prev_page = menu[idx-1] if idx > 0 else None
     next_page = menu[idx+1] if idx < len(menu)-1 and idx != -1 else None
 
+    # SEO: Better title (remove number prefix like "01-")
+    clean_slug = re.sub(r'^\d+-', '', slug)
+    doc_title = clean_slug.replace("-", " ").title()
+    seo_title = f"{doc_title} | Asok Framework Documentation"
+
+    # SEO: Structured data for technical documentation
+    structured_data = json.dumps({
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": doc_title,
+        "description": description,
+        "url": f"https://asok-framework.com/docs/{slug}",
+        "dateModified": last_updated or "2026-05-10",
+        "author": {
+            "@type": "Organization",
+            "name": "Asok Framework"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "Asok Framework",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://asok-framework.com/static/images/logo.svg"
+            }
+        }
+    }, indent=2)
+
     return request.stream("page.html",
         content=html_content,
         slug=slug,
-        title=slug.replace("-", " ").title(),
+        title=doc_title,
+        seo_title=seo_title,
+        description=description,
         prev_page=prev_page,
         next_page=next_page,
         toc_tokens=toc_tokens,
         last_updated=last_updated,
-        reading_time=reading_time
+        reading_time=reading_time,
+        structured_data=structured_data
     )

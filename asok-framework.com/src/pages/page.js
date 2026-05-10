@@ -1,28 +1,12 @@
-// Copy pip install command
-const copyBtn = document.getElementById('copy-pip-btn');
-if (copyBtn) {
-    copyBtn.addEventListener('click', function () {
-        navigator.clipboard.writeText('pip install asok').then(() => {
-            const copyIcon = this.querySelector('.copy-icon');
-            const checkIcon = this.querySelector('.check-icon');
-
-            copyIcon.classList.add('hidden');
-            checkIcon.classList.remove('hidden');
-
-            setTimeout(() => {
-                copyIcon.classList.remove('hidden');
-                checkIcon.classList.add('hidden');
-            }, 2000);
-        });
-    });
-}
-
-// Playground tabs
-document.querySelectorAll('.playground-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
+// Delegate events to document to support SPA navigation transitions
+document.addEventListener('click', (e) => {
+    // Playground tabs logic
+    const tab = e.target.closest('.playground-tab');
+    if (tab) {
         const targetTab = tab.dataset.tab;
+        if (!targetTab) return;
 
-        // Update tabs
+        // Update tabs styling
         document.querySelectorAll('.playground-tab').forEach(t => {
             t.classList.remove('active', 'font-bold');
             t.classList.add('font-medium');
@@ -37,11 +21,34 @@ document.querySelectorAll('.playground-tab').forEach(tab => {
         tab.style.color = 'var(--accent-primary)';
         tab.style.border = '1px solid var(--editor-tab-active-border)';
 
-        // Update content
+        // Update content visibility
         document.querySelectorAll('.playground-content').forEach(content => {
-            content.classList.add('hidden');
+            content.classList.add('pg-hidden');
         });
 
-        document.querySelector(`[data-content="${targetTab}"]`).classList.remove('hidden');
-    });
+        const targetContent = document.querySelector(`[data-content="${targetTab}"]`);
+        if (targetContent) {
+            targetContent.classList.remove('pg-hidden');
+        }
+        return;
+    }
+
+    // Pip copy logic
+    const copyBtn = e.target.closest('#copy-pip-btn');
+    if (copyBtn) {
+        navigator.clipboard.writeText('pip install asok').then(() => {
+            const copyIcon = copyBtn.querySelector('.copy-icon');
+            const checkIcon = copyBtn.querySelector('.check-icon');
+
+            if (copyIcon && checkIcon) {
+                copyIcon.classList.add('pg-hidden');
+                checkIcon.classList.remove('pg-hidden');
+                
+                setTimeout(() => {
+                    copyIcon.classList.remove('pg-hidden');
+                    checkIcon.classList.add('pg-hidden');
+                }, 2000);
+            }
+        });
+    }
 });

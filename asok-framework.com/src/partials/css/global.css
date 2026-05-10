@@ -460,3 +460,6 @@ aside::-webkit-scrollbar-thumb:hover {
     border-color: var(--accent-border);
     box-shadow: 0 4px 20px -4px rgba(99, 102, 241, 0.1);
 }
+.pg-hidden {
+    display: none;
+}

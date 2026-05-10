@@ -22,13 +22,54 @@ class Post(Model):
 
 ### Custom table name
 
-By default, the table name is the pluralized model name (`Post` → `posts`, `Category` → `categories`). To override:
+By default, the table name is derived from the model name by converting `CamelCase` to `snake_case` and pluralizing (`Post` → `posts`, `OrderItem` → `order_items`, `Category` → `categories`). To override:
 
 ```python
 class Category(Model):
     __tablename__ = "categories"  # Explicit table name
     name = Field.String()
 ```
+
+## Schema Evolution & Migrations
+
+Asok provides two ways to manage your database schema: **Zero-Config Auto-Evolution** for rapid prototyping, and **Versioned Migrations** for professional projects.
+
+### 1. Versioned Migrations (Recommended)
+This is the professional way to manage schema changes. Asok detects changes in your models and generates migration files that you can review, version-control, and apply.
+
+```bash
+asok make migration add_bio_to_users
+asok migrate
+```
+
+See the [Migrations Documentation](09-migrations.md) for full details.
+
+### 2. Auto-Evolution (Zero-Config)
+For small projects or rapid prototyping, Asok can automatically update your database on app start. When `Model.create_table()` is called, the framework inspects the table and automatically adds any missing columns.
+
+- **Safe**: It only adds columns (`ALTER TABLE ... ADD COLUMN`), never deletes or renames.
+- **Automatic**: No migration files needed.
+- **Default**: This is how Asok handles its internal tables and simple projects.
+
+
+### Query Scopes
+
+Scopes allow you to define common sets of constraints as reusable methods. To define a scope, add a static method prefixed with `scope_` to your Model.
+
+```python
+class Product(Model):
+    name = Field.text()
+    price = Field.decimal()
+    
+    @staticmethod
+    def scope_expensive(query, threshold=100):
+        return query.where('price', '>', threshold)
+
+# Usage:
+products = Product.query().expensive(500).get()
+```
+
+The first argument to a scope is always the current `Query` object.
 
 ## Field types
 
@@ -51,6 +92,25 @@ class Category(Model):
 | `Field.UpdatedAt()` | TEXT | Updated on every save |
 | `Field.SoftDelete()` | TEXT | Enables soft delete (see below) |
 | `Field.Dropdown(choices)` | TEXT | List of tuples `(value, label)`. |
+
+### Common Field Parameters
+
+All Field types support these optional parameters:
+
+```python
+class User(Model):
+    email = Field.String(
+        unique=True,      # Creates UNIQUE constraint + index
+        nullable=False,   # NOT NULL constraint
+        default="",       # Default value
+        index=True,       # Creates database index for fast lookups
+        hidden=True,      # Hide from forms/admin
+        protected=True,   # Exclude from mass assignment
+        label="Email Address",  # Custom form label
+    )
+```
+
+**Performance tip:** Add `index=True` to columns frequently used in `WHERE`, `ORDER BY`, or `GROUP BY` clauses. See [Advanced ORM](08-advanced-orm.md#database-indexes) for more details.
 
 ### Rich Dropdowns and Selection
 
@@ -101,7 +161,7 @@ Contact.create(email='not-an-email', message='hi')
 # → ModelError: Email is not a valid email address.
 ```
 
-This validation happens regardless of whether the value comes from a Form, an API call, or hand-written code. Forms generated via `Form.from_model()` also pick up the `email` validation rule automatically (see [Forms](09-forms.md)).
+This validation happens regardless of whether the value comes from a Form, an API call, or hand-written code. Forms generated via `Form.from_model()` also pick up the `email` validation rule automatically (see [Forms](11-forms.md)).
 
 ### Field options
 
@@ -248,10 +308,53 @@ Post.like('title', '%python%').get() # Shortcut for LIKE
 | `.avg('col')` | Average value |
 | `.min('col')` | Minimum value |
 | `.max('col')` | Maximum value |
+| `.select(*cols)` | Select specific columns (e.g., aggregates) |
+| `.group_by(*cols)` | GROUP BY results |
 | `.pluck('col')` | List of single column values |
 | `.update(**vals)` | Bulk UPDATE |
 | `.delete()` | Bulk DELETE |
 | `.exists()` | Bool |
+| `.to_sql()` | Return SQL string with placeholders |
+| `.raw_sql()` | Return SQL string with parameters interpolated (debug only) |
+
+### Inspecting SQL
+
+For debugging purposes, you can see the actual SQL that Asok is about to execute.
+
+#### 1. From a Query object
+You can inspect a query before executing it:
+
+```python
+query = Product.query().where('price', '>', 100)
+print(query.to_sql())
+# → SELECT * FROM products WHERE price > ?
+
+print(query.raw_sql())
+# → SELECT * FROM products WHERE price > 100
+```
+
+#### 2. From a ModelList (Result)
+Even after executing a query, the resulting `ModelList` remembers the SQL that produced it. This works for `.all()`, `.get()`, `.search()`, and even relationships:
+
+```python
+contacts = Contact.all()
+print(contacts.to_sql())
+# → SELECT * FROM contacts
+
+# Useful for debugging complex relationship filters
+user = User.find(id=1)
+user_posts = user.posts  # This returns a ModelList
+print(user_posts.raw_sql())
+# → SELECT * FROM posts WHERE user_id = 1
+```
+
+> **Debug Only**: `raw_sql()` is intended strictly for debugging and inspection. The interpolation is naive and **not secure** against SQL injection. Never attempt to execute the output of these methods in your application logic.
+
+#### 3. Using the global helper
+```python
+from asok.orm import convert_sql_to_text
+print(convert_sql_to_text(Product.query().limit(5)))
+```
 
 ### Raw SQL
 
@@ -344,7 +447,7 @@ class Post(Model):
     cover = Field.File(upload_to='posts')
 ```
 
-The column stores the filename. The actual file is saved to `uploads/posts/<filename>` when set via a form. Use `request.files` and `UploadedFile.save()` for manual handling — see [File Storage](14-file-storage.md).
+The column stores the filename. The actual file is saved to `uploads/posts/<filename>` when set via a form. Use `request.files` and `UploadedFile.save()` for manual handling — see [File Storage](16-file-storage.md).
 
 ## Lifecycle hooks
 
@@ -402,7 +505,7 @@ post.to_dict()
 # {"id": 1, "title": "Hello", ...}
 ```
 
-For controlled API output, use `Schema` (see [Serialization](13-serialization.md)):
+For controlled API output, use `Schema` (see [Serialization](15-serialization.md)):
 
 ```python
 from asok import Schema, Field
@@ -424,4 +527,4 @@ PostSchema(many=True).dump(posts)
 - **No configuration needed**
 
 ---
-[← Previous: Configurations](06-configurations.md) | [Documentation](README.md) | [Next: Advanced ORM →](08-advanced-orm.md)
+[← Previous: Configurations](06-configurations.md) | [Documentation](README.md) | [Next: Advanced ORM Features →](08-advanced-orm.md)

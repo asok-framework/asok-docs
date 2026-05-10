@@ -6,8 +6,8 @@ Asok is designed to be "zero-config" by default, but it provides a comprehensive
 
 | Key | Type | Default | Description |
 |---|---|---|---|
-| `DEBUG` | bool | `True` | Enables detailed error pages, auto-reloading, and disables production caching. |
-| `SECRET_KEY` | str | *auto* | Used for signing cookies, tokens, and CSRF protection. Required in production. |
+| `DEBUG` | bool | `False` | Enables detailed error pages, auto-reloading. Set to `True` for development. |
+| `SECRET_KEY` | str | *auto* | Used for signing cookies, tokens, and CSRF protection. **Required (min 32 chars)** in production. |
 | `INDEX` | str | `"page"` | The name of the default entry point file in your page directories. |
 | `LOCALE` | str | `"en"` | The default language code for translations. |
 | `PROJECT_NAME` | str | `"Asok App"` | The display name of your project. |
@@ -18,7 +18,7 @@ Asok is designed to be "zero-config" by default, but it provides a comprehensive
 
 | Key | Type | Default | Description |
 |---|---|---|---|
-| `APP_URL` | str | `None` | The base URL of your app (e.g., `https://example.com`). Used for absolute links. |
+| `APP_URL` | str | `None` | The base URL of your app (e.g., `https://example.com`). **Mandatory in production** for Magic Links. |
 | `ASOK_PORT` | int | `8000` | The default port for the `asok dev` and `asok preview` commands. |
 | `WS_PORT` | int | `8001` | The port used by the built-in WebSocket server. |
 | `MAX_CONTENT_LENGTH` | int | `10485760` | Maximum allowed size (in bytes) for request bodies (default 10 MB). |
@@ -108,6 +108,49 @@ The Admin interface is initialized by passing parameters to the `Admin` extensio
 |---|---|---|---|
 | `SESSION_SAMESITE` | str | `"Lax"` | SameSite attribute for the session cookie (`Lax`, `Strict`, or `None`). |
 | `SESSION_SECURE` | bool | *auto* | Forces session cookie to be sent over HTTPS only. Defaults to `True` if not in `DEBUG`. |
+
+## 12. Mandatory Production Settings
+
+When running Asok in production (`DEBUG=False`), certain configurations are strictly enforced to ensure the security of your application. The framework will raise a `RuntimeError` on startup if these are missing or insecure.
+
+### Required Variables
+
+| Key | Requirement | Rationale |
+|---|---|---|
+| **`SECRET_KEY`** | Must be at least **32 characters** | Used for HMAC signing of sessions, CSRF tokens, and secure cookies. |
+| **`APP_URL`** | Must be a valid URL (e.g., `https://example.com`) | Required to prevent Host Header Injection and to generate absolute URLs for Magic Links. |
+
+### How to Configure
+
+You can define your configurations in two ways. Asok will merge them, with `wsgi.py` settings taking precedence over `.env`.
+
+#### Option A: Using a `.env` file (Recommended)
+
+Create a `.env` file in your project root. This is the preferred method for sensitive secrets.
+
+```env
+DEBUG=false
+SECRET_KEY=your-ultra-secure-64-character-key-here
+APP_URL=https://myapp.com
+DATABASE_URL=sqlite:///data/prod.db
+```
+
+#### Option B: In your `wsgi.py`
+
+You can set configurations directly on the `app` instance using the `config` dictionary.
+
+```python
+from asok import Asok
+
+app = Asok()
+
+# Production overrides
+app.config["DEBUG"] = False
+app.config["SECRET_KEY"] = "your-ultra-secure-64-character-key-here"
+app.config["APP_URL"] = "https://myapp.com"
+```
+
+> In production, `DEBUG` defaults to `False`. You only need to set it to `True` explicitly in your development environment.
 
 ---
 [← Previous: Middleware](05-middleware.md) | [Documentation](README.md) | [Next: ORM Basics →](07-orm.md)

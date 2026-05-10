@@ -12,3 +12,4 @@ src/partials/uploads/
 src/partials/css/base.build.css
 article/
 asok_debug.log
+src/migrations/

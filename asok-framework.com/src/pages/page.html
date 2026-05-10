@@ -34,7 +34,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                 </svg>
-                ~3K LOC
+                ~20K LOC
             </span>
             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold"
                 style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #22c55e">
@@ -69,11 +69,11 @@
         </h1>
 
         <!-- Subheading -->
-        <p class="text-xl md:text-2xl max-w-3xl mb-14 font-medium leading-relaxed" style="color: var(--text-secondary)">
+        <p class="text-xl md:text-2xl max-w-4xl mb-14 font-medium leading-relaxed" style="color: var(--text-secondary)">
             <strong style="color: var(--accent-primary)">Zero dependencies.</strong> Just Python's standard library.
-            Build AI-ready apps with <strong style="color: var(--accent-primary)">Vector Search</strong>, ORM, Auth,
-            WebSockets, and
-            native HTML streaming—all in <strong>~3000 lines of code</strong>.
+            Build AI-ready apps with <strong style="color: var(--accent-primary)">Vector Search</strong>, Enterprise APIs,
+            ORM, Auth, Reactive UI, and
+            native HTML streaming—all in <strong>~20,000 lines of code</strong>.
         </p>
 
         <!-- CTAs -->
@@ -90,7 +90,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
-                    <svg class="w-5 h-5 check-icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    <svg class="w-5 h-5 check-icon pg-hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                         style="color: #22c55e">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
@@ -135,7 +135,11 @@
                             Component</button>
                         <button
                             class="playground-tab p-3 rounded-xl text-xs font-medium cursor-pointer transition-all text-left hover:bg-white/5"
-                            data-tab="api" style="color: var(--editor-tab-inactive); border: 1px solid transparent">REST
+                            data-tab="directives"
+                            style="color: var(--editor-tab-inactive); border: 1px solid transparent">Reactive UI</button>
+                        <button
+                            class="playground-tab p-3 rounded-xl text-xs font-medium cursor-pointer transition-all text-left hover:bg-white/5"
+                            data-tab="api" style="color: var(--editor-tab-inactive); border: 1px solid transparent">Secure
                             API</button>
                     </div>
                     <!-- Code (stays dark for readability) -->
@@ -145,14 +149,15 @@
                         <!-- Hello World -->
                         <div class="playground-content" data-content="basic">
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">1</span><span><span class="opacity-50">#
-                                        src/pages/page.py</span></span></div>
+                                    style="color: var(--editor-line-num)">1</span><span><span
+                                        class="text-purple-400">from</span> asok <span
+                                        class="text-purple-400">import</span> Request</span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
                                     style="color: var(--editor-line-num)">2</span><span></span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
                                     style="color: var(--editor-line-num)">3</span><span><span
                                         class="text-purple-400">def</span> <span
-                                        class="text-yellow-400">render</span>(request):</span></div>
+                                        class="text-yellow-400">render</span>(request: Request):</span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
                                     style="color: var(--editor-line-num)">4</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span
                                         class="text-purple-400">return</span> <span
@@ -160,87 +165,133 @@
                             <div class="flex gap-6 mb-2"><span class="w-4"
                                     style="color: var(--editor-line-num)">5</span><span></span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">6</span><span></span></div>
-                            <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">7</span><span><span class="opacity-50">#
+                                    style="color: var(--editor-line-num)">6</span><span><span class="opacity-50">#
                                         That's it. No routing config.</span></span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">8</span><span><span class="opacity-50"># File
+                                    style="color: var(--editor-line-num)">7</span><span><span class="opacity-50"># File
                                         path = URL.</span></span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">9</span><span><span class="opacity-50"># Just
+                                    style="color: var(--editor-line-num)">8</span><span><span class="opacity-50"># Just
                                         run: asok dev</span></span></div>
                         </div>
 
                         <!-- Live Component -->
-                        <div class="playground-content hidden" data-content="component">
+                        <div class="playground-content pg-hidden" data-content="component">
                             <div class="flex gap-6 mb-2"><span class="w-4"
                                     style="color: var(--editor-line-num)">1</span><span><span
                                         class="text-purple-400">from</span> asok <span
                                         class="text-purple-400">import</span> Component</span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">2</span><span></span></div>
+                                    style="color: var(--editor-line-num)">2</span><span><span
+                                        class="text-purple-400">from</span> asok.component <span
+                                        class="text-purple-400">import</span> exposed</span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">3</span><span><span
+                                    style="color: var(--editor-line-num)">3</span><span></span></div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">4</span><span><span
                                         class="text-purple-400">class</span> <span
                                         class="text-yellow-400">Counter</span>(Component):</span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">4</span><span>&nbsp;&nbsp;&nbsp;&nbsp;count =
+                                    style="color: var(--editor-line-num)">5</span><span>&nbsp;&nbsp;&nbsp;&nbsp;counter =
                                     <span class="text-orange-400">0</span></span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">5</span><span></span></div>
+                                    style="color: var(--editor-line-num)">6</span><span></span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">6</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                    style="color: var(--editor-line-num)">7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                        class="text-indigo-400">@exposed</span></span></div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span
                                         class="text-purple-400">def</span> <span
                                         class="text-yellow-400">increment</span>(<span
                                         class="text-purple-400">self</span>):</span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-                                        class="text-purple-400">self</span>.count += <span
+                                    style="color: var(--editor-line-num)">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                        class="text-purple-400">self</span>.counter += <span
                                         class="text-orange-400">1</span></span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">8</span><span></span></div>
+                                    style="color: var(--editor-line-num)">10</span><span></span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                    style="color: var(--editor-line-num)">11</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span
                                         class="text-purple-400">def</span> <span
                                         class="text-yellow-400">render</span>(<span
                                         class="text-purple-400">self</span>):</span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">10</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                    style="color: var(--editor-line-num)">12</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
                                         class="text-purple-400">return</span> <span
                                         class="text-purple-400">self</span>.html(<span
                                         class="text-orange-400">"counter.html"</span>)</span></div>
                         </div>
 
+                        <!-- Reactive UI -->
+                        <div class="playground-content pg-hidden" data-content="directives">
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">1</span><span><span class="opacity-50">&lt;!--
+                                        Lightweight client-side reactivity --&gt;</span></span></div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">2</span><span>&lt;<span
+                                        class="text-indigo-400">div</span> <span class="text-yellow-400">asok-state</span>=<span
+                                        class="text-orange-400">"{ count: 0 }"</span>&gt;</span></div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">3</span><span>&nbsp;&nbsp;&lt;<span
+                                        class="text-indigo-400">p</span> <span class="text-yellow-400">asok-text</span>=<span
+                                        class="text-orange-400">"'Count: ' + count"</span>&gt;&lt;/<span
+                                        class="text-indigo-400">p</span>&gt;</span></div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">4</span><span>&nbsp;&nbsp;&lt;<span
+                                        class="text-indigo-400">button</span> <span
+                                        class="text-yellow-400">asok-on:click</span>=<span
+                                        class="text-orange-400">"count++"</span>&gt;</span></div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">5</span><span>&nbsp;&nbsp;&nbsp;&nbsp;Increment</span>
+                            </div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">6</span><span>&nbsp;&nbsp;&lt;/<span
+                                        class="text-indigo-400">button</span>&gt;</span></div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">7</span><span>&lt;/<span
+                                        class="text-indigo-400">div</span>&gt;</span></div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">8</span><span></span></div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">9</span><span><span class="opacity-50"># Zero JS
+                                        required. Built-in runtime handles state.</span></span></div>
+                        </div>
+
                         <!-- REST API -->
-                        <div class="playground-content hidden" data-content="api">
+                        <div class="playground-content pg-hidden" data-content="api">
                             <div class="flex gap-6 mb-2"><span class="w-4"
                                     style="color: var(--editor-line-num)">1</span><span><span
-                                        class="text-purple-400">from</span> asok.api <span
-                                        class="text-purple-400">import</span> api</span></div>
+                                        class="text-purple-400">from</span> asok <span
+                                        class="text-purple-400">import</span> api, RateLimit</span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
                                     style="color: var(--editor-line-num)">2</span><span></span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
                                     style="color: var(--editor-line-num)">3</span><span><span
-                                        class="text-indigo-400">@api</span>(</span></div>
+                                        class="text-indigo-400">@api</span>(summary=<span
+                                        class="text-orange-400">"Create Task"</span>, input=TaskSchema)</span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">4</span><span>&nbsp;&nbsp;&nbsp;&nbsp;summary=<span
-                                        class="text-orange-400">"List tasks"</span>,</span></div>
+                                    style="color: var(--editor-line-num)">4</span><span><span
+                                        class="text-indigo-400">@RateLimit</span>(limit=<span
+                                        class="text-orange-400">10</span>)</span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">5</span><span>&nbsp;&nbsp;&nbsp;&nbsp;output=TaskSchema</span>
-                            </div>
-                            <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">6</span><span>)</span></div>
-                            <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">7</span><span><span
+                                    style="color: var(--editor-line-num)">5</span><span><span
                                         class="text-purple-400">def</span> <span
-                                        class="text-yellow-400">render</span>(request):</span></div>
+                                        class="text-yellow-400">post</span>(request):</span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;tasks =
-                                    Task.all()</span></div>
+                                    style="color: var(--editor-line-num)">6</span><span>&nbsp;&nbsp;&nbsp;&nbsp;data =
+                                    request.json_body</span></div>
                             <div class="flex gap-6 mb-2"><span class="w-4"
-                                    style="color: var(--editor-line-num)">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span
-                                        class="text-purple-400">return</span> request.api(tasks)</span></div>
+                                    style="color: var(--editor-line-num)">7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;task =
+                                    Task.create(**data)</span></div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                        class="text-purple-400">return</span> request.api(task, status=<span
+                                        class="text-orange-400">201</span>)</span></div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">9</span><span></span></div>
+                            <div class="flex gap-6 mb-2"><span class="w-4"
+                                    style="color: var(--editor-line-num)">10</span><span><span class="opacity-50">#
+                                        Auto-generated OpenAPI 3.0 docs at /docs</span></span></div>
                         </div>
 
                     </div>
@@ -258,12 +309,12 @@
                 </div>
             </div>
             <div class="p-8 rounded-[2rem] home-glass-card text-center">
-                <div class="text-5xl font-black mb-3" style="color: var(--accent-primary)">~3K</div>
+                <div class="text-5xl font-black mb-3" style="color: var(--accent-primary)">~20K</div>
                 <div class="text-sm font-bold uppercase tracking-widest" style="color: var(--text-muted)">Lines of Code
                 </div>
             </div>
             <div class="p-8 rounded-[2rem] home-glass-card text-center">
-                <div class="text-5xl font-black mb-3" style="color: var(--accent-primary)">45+</div>
+                <div class="text-5xl font-black mb-3" style="color: var(--accent-primary)">50+</div>
                 <div class="text-sm font-bold uppercase tracking-widest" style="color: var(--text-muted)">Features
                     Built-in</div>
             </div>
@@ -271,6 +322,56 @@
                 <div class="text-5xl font-black mb-3" style="color: var(--accent-primary)">100%</div>
                 <div class="text-sm font-bold uppercase tracking-widest" style="color: var(--text-muted)">Python Stdlib
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Asok Section -->
+    <section class="mt-60 max-w-6xl mx-auto w-full px-6">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-black mb-6 tracking-tight" style="color: var(--text-primary)">
+                Why Choose <span class="text-shimmer">Asok?</span>
+            </h2>
+            <p class="text-xl max-w-3xl mx-auto" style="color: var(--text-secondary)">
+                Built on the belief that simplicity and transparency matter more than feature abundance.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Zero Dependencies -->
+            <div class="p-8 rounded-[2rem] home-glass-card home-glass-card-hover group">
+                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">📦</div>
+                <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Zero Dependencies</h3>
+                <p class="text-sm leading-relaxed" style="color: var(--text-secondary)">
+                    Only Python's standard library. No npm install, no pip freeze conflicts, no security vulnerabilities from third-party packages.
+                </p>
+            </div>
+
+            <!-- Code Transparency -->
+            <div class="p-8 rounded-[2rem] home-glass-card home-glass-card-hover group">
+                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">👁️</div>
+                <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Code Transparency</h3>
+                <p class="text-sm leading-relaxed" style="color: var(--text-secondary)">
+                    ~20,000 lines of readable Python. You can understand every part of your stack without digging through layers of abstractions.
+                </p>
+            </div>
+
+            <!-- Ship Faster -->
+            <div class="p-8 rounded-[2rem] home-glass-card home-glass-card-hover group">
+                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🚀</div>
+                <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Ship Faster</h3>
+                <p class="text-sm leading-relaxed" style="color: var(--text-secondary)">
+                    Everything included: ORM, Auth, Admin, Forms, API docs. Stop wiring libraries together and start building your product.
+                </p>
+            </div>
+
+            <!-- Full Control -->
+            <div class="p-8 rounded-[2rem] home-glass-card home-glass-card-hover group">
+                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🎮</div>
+                <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Full Control</h3>
+                <p class="text-sm leading-relaxed" style="color: var(--text-secondary)">
+                    No magic. No hidden behaviors. You own every line of code in your application, making debugging and customization effortless.
+                </p>
             </div>
         </div>
     </section>
@@ -410,8 +511,8 @@
                             d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
                     </svg>
                 </div>
-                <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Fluent ORM</h4>
-                <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Zero-config SQLite ORM with
+                <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Zero-Config ORM</h4>
+                <p class="text-sm leading-relaxed" style="color: var(--text-muted)">High-performance SQLite ORM with
                     auto-migrations, eager loading, and soft deletes built-in.</p>
             </div>
 
@@ -424,11 +525,10 @@
                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                 </div>
-                <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Auto-Doc API</h4>
-                <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Interactive OpenAPI 3.0 docs
-                    auto-generated at /docs. Standardized JSON responses with <code class="text-xs px-1 rounded"
-                        style="background: var(--code-inline-bg); color: var(--code-inline-color)">@api</code>
-                    decorator.</p>
+                <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Enterprise API</h4>
+                <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Build industrial-grade JSON APIs with
+                    Rate Limiting, CORS, and auto-generated OpenAPI 3.0 documentation at <code class="text-xs px-1 rounded"
+                        style="background: var(--code-inline-bg); color: var(--code-inline-color)">/docs</code>.</p>
             </div>
 
             <!-- Auth -->
@@ -561,19 +661,22 @@
                     Auto-detect user language and switch seamlessly between translations.</p>
             </div>
 
-            <!-- Testing -->
+            <!-- Reactive Directives -->
             <div class="p-8 rounded-[2rem] home-glass-card home-glass-card-hover group">
                 <div
                     class="text-emerald-400 mb-6 opacity-50 group-hover:opacity-100 transition-all group-hover:scale-110">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
-                <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Test Client</h4>
-                <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Built-in WSGI test client.
-                    Write integration tests without running a server. Assertions for status, redirects, and sessions
-                    included.</p>
+                <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Asok Directives</h4>
+                <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Build interactive UIs with zero custom
+                    JS. Use <code class="text-xs px-1 rounded"
+                        style="background: var(--code-inline-bg); color: var(--code-inline-color)">asok-state</code> and
+                    <code class="text-xs px-1 rounded"
+                        style="background: var(--code-inline-bg); color: var(--code-inline-color)">asok-on</code> for instant
+                    reactivity.</p>
             </div>
 
             <!-- CLI Tools -->
@@ -600,9 +703,9 @@
                     </svg>
                 </div>
                 <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Tailwind v4</h4>
-                <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Optional Tailwind CSS integration
+                <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Native Tailwind CSS integration
                     with zero npm setup.
-                    Watch mode, auto-compilation, and production minification built-in.</p>
+                    Watch mode and production minification built-in.</p>
             </div>
 
             <!-- Transitions -->
@@ -683,6 +786,8 @@
                         <div class="diff-line-added mb-2">&nbsp;&nbsp;&nbsp;&nbsp;<span
                                 class="text-purple-400">return</span> request.html(<span
                                 class="text-orange-400">'page.html'</span>)</div>
+                        <div class="italic mt-4 opacity-50 text-xs">File-based routing. The folder structure defines
+                            the URL automatically.</div>
                     </div>
                 </div>
             </div>
@@ -734,7 +839,7 @@
                                 class="text-orange-400">"/update"</span></div>
                         <div class="diff-line-added mb-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
                                 class="text-yellow-400">data-block</span>=<span
-                                class="text-orange-400">"#target"</span>&gt;</div>
+                                class="text-orange-400">"target"</span>&gt;</div>
                         <div class="diff-line-added mb-2">&nbsp;&nbsp;Update Content</div>
                         <div class="diff-line-added mb-2">&lt;/button&gt;</div>
                     </div>
@@ -932,10 +1037,12 @@
     <!-- Comparison Table -->
     <section class="mt-60 max-w-6xl mx-auto px-6">
         <div class="text-center mb-20">
-            <h2 class="text-5xl font-black mb-6 tracking-tight" style="color: var(--text-primary)">The Framework
-                Showdown</h2>
-            <p class="text-xl max-w-2xl mx-auto" style="color: var(--text-secondary)">See how Asok compares to Flask and
-                Django across key features.</p>
+            <h2 class="text-5xl font-black mb-6 tracking-tight" style="color: var(--text-primary)">
+                Feature <span class="text-shimmer">Overview</span>
+            </h2>
+            <p class="text-xl max-w-2xl mx-auto" style="color: var(--text-secondary)">
+                A side-by-side look at different approaches to Python web development.
+            </p>
         </div>
 
         <div class="overflow-x-auto rounded-2xl" style="border: 1px solid var(--border-primary)">
@@ -1057,37 +1164,80 @@
 
     <!-- Interactive Component Preview -->
     <section class="mt-60 max-w-7xl mx-auto px-6">
-        <div
-            class="home-glass-card rounded-[3rem] p-8 md:p-16 relative overflow-hidden flex flex-col lg:flex-row items-center gap-20">
-            <div
-                class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-indigo-600/10 to-transparent pointer-events-none">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl md:text-6xl font-black mb-6 tracking-tight" style="color: var(--text-primary)">
+                Reactive by <span class="text-shimmer">Nature.</span>
+            </h2>
+            <p class="text-xl max-w-3xl mx-auto mb-8" style="color: var(--text-secondary)">
+                Two approaches to reactivity, both without writing JavaScript.
+            </p>
+        </div>
+
+        <div class="home-glass-card rounded-[3rem] p-12 md:p-16">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                <!-- Directives Counter -->
+                <div class="text-center">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold mb-4"
+                        style="background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--text-muted)">
+                        Asok Directives
+                    </div>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--text-primary)">Client-side Reactivity</h3>
+                    <p class="text-sm mb-8" style="color: var(--text-muted)">
+                        No WebSocket • Pure HTML
+                    </p>
+
+                    <div asok-state="{ counter: 0 }" class="flex flex-col items-center gap-6 p-12 rounded-2xl" style="background: var(--accent-bg); border: 2px solid var(--accent-border)">
+                        <div class="w-28 h-28 rounded-full flex items-center justify-center transition-transform"
+                            style="background: var(--phone-counter-bg)">
+                            <span class="text-5xl font-black tabular-nums" style="color: var(--text-primary)" asok-text="counter">0</span>
+                        </div>
+
+                        <div class="w-full flex gap-2">
+                            <button
+                                class="flex-1 py-2.5 rounded-xl font-black text-2xl transition-all cursor-pointer hover:scale-105 active:scale-95"
+                                style="background: rgba(239, 68, 68, 0.2); color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.4);"
+                                asok-on:click="counter--">
+                                −
+                            </button>
+                            <button
+                                class="flex-1 py-2.5 rounded-xl font-black text-2xl transition-all cursor-pointer hover:scale-105 active:scale-95"
+                                style="background: rgba(34, 197, 94, 0.2); color: #16a34a; border: 1px solid rgba(34, 197, 94, 0.4);"
+                                asok-on:click="counter++">
+                                +
+                            </button>
+                        </div>
+
+                        <button
+                            class="w-full py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer hover:scale-105 active:scale-95"
+                            style="background: rgba(249, 115, 22, 0.15); color: var(--accent-secondary); border: 1px solid rgba(249, 115, 22, 0.3);"
+                            asok-on:click="counter = 0">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- WebSocket Counter -->
+                <div class="text-center">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold mb-4"
+                        style="background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--text-muted)">
+                        Live Component
+                    </div>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--text-primary)">WebSocket Sync</h3>
+                    <p class="text-sm mb-8" style="color: var(--text-muted)">
+                        Real-time • Multi-user
+                    </p>
+
+                    <div class="inline-flex flex-col items-center gap-6 p-12 rounded-2xl" style="background: var(--accent-bg); border: 2px solid var(--accent-border)">
+                        {{ component('Counter', counter=10) }}
+                    </div>
+                </div>
             </div>
 
-            <div class="flex-1 space-y-8 relative z-10 text-center lg:text-left">
-                <h2 class="text-5xl md:text-6xl font-black leading-tight tracking-tight"
-                    style="color: var(--text-primary)">Reactive by <br /> <span class="text-shimmer">Nature.</span></h2>
-                <p class="text-xl leading-relaxed max-w-xl mx-auto lg:mx-0" style="color: var(--text-secondary)">
-                    Build live interfaces without a single line of JavaScript.
-                    Asok components synchronize state automatically via binary WebSockets.
+            <!-- Bottom Note -->
+            <div class="mt-12 pt-8 border-t text-center" style="border-color: var(--border-primary)">
+                <p class="text-sm" style="color: var(--text-muted)">
+                    Same result, different approach. Both require <strong style="color: var(--accent-primary)">zero JavaScript</strong> from you.
                 </p>
-                <div class="flex flex-wrap justify-center lg:justify-start gap-4">
-                    <div class="px-4 py-2 rounded-xl text-xs font-bold transition-colors"
-                        style="background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent-primary)">
-                        Zero JS Runtime</div>
-                    <div class="px-4 py-2 rounded-xl text-xs font-bold transition-colors"
-                        style="background: rgba(249, 115, 22, 0.08); border: 1px solid rgba(249, 115, 22, 0.15); color: var(--accent-secondary)">
-                        Fast Binary Sync</div>
-                </div>
-            </div>
-
-            <!-- Phone Mockup / Counter Demo -->
-            <div class="w-full max-w-xs h-[580px] rounded-[3rem] border-[8px] shadow-2xl relative overflow-hidden shrink-0 group hover:scale-105 transition-transform duration-500"
-                style="background: var(--phone-bg); border-color: var(--phone-border)">
-                <div class="absolute top-0 inset-x-0 h-6 flex justify-center" style="background: var(--phone-notch-bg)">
-                    <div class="w-20 h-4 rounded-b-xl" style="background: var(--phone-notch-inner)"></div>
-                </div>
-                <!-- Live Counter Component -->
-                {{ component('Counter', count=10) }}
             </div>
         </div>
     </section>
@@ -1154,4 +1304,8 @@
         </div>
     </section>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script nonce="{{ nonce }}" src="{{ static('pages/page.js') }}" defer></script>
 {% endblock %}

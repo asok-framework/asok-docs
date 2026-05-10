@@ -1,6 +1,6 @@
 # Templates
 
-Asok has a built-in template engine with Jinja2-like syntax. No external dependency.
+Asok features a powerful, built-in template engine with an elegant, intuitive syntax. Designed for performance and security, it requires no external dependencies.
 
 ## Variables
 
@@ -63,6 +63,28 @@ Asok includes a set of human-friendly formatting filters for common data types:
 | `filesize` | `{{ file.size | filesize }}` | "1.2 MB", "450 KB", "0 B" |
 | `intcomma` | `{{ 1200 | intcomma }}` | "1,200" (adds thousands separators) |
 | `duration` | `{{ seconds | duration }}` | "5m 20s", "1h 10m", "2d 4h" |
+
+### Base64 Image Filter (v0.1.4+)
+
+The `decode_base64` filter converts base64-encoded images (like signatures) into `<img>` tags:
+
+```html
+<!-- Simple usage -->
+{{ user.signature | decode_base64 }}
+
+<!-- With Tailwind CSS -->
+{{ user.signature | decode_base64(class_="w-64 h-32 border border-gray-300 rounded") }}
+
+<!-- With custom styling -->
+{{ user.signature | decode_base64(style="max-width:300px;border:1px solid #ccc") }}
+
+<!-- Multiple attributes -->
+{{ user.avatar | decode_base64(class_="profile-img", width="200", height="200") }}
+```
+
+This is particularly useful for displaying signatures from signature pads or any base64-encoded images stored in the database.
+
+**Note:** Use `class_` with an underscore to avoid conflicts with Python's `class` keyword.
 
 Chain filters:
 
@@ -336,7 +358,7 @@ The `{% call %}` block allows you to pass a block of template code to a macro, w
 <div class="card">
   <div class="header">{{ title }}</div>
   <div class="body">
-    {{ caller() }}
+    {{ caller() | safe }}
   </div>
 </div>
 {% endmacro %}
@@ -426,7 +448,7 @@ Every template has these available automatically:
 
 ## Partial rendering (blocks)
 
-For HTMX or any partial update scenario, `request.block()` renders only the content of a specific `{% block %}` instead of the full page.
+For partial updates or single-page application (SPA) scenarios, `request.block()` renders only the content of a specific `{% block %}` instead of the full page.
 
 ```python
 def render(request: Request):
@@ -459,6 +481,15 @@ Template (`page.html`):
 
 If the block name doesn't exist, a `ValueError` is raised.
 
+### Clean Blocks for SEO
+
+By default, Asok injects HTML comment markers (`<!-- block:name:start -->`) around template blocks to support SPA partial updates. However, for sensitive blocks that end up in browser tab titles or meta tag attributes, these markers are automatically excluded:
+
+- **`title` block**: Content is rendered cleanly so it doesn't appear in the browser tab title as comments.
+- **`description` block**: Content is rendered cleanly to prevent breaking meta tag `content` attributes.
+
+The SPA engine is intelligent enough to target these blocks directly (using the `<title>` and `<meta>` tags) even without the comment markers.
+
 You can also use `render_block_string()` directly:
 
 ```python
@@ -478,12 +509,14 @@ The runtime is auto-injected into every full HTML response. You don't import any
 The simplest case: a form (or link) submits via `fetch` and the response replaces the contents of a target element.
 
 ```html
-<form method="post" data-block="#result">
+<form method="post" data-block="result">
   {{ request.csrf_input() }}
   <input name="email">
   <button>Subscribe</button>
 </form>
-<div id="result"></div>
+<div id="result">
+  {% block result %}{% endblock %}
+</div>
 ```
 
 Server side:
@@ -501,36 +534,30 @@ def render(request: Request):
 
 The framework detects the partial request via the `X-Block` header and you can serve a fragment (`request.block("page.html", "result")`) or the full page — both work. CSRF tokens are rotated automatically and re-injected into the new DOM.
 
-#### Target selector syntax
+The `data-block` attribute targets a template block by its name.
 
-The `data-block` attribute supports two types of selectors:
-
-- **`data-block="#main"`** — Targets a DOM element by ID (CSS selector)
+- **`data-block="main"`** — Targets a template block named `main`.
 
 ```html
-<div id="main">Content will be replaced here</div>
+<div id="main">
+  {% block main %}
+    Content will be replaced here
+  {% endblock %}
+</div>
 ```
 
-- **`data-block="main"`** — Targets a template block (without `#`)
-
-```html
-{% block main %}
-  Content will be replaced here
-{% endblock %}
-```
-
-When using template blocks, the server should return a fragment using `request.block("template.html", "main")`. When using DOM IDs, you can return either the full page or just the fragment for that ID.
+When using `data-block`, the server should return the specific fragment using `request.block("template.html", "main")`.
 
 **Examples:**
 
 ```html
-<!-- Target template block -->
+<!-- Target template block "content" -->
 <form data-block="content" data-url="/update">...</form>
 <!-- Server: return request.block("page.html", "content") -->
 
-<!-- Target DOM element -->
-<form data-block="#result" data-url="/search">...</form>
-<!-- Server: return any HTML, #result will be replaced -->
+<!-- Target template block "result" -->
+<form data-block="result" data-url="/search">...</form>
+<!-- Server: return request.block("page.html", "result") -->
 ```
 
 ### `data-trigger` — fire on different events
@@ -539,29 +566,33 @@ By default forms fire on `submit` and links on `click`. `data-trigger` overrides
 
 ```html
 <!-- Search-as-you-type with debounce -->
-<input data-block="#results"
+<input data-block="results"
        data-url="/search"
        data-trigger="input delay:300ms"
        name="q" placeholder="Search…">
 
 <!-- Filter that reloads on change -->
-<select data-block="#results"
+<select data-block="results"
         data-url="/list"
         data-trigger="change"
         name="category">...</select>
 
 <!-- Auto-save on blur -->
-<textarea data-block="#status"
+<textarea data-block="status"
           data-url="/draft"
           data-method="POST"
           data-trigger="blur"
           name="body"></textarea>
 
-<!-- Lazy load (fires once on page load) -->
-<div id="notifs" data-block="#notifs" data-url="/notifications" data-trigger="load"></div>
+<!-- Lazy load (fire once on page load) -->
+<div id="notifs" data-block="notifs" data-url="/notifications" data-trigger="load">
+  {% block notifs %}{% endblock %}
+</div>
 
 <!-- Polling every 5 seconds -->
-<div id="stats" data-block="#stats" data-url="/stats" data-trigger="every 5s"></div>
+<div id="stats" data-block="stats" data-url="/stats" data-trigger="every 5s">
+  {% block stats %}{% endblock %}
+</div>
 ```
 
 Accepted formats: any DOM event name (`submit`, `click`, `change`, `input`, `blur`, `focus`, …), plus the special triggers `load` (fire once at page load) and `every Ns` / `every Nms` (polling). Add `delay:Nms` to debounce.
@@ -572,21 +603,21 @@ The default is `innerHTML`. Other modes:
 
 ```html
 <!-- Delete a row in place after a server action -->
-<button data-block="#row-42"
+<button data-block="row-42"
         data-url="/rows/42"
         data-method="POST"
         data-swap="delete">×</button>
 
 <!-- Infinite scroll: append the response instead of replacing -->
-<button data-block="#rows"
+<button data-block="rows"
         data-url="/rows?page=2"
         data-swap="beforeend">Load more</button>
 
 <!-- New chat message at the top -->
-<form data-block="#msgs" data-swap="afterbegin">...</form>
+<form data-block="msgs" data-swap="afterbegin">...</form>
 
 <!-- Replace the element itself (for inline row editing) -->
-<form data-block="#row-42" data-swap="outerHTML">...</form>
+<form data-block="row-42" data-swap="outerHTML">...</form>
 ```
 
 | Mode | Behavior |
@@ -603,7 +634,7 @@ The default is `innerHTML`. Other modes:
 ### `data-push-url` — update history & support Back button
 
 ```html
-<a href="/users/42" data-block="#main" data-push-url>View</a>
+<a href="/users/42" data-block="main" data-push-url>View</a>
 ```
 
 After the swap, `history.pushState` updates the URL. Pressing Back triggers `popstate` and asok re-fetches the previous URL into the same target with the same swap mode — full SPA feel without a SPA framework.
@@ -613,7 +644,7 @@ You can also push a custom URL: `data-push-url="/custom-url"`.
 ### `data-indicator` — loading state
 
 ```html
-<form data-block="#list" data-indicator="#spinner">...</form>
+<form data-block="list" data-indicator="#spinner">...</form>
 <div id="spinner" hidden>Loading…</div>
 ```
 
@@ -628,7 +659,7 @@ During the fetch, the class `is-loading` is added to the indicator element; it's
 ### `data-disable` — anti double-submit
 
 ```html
-<form data-block="#result" data-disable>
+<form data-block="result" data-disable>
   <button type="submit">Save</button>
 </form>
 ```
@@ -643,7 +674,7 @@ Disables every `<button>` and `<input type="submit">` inside the form during the
   <option value="tech">Tech</option>
 </select>
 
-<input data-block="#results"
+<input data-block="results"
        data-url="/search"
        data-trigger="input delay:300ms"
        data-include="#cat"
@@ -655,7 +686,7 @@ The fetch will combine `q=...&category=...`. The selector can match multiple ele
 ### `data-confirm` — native confirmation
 
 ```html
-<a data-block="#row-42"
+<a data-block="row-42"
    data-url="/users/42/delete"
    data-method="POST"
    data-swap="delete"
@@ -668,10 +699,14 @@ Shows a `confirm()` dialog before firing. Cancel = no fetch, no swap, no indicat
 
 ```html
 <!-- Live notifications -->
-<div id="notifs" data-sse="/events/notifications"></div>
+<div id="notifs" data-sse="/events/notifications">
+  {% block notifs %}{% endblock %}
+</div>
 
 <!-- Append-only log -->
-<div id="log" data-sse="/events/log" data-block="#log" data-swap="beforeend"></div>
+<div id="log" data-sse="/events/log" data-block="log" data-swap="beforeend">
+  {% block log %}{% endblock %}
+</div>
 ```
 
 Each SSE message is treated as HTML and swapped according to `data-swap` (default `innerHTML`). The target is `data-block` or, if absent, the element itself by its `id`.
@@ -692,15 +727,15 @@ def render(request):
 
 ### Out-of-band swaps (multi-target updates)
 
-Sometimes a single server response needs to update several places at once. Wrap each fragment in a `<template data-block="#sel">` element. When the JS sees these in the response, it swaps each one independently:
+Sometimes a single server response needs to update several places at once. Wrap each fragment in a `<template data-block="sel">` element. When the JS sees these in the response, it swaps each one independently:
 
 ```html
 <!-- Server response from a delete handler -->
-<template data-block="#row-42" data-swap="delete"></template>
-<template data-block="#flash" data-swap="afterbegin">
+<template data-block="row-42" data-swap="delete"></template>
+<template data-block="flash" data-swap="afterbegin">
   <div class="flash success">User deleted</div>
 </template>
-<template data-block="#user-count">23</template>
+<template data-block="user-count">23</template>
 ```
 
 Three updates from one round-trip: row removed, flash shown at top, counter refreshed.
@@ -709,7 +744,7 @@ Three updates from one round-trip: row removed, flash shown at top, counter refr
 
 | Attribute | Role |
 |---|---|
-| `data-block="#sel"` | Swap target |
+| `data-block="name"` | Template block name to render and replace |
 | `data-target="#sel"` | Override the target (defaults to first selector of `data-block`) |
 | `data-url="..."` | Explicit URL (required on non-form/non-link elements) |
 | `data-method="GET|POST"` | HTTP method (default GET for non-form, form's method for form) |
@@ -734,11 +769,9 @@ Three updates from one round-trip: row removed, flash shown at top, counter refr
 
 The runtime auto-includes the CSRF token in the `X-CSRF-Token` header and rotates it transparently after every request.
 
-## Reactive Directives (asok-*)
+For complex client-side interactivity (state, loops, conditional rendering), Asok includes a native directive system that runs entirely in the browser.
 
-For more complex client-side interactivity (state, loops, conditional rendering) without writing custom JavaScript, Asok includes an Alpine.js-inspired directive system.
-
-Unlike `data-block` which relies on server round-trips for every update, `asok-*` directives handle reactivity entirely in the browser using a local state.
+Unlike `data-block` which relies on server round-trips, `asok-*` directives handle reactivity locally using a browser-side state.
 
 ```html
 <div asok-state="{ count: 0 }">
@@ -747,7 +780,7 @@ Unlike `data-block` which relies on server round-trips for every update, `asok-*
 </div>
 ```
 
-For the full reference of all available directives, see the [Asok Directives](46-asok-directives.md) documentation.
+For the full reference of all available directives, see the [Asok Directives](29-asok-directives.md) documentation.
 
 ## WebSocket helper
 
@@ -787,7 +820,7 @@ Inside the component, you access the passed content via the `{{ slot }}` variabl
 ```html
 {% component "Card", title="Welcome" %}
     <p>This is the <strong>body</strong> of the card.</p>
-    <button data-block="#more" data-url="/more">Load more</button>
+    <button data-block="more" data-url="/more">Load more</button>
 {% endcomponent %}
 ```
 

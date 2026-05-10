@@ -36,8 +36,11 @@ def render(request: Request):
 
     results = DocsIndex.search(fts_query)
 
+    
+
     if not results:
         safe_q = escape(query)
         return f'<div class="search-no-results">No results for "<strong>{safe_q}</strong>"</div>'
 
-    return render_template_string(_RESULTS_TPL, {"results": results, "query": query})
+    html = render_template_string(_RESULTS_TPL, {"results": results, "query": query})
+    return html

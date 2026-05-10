@@ -54,11 +54,15 @@ allowed = ["https://asok-framework.com", "https://www.asok-framework.com"]
 ws = WebSocketServer(app=app, port=ws_port, allowed_origins=allowed)
 ws.start()
 """
-
+from datetime import datetime, timezone
 from asok import Asok, WebSocketServer
 
 
 app = Asok()
+app.share(
+    version=app.version,
+    year=datetime.now(timezone.utc).year
+)
 
 ws = WebSocketServer(app=app, port=8001)
 ws.start()

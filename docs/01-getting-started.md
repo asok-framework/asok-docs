@@ -1,6 +1,6 @@
 # Getting Started
 
-Asok is a **zero-dependency** Python framework that combines the simplicity of Flask, the included batteries of Django, and the modern file-based routing of Next.js/SvelteKit.
+Asok is a **zero-dependency** Python framework designed for speed, security, and a unified development experience through intuitive file-based routing and native client-side reactivity.
 
 ## Installation
 
@@ -107,7 +107,7 @@ request.env('DEBUG')  # Returns True (auto-cast)
 |---|---|
 | Routing | Folder-based, automatic |
 | Database | SQLite ORM built-in |
-| Templates | Jinja2-like syntax |
+| Templates | Built-in, high-performance engine |
 | Forms | Declarative, auto-validated |
 | Auth | Login/logout/sessions |
 | i18n | JSON locale files |
