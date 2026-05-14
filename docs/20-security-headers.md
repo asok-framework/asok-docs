@@ -34,5 +34,22 @@ app.config["SECURITY_HEADERS"] = {
 }
 ```
 
+### Adaptive CSP (Reactive Directives)
+
+Asok uses an **Adaptive CSP** to keep your application as secure as possible while allowing modern reactive features.
+
+- **Dynamic `'unsafe-eval'`**: By default, `'unsafe-eval'` is disabled in production. However, if a page uses `asok-*` directives or Live Components, Asok automatically adds `'unsafe-eval'` to the `script-src` for that specific request.
+- **Manual Control**: You can force this behavior via the `CSP_UNSAFE_EVAL` setting (useful if you use external JS libraries that require `eval`):
+
+```python
+# In wsgi.py
+app.config["CSP_UNSAFE_EVAL"] = True  # Always allow 'unsafe-eval'
+```
+
+Or via `.env`:
+```env
+CSP_UNSAFE_EVAL=true
+```
+
 ---
 [← Previous: Sessions](19-sessions.md) | [Documentation](README.md) | [Next: CORS & Gzip →](21-cors-gzip.md)

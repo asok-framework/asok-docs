@@ -140,7 +140,13 @@ A thorough security audit has been conducted on Asok framework v0.1.6. Here are 
 - **SameSite=Strict**: Session and CSRF cookies use Strict for best protection
 - **SameSite=Lax**: Non-sensitive cookies (language) use Lax appropriately
 - **HMAC Signing**: Session IDs are signed to prevent tampering
-- **Secure RNG**: Uses `secrets` module for cryptographically secure random generation
+- **Secure RNG**: Uses `secrets` module for cryptographically secure random generation.
+
+### Adaptive Content Security Policy ✅
+
+- **Least Privilege Principle**: Asok implements an adaptive CSP that disables `'unsafe-eval'` by default in production.
+- **Context-Aware Activation**: It is automatically and surgically enabled ONLY for specific requests that utilize reactive directives (`asok-*`) or Live Components.
+- **Granular Control**: Developers can override this behavior globally via `CSP_UNSAFE_EVAL`.
 
 ### Command Injection Protection ✅
 
