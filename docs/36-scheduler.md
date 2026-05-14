@@ -1,44 +1,53 @@
 # Scheduled Tasks
 
-Run functions at regular intervals using daemon threads.
+Run recurring functions at regular intervals. Asok provides a built-in scheduler integrated into the application lifecycle.
 
-## Usage
+## 1. Quick Start
+
+The recommended way to schedule tasks is via the `app.schedule()` method in your `wsgi.py`. This ensures tasks are automatically stopped when the server shuts down.
+
+```python
+from asok import Asok
+
+app = Asok()
+
+def cleanup():
+    print("Cleaning up old logs...")
+
+# Schedule every 10 minutes
+app.schedule("10m", cleanup)
+```
+
+## 2. Timing Syntax
+
+Asok supports human-readable strings for defining intervals:
+
+- `"30s"`: Every 30 seconds
+- `"5m"`: Every 5 minutes
+- `"2h"`: Every 2 hours
+- `"1d"`: Every day
+- `"1w"`: Every week (7 days)
+- `"1mo"`: Every month (30 days)
+- `"1y"`: Every year (365 days)
+
+You can still use raw numbers (seconds) if preferred: `app.schedule(3600, cleanup)`.
+
+## 3. Standalone Usage
+
+For tasks independent of the app lifecycle, use the `schedule` factory:
 
 ```python
 from asok import schedule
 
-def cleanup():
-    print("Cleaning up old sessions...")
+task = schedule("1h", my_function)
 
-task = schedule(3600, cleanup)  # every hour
-```
-
-The first execution happens after the interval (not immediately).
-
-### With arguments
-
-```python
-schedule(60, send_ping, "https://example.com", timeout=5)
-```
-
-### Cancel a task
-
-```python
+# Manually cancel if needed
 task.cancel()
-print(task.is_cancelled)  # True
 ```
 
-Cancellation is immediate — uses `threading.Event.wait()` internally.
+## 4. Error Handling
 
-## Error handling
-
-Exceptions in scheduled tasks are logged (via `logging.exception`) but do not stop the scheduler. The task continues running on the next interval.
-
-## Notes
-
-- Tasks run in daemon threads (they stop when the main process exits)
-- Each `schedule()` call creates one thread
-- Suitable for lightweight recurring work (cleanup, pings, cache refresh)
+Exceptions in scheduled tasks are caught and logged automatically. The task will continue to run at the next scheduled interval even if one execution fails.
 
 ---
 [← Previous: Background Tasks](35-background-tasks.md) | [Documentation](README.md) | [Next: Internationalization (i18n) →](37-internationalization.md)

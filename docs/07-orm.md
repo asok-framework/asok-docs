@@ -110,6 +110,25 @@ class User(Model):
     )
 ```
 
+#### UI Customization (Tailwind CSS)
+
+All fields also accept arbitrary keyword arguments (`**kwargs`) which are stored in `field.attrs`. These are automatically passed to `Form.from_model()`, allowing you to define deep UI styling (like nested Tailwind classes) directly on your model:
+
+```python
+class Project(Model):
+    status = Field.Dropdown(
+        choices=[("active", "Active"), ("archived", "Archived")],
+        option__class="text-indigo-600 font-medium", # Target nested options
+        menu__class="shadow-2xl rounded-xl border-none" # Target the menu
+    )
+    
+    is_public = Field.Boolean(
+        form_type="toggle",
+        slider__class="bg-indigo-500", # Target the toggle slider
+        container__class="p-4 bg-gray-50 rounded-lg"
+    )
+```
+
 **Performance tip:** Add `index=True` to columns frequently used in `WHERE`, `ORDER BY`, or `GROUP BY` clauses. See [Advanced ORM](08-advanced-orm.md#database-indexes) for more details.
 
 ### Rich Dropdowns and Selection

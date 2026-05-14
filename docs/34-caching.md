@@ -1,88 +1,100 @@
 # Caching
 
-In-memory or file-based cache. No external dependency.
+Asok comes with a lightning-fast, zero-dependency caching system built natively into the framework. It can drastically speed up your application by caching HTTP responses, database queries, and even template fragments.
 
-## Quick start
+## 1. Template Fragment Caching
 
-```python
-from asok import Cache
+The template engine supports the `{% cache "key" ttl %}` tag to cache computationally expensive blocks of HTML. This is especially useful for rendering complex loops or menus.
 
-cache = Cache()  # In-memory (default)
-
-cache.set('key', 'value')
-cache.get('key')           # 'value'
-cache.get('missing', 'x') # 'x' (default)
-cache.forget('key')        # Delete
-cache.flush()              # Clear all
+```html
+{% cache "sidebar_categories" 3600 %}
+    <!-- This loop and any queries inside it are only executed once per hour! -->
+    <ul>
+    {% for cat in get_categories() %}
+        <li>{{ cat.name }}</li>
+    {% endfor %}
+    </ul>
+{% endcache %}
 ```
 
-## TTL (expiration)
+## 2. Caching HTTP Pages
+
+The easiest way to cache a full page is to use the `@cache_page` decorator. It will automatically intercept `GET` requests and serve the cached response without executing your view logic.
 
 ```python
-cache.set('token', 'abc123', ttl=300)  # Expires in 5 minutes
-cache.set('session', data, ttl=3600)   # Expires in 1 hour
+from asok.cache import cache_page
+import time
+
+@cache_page(ttl=60) # Caches the response for 60 seconds
+def render(request):
+    time.sleep(2) # Simulating heavy computation
+    return request.html("dashboard.asok")
 ```
 
-After the TTL, `get()` returns the default.
+## 2. Caching Database Queries
 
-## Check existence
-
-```python
-cache.has('key')  # True/False
-```
-
-## File-based cache
-
-Persists across server restarts:
+You can chain the `.cache(ttl)` method directly onto any ORM query builder. Asok will compute a unique hash based on the exact SQL statement and parameters, completely bypassing the database if the result is already in memory.
 
 ```python
-cache = Cache(backend='file', path='.cache')
-
-cache.set('stats', {'views': 100}, ttl=600)
-cache.get('stats')  # Works even after restart
-```
-
-Files are stored as JSON in the `.cache/` directory.
-
-## Usage example — cache database queries
-
-```python
-from asok import Cache
 from models.post import Post
 
-cache = Cache()
-
 def get_popular_posts():
-    cached = cache.get('popular_posts')
-    if cached:
-        return cached
-
-    posts = Post.all(order_by='-views', limit=10)
-    data = [p.to_dict() for p in posts]
-    cache.set('popular_posts', data, ttl=300)
-    return data
+    # Only hits the SQLite database once every 5 minutes
+    posts = Post.query().order_by('-views').limit(10).cache(ttl=300).get()
+    
+    return [p.to_dict() for p in posts]
 ```
 
-## Usage in middleware
+> **Note**: `.cache()` is part of the Query Builder. You must call it *before* execution methods like `.get()` or `.first()`. You cannot chain it after `.all()` since `.all()` returns a list immediately.
+
+## 3. Global Configuration
+
+By default, Asok uses a blazing fast **in-memory** cache (`backend="memory"`).
+
+### Production Recommendations
+
+In a production environment (especially when using **Gunicorn** with multiple workers), the `memory` backend is isolated to each process. This means a cache set by Worker A will not be visible to Worker B.
+
+To ensure cache consistency across all worker processes, you **should** use the file-based backend:
+
+```env
+# .env
+ASOK_CACHE_BACKEND=file
+ASOK_CACHE_PATH=.asok/cache
+```
+
+### Backend Comparison
+
+| Backend | Speed | Persistence | Multi-process Safe |
+|---|---|---|---|
+| `memory` | ⚡ Instant | No (Lost on restart) | No |
+| `file` | 🚀 Fast | Yes | **Yes** |
+
+---
+
+## Advanced Usage (Manual Caching)
+
+If you need fine-grained control over caching specific variables or logic, you can use the underlying `Cache` class directly.
 
 ```python
-# src/middlewares/cache.py
 from asok.cache import Cache
 
-page_cache = Cache()
+# You can instantiate your own custom cache instance
+cache = Cache(backend='file', path='.my_custom_cache')
 
-def handle(request, next):
-    if request.method == 'GET':
-        cached = page_cache.get(request.path)
-        if cached:
-            return cached
+cache.set('key', 'value', ttl=300)
+cache.get('key', default='missing')
+cache.has('key')  # True/False
+cache.forget('key')
+cache.flush()     # Clear all
+```
 
-    response = next(request)
+### The `remember` pattern
+A very common and elegant pattern to cache variables dynamically:
 
-    if request.method == 'GET' and request.status == '200 OK':
-        page_cache.set(request.path, response, ttl=60)
-
-    return response
+```python
+# If 'api_data' exists, return it. Otherwise, execute fetch_slow_api(), cache it for 60s, and return it.
+data = cache.remember('api_data', ttl=60, fn=fetch_slow_api)
 ```
 
 ---

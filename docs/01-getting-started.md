@@ -8,6 +8,8 @@ Asok is a **zero-dependency** Python framework designed for speed, security, and
 pip install asok
 ```
 
+> **💡 Note for VS Code Users:** For the best developer experience, we highly recommend installing the official **[Asok VS Code Extension](https://marketplace.visualstudio.com/items?itemName=AsokFramework.asok-vscode)**. It provides native autocompletion, reactive snippets, and integrated CLI commands directly in your editor.
+
 ## Create a project
 
 Asok features a **smart interactive CLI**. Just run the create command and it will guide you through the setup:

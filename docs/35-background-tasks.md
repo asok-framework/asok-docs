@@ -1,34 +1,49 @@
 # Background Tasks
 
-Run any function in a background thread so the page responds instantly.
+Run heavy functions in background threads so your pages respond instantly. Asok manages a thread pool automatically for you.
 
-## Usage
+## 1. Usage (Recommended)
 
-```python
-from asok import Request, background
-
-def heavy_task(user_id, data):
-    # This could take 5 seconds — doesn't matter
-    process_payment(user_id, data)
-    send_receipt(user_id)
-
-def render(request: Request):
-    background(heavy_task, user_id=42, data=request.form)
-    request.flash('success', 'Processing your order!')
-    request.redirect('/orders')
-```
-
-The user sees the success page immediately. The heavy work runs in a separate thread.
-
-## API
+The recommended way to dispatch background tasks is via the `app.background()` method. This ensures the tasks are managed by the application's lifecycle and correctly shut down on exit.
 
 ```python
-background(function, *args, **kwargs)
+# src/pages/order/page.py
+def post(request):
+    app = request.environ.get("asok.app")
+    
+    def heavy_task(data):
+        # Process payment, send receipt, etc.
+        pass
+
+    # Dispatch to background pool
+    app.background(heavy_task, data=request.form)
+    
+    request.flash('success', 'Order processing!')
+    request.redirect('/success')
 ```
 
-- `function` — Any callable
-- `*args, **kwargs` — Passed to the function
-- Returns the `Thread` object (if you need to wait on it)
+## 2. Configuration
+
+You can control the size of the background worker pool via `app.config`.
+
+| Key | Default | Description |
+|---|---|---|
+| `BG_WORKERS` | `10` | Maximum number of concurrent background threads. |
+
+Example in `.env`:
+```env
+BG_WORKERS=20
+```
+
+## 3. Standalone Usage
+
+For legacy support or independent usage, you can still use the `background` factory:
+
+```python
+from asok import background
+
+background(my_function, arg1, key=val)
+```
 
 ## Error handling
 

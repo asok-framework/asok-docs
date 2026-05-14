@@ -5,6 +5,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.1.6] - 2026-05-14
+
+### Added
+- **Deep UI Customization (Prefix Targeting)**:
+    - Introduced a unified `prefix__attribute` syntax across all framework components (Forms, Tables, ORM Fields).
+    - Enables granular Tailwind CSS targeting for complex nested elements like `dropdown__menu__class`, `table__header__class`, or `pagination__link__class`.
+    - Integrated automatic attribute propagation from ORM `Field` definitions to generated UI components.
+- **Enhanced Developer APIs**:
+    - Added `@app.rate_limit()`, `@app.cache_page()`, `@app.schedule()`, and `@app.background()` decorators to the `Asok` class for more intuitive application-level usage.
+    - Exported `cache_page` globally in the `asok` package.
+- **Unified Exception Hierarchy**:
+    - Centralized all framework errors under `AsokException`.
+    - Integrated `MailError` for consistent email-related error handling.
+    - Improved middleware error trapping in `core.py` with automatic HTTP status mapping for semantic exceptions.
+- **Fail-Fast Mail Service**:
+    - Added `raise_on_error=True` to synchronous email dispatch to provide better feedback for business logic.
+
+### Improved
+- **Table Module Architecture**:
+    - Refactored `Table` and `TableColumn` to support arbitrary keyword arguments and deep UI customization.
+    - Shared internal rendering utilities (`_extract_nested_attrs`, `_render_attrs`) across the framework to ensure consistent attribute handling.
+- **Security Audit**:
+    - Conducted a comprehensive framework security audit, confirming robust protections against SQLi, XSS, CSRF, and SSTI.
+    - Enhanced CSRF verification with strict Origin/Referer checks for HTTPS connections.
+
+### Fixed
+- Fixed import sorting and linting compliance in `asok/forms.py`.
+- Fixed duplicate `AbortException` import in `asok/request.py`.
+- Cleaned up residual code in `asok/forms.py` following utility refactoring.
+
 ## [0.1.4] - 2026-05-09
 
 ### Added

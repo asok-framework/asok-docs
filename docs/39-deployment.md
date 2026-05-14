@@ -40,21 +40,48 @@ This command generates a `dist/` folder. You should deploy the **contents** of t
 ### What the script does:
 - Installs `nginx`, `python3-pip`, and `python3-venv`.
 - Creates a virtual environment and installs `gunicorn`.
-- **Permissions**: Automatically sets correct permissions for the SQLite database and uploads folder so `www-data` (Nginx/Gunicorn) can write to them.
-- **SystemD**: Configures and starts your app as a background service.
-- **Nginx**: Configures Nginx to proxy traffic and serve static files with 30-day caching.
+## 4. Directory Permissions
 
-## 3. Production Hardening
+For the `file` backend to work correctly, the directories used for sessions and caching must be writable by the user running the web server (Gunicorn).
 
-### SSL (HTTPS)
-Asok recommends using **Certbot** for free, automated SSL certificates:
+### Recommended Permissions Table
+
+| Directory / File | Default Path | Purpose | Rec. Permissions | Rec. Owner |
+|---|---|---|---|---|
+| **Sessions** | `.asok/sessions/` | User session storage | `775` | `www-data` |
+| **Cache** | `.asok/cache/` | Fragment/ORM caching | `775` | `www-data` |
+| **Database** | `db.sqlite3` | SQLite database file | `664` | `www-data` |
+| **Database Dir** | `./` (Project root) | SQLite WAL/SHM files | `775` | `www-data` |
+| **Uploads** | `src/partials/uploads/` | User-uploaded files | `775` | `www-data` |
+
+### Setup Commands (Ubuntu/Debian)
+
+If you are running Gunicorn as the `www-data` user (the default on Ubuntu), you must grant it ownership of the state directories:
+
 ```bash
-sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d yourdomain.com
+# Ensure directories exist
+mkdir -p .asok/sessions .asok/cache src/partials/uploads
+
+# Give ownership to the web server user
+sudo chown -R www-data:www-data .asok/sessions .asok/cache src/partials/uploads
+
+# Important: SQLite needs write access to the DIRECTORY containing the DB
+# to create temporary WAL (Write-Ahead Log) files.
+sudo chown www-data:www-data .
+sudo chmod 775 .
+
+# Set permissions (Owner: Read/Write/Exec, Group: Read/Exec)
+sudo chmod -R 775 .asok/sessions .asok/cache src/partials/uploads
+
+# Secure the database file
+if [ -f "db.sqlite3" ]; then
+    sudo chown www-data:www-data db.sqlite3
+    sudo chmod 664 db.sqlite3
+fi
 ```
 
-### Static Asset Hash
-To ensure users always see the latest version of your CSS/JS after an update, Asok supports asset hashing. This is enabled automatically in production (`DEBUG=false`).
+### Security Note
+Asok's `file` backend automatically sets `0600` permissions (read/write for owner only) on the individual session and cache files it creates. This ensures that even if another user on the system has access to the directory, they cannot read the sensitive contents of your sessions.
 
 ## 5. RHEL / AlmaLinux (SELinux)
 

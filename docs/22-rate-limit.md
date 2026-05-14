@@ -1,61 +1,63 @@
 # Rate Limit
 
-In-memory rate limiter. No external dependency.
+Protect your application from brute-force attacks and abuse with Asok's built-in rate limiter.
 
-## Quick start
+## 1. Quick Start (Decorator)
 
-Create `src/middlewares/ratelimit.py`:
+The easiest way to protect a specific page is using the `@rate_limit` decorator in your `page.py`:
+
+```python
+# src/pages/protected/page.py
+from asok import rate_limit
+
+@rate_limit("5/m")  # Limit to 5 requests per minute
+def render(request):
+    return "This page is protected!"
+```
+
+## 2. Limit Syntax
+
+Asok supports human-readable strings for defining limits:
+
+- `"10/s"`: 10 requests per second
+- `"60/m"`: 60 requests per minute
+- `"1000/h"`: 1000 requests per hour
+- `"5000/d"`: 5000 requests per day
+
+## 3. Global Middleware
+
+To apply a global rate limit, create `src/middlewares/ratelimit.py`:
 
 ```python
 from asok import RateLimit
 
-limiter = RateLimit(max_requests=60, window=60)  # 60 req/min
+# Use a string limit for simplicity
+limiter = RateLimit("100/m")
 
 def handle(request, next):
     return limiter(request, next)
 ```
 
-When a client exceeds the limit, they receive a `429 Too Many Requests` response with the remaining wait time.
+## 4. Production Storage (Shared Limit)
 
-## Options
-
-```python
-RateLimit(
-    max_requests=60,  # Max requests per window (default: 60)
-    window=60,         # Window duration in seconds (default: 60)
-    key_func=None,     # Custom function to identify clients
-)
-```
-
-## Custom key function
-
-By default, clients are identified by their IP address (`X-Forwarded-For` or `REMOTE_ADDR`). You can provide a custom key function:
+By default, the rate limiter works in-memory (per Gunicorn worker). For production systems with multiple workers, use the **`file` storage** to share the limit across processes:
 
 ```python
-# Rate limit per user instead of per IP
-def by_user(request):
-    if request.is_authenticated:
-        return f"user:{request.user.id}"
-    return request.environ.get("REMOTE_ADDR", "unknown")
+from asok import Asok, RateLimit, Cache
 
-limiter = RateLimit(max_requests=100, window=60, key_func=by_user)
+app = Asok()
+# Link the rate limiter to the app's cache storage
+limiter = RateLimit("60/m", storage=app._cache)
 ```
 
-## Different limits per route
+## 5. Options
 
-```python
-from asok import RateLimit
-
-api_limiter = RateLimit(max_requests=30, window=60)
-login_limiter = RateLimit(max_requests=5, window=300)  # 5 attempts / 5 min
-
-def handle(request, next):
-    if request.path.startswith("/api/"):
-        return api_limiter(request, next)
-    if request.path == "/login" and request.method == "POST":
-        return login_limiter(request, next)
-    return next(request)
-```
+| Option | Type | Description |
+|---|---|---|
+| `limit` | `str/int` | Maximum requests (e.g., `"60/m"` or `60`). |
+| `window` | `int` | Window duration in seconds (if `limit` is an `int`). |
+| `key_func`| `func` | Custom function to identify clients (default: IP address). |
+| `storage` | `Cache` | Optional `Cache` instance for cross-process persistence. |
 
 ---
 [← Previous: CORS & Gzip](21-cors-gzip.md) | [Documentation](README.md) | [Next: Security Audit →](23-security-audit.md)

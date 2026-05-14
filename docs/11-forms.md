@@ -19,6 +19,9 @@ def render(request: Request):
         # All fields are valid — process the data
         request.flash('success', 'Sent!')
         request.redirect('/contact')
+        
+    # Alternatively, use fail-fast validation:
+    # form.validate(raise_error=True)  # Raises ValidationError on failure
 
     return request.html('page.html', form=form)
 ```
@@ -108,6 +111,27 @@ Pass attributes when rendering to override defaults:
 ```
 
 Since `class` is a Python reserved word, use `class_` — the trailing underscore is stripped automatically. This works for any attribute: `for_` becomes `for`, etc.
+
+### Nested Attribute Targeting
+
+For complex components (Dropdown, Toggle, Select, etc.), you can target sub-elements using the `prefix__attribute` convention.
+
+```html
+<!-- Style the <option> elements in a select -->
+{{ form.country(option__class="text-gray-600 bg-white") }}
+
+<!-- Style the slider in a toggle switch -->
+{{ form.active(slider__class="bg-blue-500", container__class="p-2") }}
+
+<!-- Style items and menu in a dropdown -->
+{{ form.users(
+    menu__class="shadow-xl rounded",
+    item__class="hover:bg-indigo-50 p-2",
+    trigger__class="btn-primary"
+) }}
+```
+
+This ensures full customizability for Tailwind CSS at every level of nesting.
 
 ## Field types
 

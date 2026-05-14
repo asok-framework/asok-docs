@@ -73,6 +73,21 @@ This command will:
 
 The binary is downloaded from the official `tailwindlabs/tailwindcss` GitHub releases. Supported: macOS (x64/arm64), Linux (x64/arm64), Windows (x64). On unsupported platforms, install Tailwind manually and place the binary at `.asok/bin/tailwindcss`.
 
+## Nested UI Customization
+
+Asok v0.1.6 introduces a nested attribute targeting system designed specifically for Tailwind CSS users. Complex components can be styled at every level using the `__` separator:
+
+```html
+<!-- Style a dropdown with Tailwind -->
+{{ form.dropdown("Filter", items,
+    trigger__class="bg-white border rounded px-4 py-2 flex items-center gap-2",
+    menu__class="absolute mt-1 w-64 bg-white shadow-xl rounded-lg border",
+    item__class="px-4 py-2 hover:bg-indigo-50 cursor-pointer transition-colors"
+) }}
+```
+
+See [Forms](11-forms.md#nested-attribute-targeting) for more details.
+
 ## Notes
 
 - The pinned version lives in `asok/cli.py` as `TAILWIND_VERSION` (currently `4.2.2`).

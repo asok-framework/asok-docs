@@ -479,7 +479,14 @@ Template (`page.html`):
 
 `request.block("page.html", "form", success=True)` returns only the inner content of `{% block form %}`, without the parent layout (`<html>`, `<head>`, etc.).
 
-If the block name doesn't exist, a `ValueError` is raised.
+If the block name doesn't exist, a `TemplateError` is raised.
+
+### Template Security & Errors
+
+Asok's template engine is sandboxed for security.
+
+- **`SecurityError`**: Raised if a template tries to access "private" attributes (starting with `_`) or sensitive Python internals.
+- **`TemplateError`**: Raised for syntax errors during compilation or runtime errors during rendering.
 
 ### Clean Blocks for SEO
 

@@ -273,6 +273,56 @@ Use `request.shared(name)` to retrieve a shared variable's value for the current
 ```python
 def render(request):
     user = request.shared('user')  # Result of the lambda(request)
+
+## Error Handling & Exceptions
+
+Asok provides a structured exception hierarchy for handling errors and controlling the request flow. All framework exceptions inherit from `AsokException`.
+
+### 1. Flow Control
+
+These exceptions are caught by the framework to send a specific HTTP response.
+
+- `request.redirect(url)` raises `RedirectException`.
+- `request.abort(code)` raises `AbortException`.
+
+### 2. Semantic HTTP Shortcuts
+
+Instead of using raw status codes, you can raise semantic exceptions:
+
+```python
+from asok import NotFoundError, ForbiddenError, UnauthorizedError
+
+def render(request):
+    item = Item.find(request.params['id'])
+    if not item:
+        request.abort_404("Item not found") # Shortcut for raise NotFoundError
+    
+    if not request.user:
+        request.abort_401() # Shortcut for raise UnauthorizedError
+    
+    if item.user_id != request.user.id:
+        request.abort_403() # Shortcut for raise ForbiddenError
+```
+
+#### Shortcut Helpers
+
+The `Request` object provides methods that automatically raise the appropriate exception:
+
+- `request.abort(code, message)` -> `AbortException`
+- `request.abort_404(message)` -> `NotFoundError`
+- `request.abort_403(message)` -> `ForbiddenError`
+- `request.abort_401(message)` -> `UnauthorizedError`
+
+### 3. Logical Errors
+
+- **`SecurityError`**: Raised for CSRF violations, tampered sessions, or unauthorized attribute access in templates.
+- **`ValidationError`**: Raised when form or data validation fails. It can hold a dictionary of specific field errors.
+- **`TemplateError`**: Raised when a template fails to compile or render.
+
+```python
+from asok import ValidationError
+
+raise ValidationError("Invalid input", errors={"email": "Invalid format"})
 ```
 
 ---

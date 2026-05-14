@@ -1,22 +1,11 @@
 # Asok Documentation
 
-> **Latest Version: v0.1.4** (Development)
-> - **ORM Indexes**: Database indexes for performance (`Field.String(index=True)`).
-> - **Union/Intersect Queries**: Combine multiple queries with SQL UNION and INTERSECT.
-> - **Subqueries**: Use queries in `WHERE IN` clauses for advanced filtering.
-> - **18 New Form Fields**: Complete UI toolkit with toggle, OTP, rating stars, autocomplete, WYSIWYG editor, signature pad, drag & drop, tree select, transfer list, phone international, and more.
-> - **New Template Filter**: `decode_base64` filter for displaying base64 images (signatures, avatars) with customizable HTML attributes.
-> - Added 9 new validation rules (`url`, `slug`, `uuid`, `numeric`, `digits`, `boolean`, `between`, `month`, `base64`).
-> - Enhanced Admin security: Improved CSRF handling and global error catching.
-> - Improved Developer UX: `ModelAdmin` base class for full IDE autocompletion.
-> - Security hardening: ReDoS protection on all validation regex.
-> - Template Engine: Added `{% break %}`, `{% continue %}`, `{% do %}`, `{% with %}`, and `{% call %}` support.
-> - SEO Hardware: Automatic suppression of SPA markers in `title` and `description` blocks for clean browser tab titles.
-> - ORM Power User: Added `group_by()` and `select()` to Query builder; improved table naming with `snake_case` pluralization.
-> - Auto-Migrations: Automatic `ALTER TABLE` on schema change (Zero-Config DB evolution).
-> - Real-time Live Data: `data-subscribe` for instant UI updates when models change in the DB.
-> - **Developer Toolbar**: Premium console with real-time SQL profiler (AJAX/SPA support), session inspector, and reactive state monitor.
-> - Serialization: Implemented automatic request context detection in `Schema` via `contextvars`.
+> **Latest Version: v0.1.6** (Production-Ready)
+> - **Deep UI Customization**: Unified `prefix__attribute` targeting for Forms, Tables, and ORM Fields.
+> - **Unified Exception Hierarchy**: Centralized error handling under `AsokException` with improved middleware trapping.
+> - **Security Audit Completed**: Robust protections against SQLi, XSS, CSRF (with strict Origin checks), and SSTI.
+> - **Fail-Fast Mail Service**: Synchronous email dispatch with `raise_on_error=True` support.
+> - **ORM Power User**: Automated attribute propagation from ORM Fields to UI components.
 
 Welcome to the official Asok Framework documentation. This guide is organized sequentially to take you from a total beginner to an advanced contributor.
 

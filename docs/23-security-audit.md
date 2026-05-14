@@ -89,32 +89,34 @@ Asok provides built-in support for **Nonces**. You can access a unique cryptogra
 
 ---
 
-## 7. Comprehensive Security Audit Results
+## 7. Comprehensive Security Audit Results (v0.1.6)
 
-A thorough security audit has been conducted on Asok framework v0.1.4. Here are the detailed findings:
+A thorough security audit has been conducted on Asok framework v0.1.6. Here are the detailed findings:
 
 ### SQL Injection Protection ✅
 
-- **Parameterized Queries**: All ORM queries use `?` placeholders with separate arguments array
-- **Column Validation**: `_valid_column()` validates all column names before use in queries
-- **Operator Whitelist**: SQL operators are validated against `_OPERATORS` whitelist
-- **No String Interpolation**: User input is never directly interpolated into SQL strings
+- **Parameterized Queries**: All ORM queries use `?` placeholders with separate arguments array.
+- **Strict Column Validation**: `_valid_column()` strictly validates all column names against model metadata, preventing injection in non-parameterizable clauses.
+- **Operator Whitelist**: SQL operators are validated against a strict `_OPERATORS` whitelist.
 
 ### XSS Protection ✅
 
-- **Auto-Escaping**: All template variables are automatically escaped via `_escape()`
-- **SafeString Class**: Explicit opt-in required for raw HTML via `SafeString` class
-- **HTML Escape Function**: Uses Python's `html.escape(quote=True)` from stdlib
-- **Quote Escaping**: Both single and double quotes are escaped in output
+- **Auto-Escaping**: All template variables are automatically escaped via `_escape()`.
+- **UI Attribute Escaping**: The centralized `_render_attrs` utility ensures all HTML attributes (including nested ones like `dropdown__class`) are properly escaped.
+- **SafeString Class**: Explicit opt-in required for raw HTML via `SafeString` class or `|safe` filter.
 
 ### CSRF Protection ✅
 
-- **Cryptographic Tokens**: 32-byte random tokens via `secrets.token_hex(32)`
-- **HMAC Validation**: Token comparison uses `hmac.compare_digest()` to prevent timing attacks
-- **Token Rotation**: Tokens are automatically rotated after successful validation
-- **Origin Validation**: For HTTPS requests, Origin/Referer headers are validated
-- **SameSite Cookies**: CSRF cookies use `SameSite=Strict` for maximum protection
-- **Meta Tag Support**: Admin interface includes CSRF meta tag for SPA-style requests
+- **Cryptographic Tokens**: 32-byte random tokens via `secrets.token_hex(32)`.
+- **HMAC Validation**: Token comparison uses `hmac.compare_digest()` to prevent timing attacks.
+- **Strict Origin Verification**: For HTTPS requests, both `Origin` and `Referer` headers are validated against the host to prevent cross-origin state changes.
+- **SameSite Cookies**: CSRF cookies use `SameSite=Strict` for maximum protection.
+
+### Server-Side Template Injection (SSTI) Protection ✅
+
+- **Restricted Execution**: Templates are executed in a restricted namespace with `__builtins__` blocked.
+- **Sandbox Escape Prevention**: Access to dangerous Python attributes (`__class__`, `__globals__`, `__subclasses__`, etc.) is strictly blocked.
+- **Safe Attribute Whitelist**: Only a specific set of safe underscore attributes (like `_table` or `_fields` for internal needs) are accessible.
 
 ### Path Traversal Protection ✅
 

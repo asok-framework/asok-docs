@@ -13,6 +13,22 @@ if form.validate():
     # Valid
 ```
 
+### Fail-fast validation
+
+By default, `validate()` returns a boolean. If you prefer exceptions, use `raise_error=True`:
+
+```python
+from asok import ValidationError
+
+try:
+    form.validate(raise_error=True)
+except ValidationError as e:
+    # Handle error...
+    print(e.errors) # {'email': 'Invalid email address.'}
+```
+
+When `raise_error=True` is used and the form is invalid, a `ValidationError` is raised. This is useful for APIs or when you want the global exception handler to catch and display the error automatically.
+
 See [Forms](11-forms.md) for full docs.
 
 ## Standalone usage

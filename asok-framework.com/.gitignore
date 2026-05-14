@@ -9,7 +9,7 @@ db.sqlite3-wal
 .DS_Store
 .asok/
 src/partials/uploads/
-src/partials/css/base.build.css
+# src/partials/css/base.build.css (Now included for production deployment)
 article/
 asok_debug.log
 src/migrations/

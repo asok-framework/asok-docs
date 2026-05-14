@@ -30,12 +30,19 @@ Asok is designed to be "zero-config" by default, but it provides a comprehensive
 
 | Key | Type | Default | Description |
 |---|---|---|---|
-| `SESSION_BACKEND` | str | `"memory"` | Storage backend for sessions: `"memory"` or `"file"`. |
+| `SESSION_BACKEND` | str | `"memory"` | Storage backend for sessions: `"memory"` or `"file"`. **Must be `"file"` in production.** |
 | `SESSION_PATH` | str | `".asok/sessions"` | Directory path for file-based session storage. |
 | `SESSION_MAX_AGE` | int | `2592000` | Max age for the session cookie (in seconds, default 30 days). |
 | `SESSION_TTL` | int | `86400` | Server-side session expiration time (in seconds, default 24 hours). |
 
-## 4. Security & CORS
+## 4. Caching System
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `ASOK_CACHE_BACKEND` | str | `"memory"` | Caching backend: `"memory"` or `"file"`. **`"file"` recommended for production persistence.** |
+| `ASOK_CACHE_PATH` | str | `".asok/cache"` | Directory path for file-based caching. |
+
+## 5. Security & CORS
 
 | Key | Type | Default | Description |
 |---|---|---|---|

@@ -64,14 +64,15 @@ All mutating operations automatically set `session.modified = True`.
 > 
 > The default `memory` backend stores sessions in the RAM of the specific worker process. Since requests are distributed across multiple workers, a user will "lose" their session as soon as their request is handled by a different worker.
 
-### Configuring for Gunicorn
+To ensure persistence across workers, configure the `file` backend in your `.env` or `wsgi.py`:
 
-To ensure persistence across workers, configure the `file` backend in your `wsgi.py` (before application startup):
-
-```python
-app.config["SESSION_BACKEND"] = "file"
-app.config["SESSION_PATH"] = "/run/asok/sessions" # Using SystemD RuntimeDirectory
+```env
+# .env
+SESSION_BACKEND=file
+SESSION_PATH=/run/asok/sessions
 ```
+
+> **Note**: If you are using SystemD `RuntimeDirectory=asok`, the path `/run/asok` is automatically managed and has the correct permissions for the web server user.
 
 For RHEL/AlmaLinux servers, see the [Deployment](39-deployment.md) guide for handling SELinux permissions.
 

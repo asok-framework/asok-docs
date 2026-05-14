@@ -90,5 +90,46 @@ If you define a "Delete" action, it automatically enables a **Bulk Actions Bar**
 | `.searchable([...])` | Defines which fields are searchable (default: all visible). |
 | `.class_(str)` | Adds CSS classes to the table wrapper. |
 
+## Deep UI Customization (Tailwind CSS)
+
+Just like Asok Forms, the `Table` component supports **nested attribute targeting**. You can style any internal element of the table directly from your Python code:
+
+```python
+table = Table(users, 
+    # Global table styling
+    table__class="border-separate border-spacing-0",
+    header__class="bg-gray-50 border-b",
+    
+    # Customize search and filters
+    search__class="rounded-full shadow-inner",
+    filter__class="border-none bg-transparent font-bold",
+    
+    # Pagination styling
+    pagination__class="flex gap-2 justify-center",
+    page_link__class="rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
+)
+
+# Column-specific styling
+table.columns = [
+    TableColumn("name", 
+        th__class="text-indigo-600 uppercase tracking-wider",
+        td__class="font-semibold text-gray-900"
+    ),
+    TableColumn("email")
+]
+```
+
+### Supported Target Prefixes:
+- `table__`: The `<table>` element itself.
+- `thead__`, `tbody__`: Table header and body sections.
+- `tr__`: All table rows.
+- `th__`, `td__`: Header and body cells (can be global on `Table` or per-column on `TableColumn`).
+- `header__`: The container holding search and filters.
+- `footer__`: The container holding pagination and info.
+- `search__`: The search input field.
+- `filter__`: The filter dropdown selects.
+- `pagination__`: The pagination container.
+- `page_link__`: Individual pagination links/buttons.
+
 ---
 [← Previous: Production Build System](44-production-build.md) | [Documentation](README.md) | [Next: Developer Toolbar (Asok Console) →](46-developer-toolbar.md)
