@@ -47,7 +47,7 @@ myapp/
 │   ├── models                   # Database models
 │   │   └── user.py
 │   ├── pages                    # Routes (file-based)
-│   │   ├── page.html
+│   │   ├── page.html (or .asok)
 │   │   └── page.py
 │   └── partials                 # Shared assets
 │       ├── css
@@ -65,7 +65,7 @@ myapp/
 ## How it works
 
 1. A request arrives at `/contact`
-2. Asok looks for `src/pages/contact/page.py` (or `page.html`)
+2. Asok looks for `src/pages/contact/page.py` (or `page.html` / `page.asok`)
 3. It calls the `render(request)` function
 4. Your function returns HTML via `request.html('page.html')`
 5. Asok sends the response

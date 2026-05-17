@@ -3,4 +3,4 @@ from asok import Request
 
 def render(request: Request):
     request.meta.title = "Asok : Ultra-Lightweight & Reactive Python Framework"
-    return request.stream("page.html")
+    return request.stream("page.asok")

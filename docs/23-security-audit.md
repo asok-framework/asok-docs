@@ -55,8 +55,33 @@ Asok uses **PBKDF2-SHA256** with 600,000 iterations for password hashing. This i
 
 ## 4. File and URL Safety
 
+### File Upload Validation ⭐ NEW in v0.1.6
+
+Asok provides **automatic MIME type validation** using magic bytes detection to prevent malicious file uploads:
+
+- **Magic Bytes Detection**: Files are validated by their actual content (first bytes), not just extension
+- **50+ Formats Supported**: Images (JPEG, PNG, GIF, WebP, BMP, TIFF, SVG), Audio (MP3, WAV, FLAC, OGG, AAC), Video (MP4, WebM, MKV, AVI, MOV), Documents (PDF, ZIP, Office files)
+- **Extension Matching**: File extension must match the detected MIME type
+- **Whitelist Enforcement**: `allowed_types` parameter enforces strict MIME type whitelist
+- **Secure Filenames**: Files are renamed with UUID by default (`secure_filename=True`)
+- **Restrictive Permissions**: Saved files get `0o644` (rw-r--r--) permissions
+- **Security Warnings**: Logs warning if validation is disabled or no whitelist specified
+
+```python
+# Secure file upload with validation
+photo.save("uploads/", allowed_types=['image/jpeg', 'image/png'])
+```
+
+See [File Storage](16-file-storage.md#mime-type-validation) for complete documentation.
+
 ### Path Traversal
 The `secure_filename()` utility is used automatically during file uploads to remove directory separators and illegal characters, ensuring files cannot be saved outside the intended directory.
+
+**Enhanced in v0.1.6**:
+- Uses `pathlib.Path.resolve(strict=True)` for robust path resolution
+- Validates all parent directories for symlinks
+- Only accepts filename (basename) to prevent any path traversal
+- Returns `403 Forbidden` on escape attempts
 
 ### Open Redirects
 The `request.redirect()` method uses `is_safe_url()` to block redirects to external domains or malformed URLs that could be used for phishing.
@@ -142,16 +167,17 @@ A thorough security audit has been conducted on Asok framework v0.1.6. Here are 
 - **HMAC Signing**: Session IDs are signed to prevent tampering
 - **Secure RNG**: Uses `secrets` module for cryptographically secure random generation.
 
-### Adaptive Content Security Policy ✅
+### Zero-Eval Content Security Policy ✅
 
-- **Least Privilege Principle**: Asok implements an adaptive CSP that disables `'unsafe-eval'` by default in production.
-- **Context-Aware Activation**: It is automatically and surgically enabled ONLY for specific requests that utilize reactive directives (`asok-*`) or Live Components.
-- **Granular Control**: Developers can override this behavior globally via `CSP_UNSAFE_EVAL`.
+- **Least Privilege Principle**: Asok implements a Content Security Policy that completely disables `'unsafe-eval'` by default in production.
+- **Zero-Eval Reactive Architecture**: Thanks to server-side precompilation of reactive expressions and dynamic registry injection via cryptographically nonced script elements, the browser never uses `eval()` or `new Function()`.
+- **Granular Control**: Developers can still force `'unsafe-eval'` if they use third-party libraries requiring it via `CSP_UNSAFE_EVAL`.
 
 ### Command Injection Protection ✅
 
 - **No Runtime Execution**: No `os.system()`, `eval()`, or `exec()` in runtime code
-- **Subprocess Limited**: `subprocess` only used in CLI tools, not during request handling
+- **Subprocess Limited**: `subprocess` only used in CLI tools and secure background optimization, never directly exposed to request routing.
+- **Subprocess Confinement**: The image optimizer utility in `asok/utils/image.py` strictly restricts binary execution pathways inside the `.asok/bin` subdirectory using `os.path.commonpath` checks, preventing path traversal or execution of unauthorized binaries.
 - **No Dynamic Code**: No dynamic code execution from user input
 
 ### Log Injection Protection ✅

@@ -1,10 +1,11 @@
 # Asok Documentation
 
 > **Latest Version: v0.1.6** (Production-Ready)
+> - **MIME Type Validation**: Automatic file upload validation with magic bytes detection (50+ formats: images, audio, video, documents).
+> - **Enhanced Transitions**: 6 built-in animations (fade, slide, scale, fly, blur, bounce) with SvelteKit-quality easing curves.
+> - **Security Score 10/10**: Complete OWASP Top 10 protection with AST validation, rate limiting, timing-safe auth, and strict origin checks.
 > - **Deep UI Customization**: Unified `prefix__attribute` targeting for Forms, Tables, and ORM Fields.
 > - **Unified Exception Hierarchy**: Centralized error handling under `AsokException` with improved middleware trapping.
-> - **Security Audit Completed**: Robust protections against SQLi, XSS, CSRF (with strict Origin checks), and SSTI.
-> - **Fail-Fast Mail Service**: Synchronous email dispatch with `raise_on_error=True` support.
 > - **ORM Power User**: Automated attribute propagation from ORM Fields to UI components.
 
 Welcome to the official Asok Framework documentation. This guide is organized sequentially to take you from a total beginner to an advanced contributor.

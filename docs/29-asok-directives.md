@@ -2,9 +2,20 @@
 
 Asok includes native reactive directives for building interactive UIs without custom JavaScript. These directives are automatically processed by a lightweight, built-in runtime (~5KB).
 
-### State Management
+## Production Requirements & Zero-Eval Security
 
-#### `asok-state` — Component state
+Asok achieves **Zero-Eval Security** in production for all reactive directives:
+
+*   **No `'unsafe-eval'` Required**: Unlike other lightweight reactive frameworks, Asok does not require the `'unsafe-eval'` directive in your Content Security Policy (CSP).
+*   **Server-Side Precompilation**: All JavaScript expressions inside `asok-*` attributes are precompiled on the server into safe JavaScript functions.
+*   **Cryptographically Nonced Injection**: Precompiled functions are registered in the browser using standard `<script>` tags protected by a cryptographically strong request `nonce` (both during initial render and dynamic WebSocket updates).
+*   **Enterprise-Grade Protection**: Your production applications can enforce an exceptionally strict CSP that blocks `'unsafe-eval'` completely, keeping you fully protected against Cross-Site Scripting (XSS).
+
+If you are using third-party libraries that require `eval()`, you can still manually force it by adding `CSP_UNSAFE_EVAL=true` to your `.env` file. Otherwise, no configuration is required!
+
+## State Management
+
+### `asok-state` — Component state
 
 Define reactive local state for a component:
 
@@ -18,7 +29,7 @@ Define reactive local state for a component:
 
 State is scoped to the component and its children. Changes trigger automatic re-renders.
 
-#### `$store` — Global state
+### `$store` — Global state
 
 Access shared state across all components:
 
@@ -43,9 +54,9 @@ window.Asok.store.theme = 'dark';
 window.Asok.store.user = { name: 'Alice', role: 'admin' };
 ```
 
-### Display & Visibility
+## Display & Visibility
 
-#### `asok-show` / `asok-hide`
+### `asok-show` / `asok-hide`
 
 Toggle element visibility with `display: none`:
 
@@ -57,7 +68,7 @@ Toggle element visibility with `display: none`:
 </div>
 ```
 
-#### `asok-text`
+### `asok-text`
 
 Set text content reactively:
 
@@ -68,9 +79,9 @@ Set text content reactively:
 </div>
 ```
 
-### Class & Attribute Binding
+## Class & Attribute Binding
 
-#### `asok-class` — Dynamic classes
+### `asok-class` — Dynamic classes
 
 Three syntaxes for maximum flexibility:
 
@@ -99,7 +110,7 @@ Perfect for Tailwind CSS with long class lists:
 </div>
 ```
 
-#### `asok-bind:attr`
+### `asok-bind:attr`
 
 Bind any HTML attribute:
 
@@ -111,9 +122,9 @@ Bind any HTML attribute:
 </div>
 ```
 
-### Forms & Input
+## Forms & Input
 
-#### `asok-model`
+### `asok-model`
 
 Two-way data binding for form inputs:
 
@@ -133,9 +144,9 @@ Works with:
 - Select dropdowns (`<select>`)
 - Textareas (`<textarea>`)
 
-### Event Handling
+## Event Handling
 
-#### `asok-on:event`
+### `asok-on:event`
 
 Listen to any DOM event:
 
@@ -167,9 +178,9 @@ Event modifiers:
 <div asok-on:click.outside="open = false">...</div>
 ```
 
-### Conditional Rendering
+## Conditional Rendering
 
-#### `asok-if` / `asok-elif` / `asok-else`
+### `asok-if` / `asok-elif` / `asok-else`
 
 Conditional rendering (elements are removed from DOM):
 
@@ -187,9 +198,9 @@ Conditional rendering (elements are removed from DOM):
 </div>
 ```
 
-### Loops
+## Loops
 
-#### `asok-for`
+### `asok-for`
 
 Iterate over arrays:
 
@@ -197,15 +208,15 @@ Iterate over arrays:
 <div asok-state="{ items: ['Apple', 'Banana', 'Cherry'] }">
   <ul>
     <template asok-for="item in items">
-      <li asok-text="'{item} (index: {index})'"></li>
+      <li><span asok-text="item"></span> (index: <span asok-text="index"></span>)</li>
     </template>
   </ul>
 </div>
 ```
 
-### Data Fetching
+## Data Fetching
 
-#### `asok-fetch` — Declarative HTTP requests
+### `asok-fetch` — Declarative HTTP requests
 
 Fetch JSON data automatically:
 
@@ -219,7 +230,7 @@ Fetch JSON data automatically:
   <div asok-show="error" asok-text="'Error: ' + error"></div>
 
   <div asok-show="users">
-    <p asok-text="'{users.length} users loaded'"></p>
+    <p><span asok-text="users.length"></span> users loaded</p>
   </div>
 </div>
 
@@ -238,7 +249,7 @@ Fetch JSON data automatically:
 
 Automatically sets `loading` and `error` in the component state.
 
-#### `asok-fetch-async` — Custom async expressions
+### `asok-fetch-async` — Custom async expressions
 
 For more control, use async JavaScript expressions:
 
@@ -259,9 +270,9 @@ For more control, use async JavaScript expressions:
 </div>
 ```
 
-### Advanced
+## Advanced
 
-#### `asok-ref`
+### `asok-ref`
 
 Get a reference to an element:
 
@@ -272,19 +283,27 @@ Get a reference to an element:
 </div>
 ```
 
-#### `asok-init`
+### `asok-init`
 
 Run code when component initializes:
 
 ```html
-<div asok-state="{ time: null }"
-     asok-init="time = new Date().toLocaleTimeString()">
-  Initialized at: {{ time }}
-  <span asok-text="'Initialized at: ' + time"></span>
+<div
+  asok-state="{ time: null }"
+  asok-init="
+    time = new Date().toLocaleTimeString();
+
+    setInterval(() => {
+      time = new Date().toLocaleTimeString();
+    }, 1000);
+  "
+>
+  <p>Heure actuelle : <span asok-text="time"></span></p>
 </div>
+
 ```
 
-#### `asok-teleport`
+### `asok-teleport`
 
 Render content in a different location:
 
@@ -297,7 +316,7 @@ Render content in a different location:
 <div id="modal-container"></div>
 ```
 
-#### `asok-cloak`
+### `asok-cloak`
 
 Hide element until directives are initialized (prevents flash of unstyled content):
 
@@ -306,12 +325,12 @@ Hide element until directives are initialized (prevents flash of unstyled conten
   [asok-cloak] { display: none; }
 </style>
 
-<div asok-state="{ loaded: false }" asok-cloak>
-  <span asok-text="'{message}'"></span>
+<div asok-state="{ loaded: false, message: 'Hello' }" asok-cloak>
+  <span asok-text="message"></span>
 </div>
 ```
 
-### Special Variables
+## Special Variables
 
 Inside directive expressions, you have access to:
 
@@ -323,47 +342,41 @@ Inside directive expressions, you have access to:
 | `$refs` | Object of referenced elements |
 | `$nextTick(fn)` | Run function after next DOM update |
 
-### Example: Complete Todo App
+## Example: Complete Todo App
 
 ```html
-<div asok-state="{
-  todos: [],
-  newTodo: '',
-  filter: 'all'
-}">
-  <!-- Add todo -->
+<div class="todo-app" asok-state="{ todos: [], newTodo: '', filter: 'all' }">
+  <h1>📝 Asok Todo List</h1>
+
+  <!-- Add todo form -->
   <form asok-on:submit.prevent="todos.push({text: newTodo, done: false}); newTodo = ''">
-    <input asok-model="newTodo" placeholder="What needs to be done?">
+    <input type="text" asok-model="newTodo" placeholder="What needs to be done?" required>
     <button type="submit">Add</button>
   </form>
 
-  <!-- Filter -->
-  <div>
-    <button asok-on:click="filter = 'all'"
-            asok-class:active="filter === 'all'">All</button>
-    <button asok-on:click="filter = 'active'"
-            asok-class:active="filter === 'active'">Active</button>
-    <button asok-on:click="filter = 'done'"
-            asok-class:active="filter === 'done'">Done</button>
+  <!-- Filter buttons -->
+  <div style="margin: 20px 0;">
+    <button asok-on:click="filter = 'all'" asok-class:active="filter === 'all'">All</button>
+    <button asok-on:click="filter = 'active'" asok-class:active="filter === 'active'">Active</button>
+    <button asok-on:click="filter = 'done'" asok-class:active="filter === 'done'">Done</button>
   </div>
 
-  <!-- List -->
+  <!-- Todo list -->
   <ul>
-    <template asok-for="todo in todos.filter(t =>
-      filter === 'all' ||
-      (filter === 'active' && !t.done) ||
-      (filter === 'done' && t.done)
-    )">
+    <template asok-for="todo in todos.filter(t => filter === 'all' || (filter === 'active' && !t.done) || (filter === 'done' && t.done))">
       <li asok-class="{ 'line-through': todo.done }">
         <input type="checkbox" asok-model="todo.done">
-        <span asok-text="'{todo.text}'"></span>
-        <button asok-on:click="todos.splice(index, 1)">×</button>
+        <span asok-text="todo.text"></span>
+        <button class="delete-btn" asok-on:click="todos.splice(index, 1)">×</button>
       </li>
     </template>
   </ul>
 
   <!-- Stats -->
-  <p asok-text="'{todos.filter(t => !t.done).length} items left'"></p>
+  <div class="stats">
+    <p><span asok-text="todos.filter(t => !t.done).length"></span> items left</p>
+    <p><span asok-text="todos.length"></span> total items</p>
+  </div>
 </div>
 ```
 

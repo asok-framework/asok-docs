@@ -19,4 +19,4 @@ class Counter(Component):
         self.count = 0
 
     def render(self):
-        return self.html("counter.html")
+        return self.html("counter.asok")

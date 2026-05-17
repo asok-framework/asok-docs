@@ -140,7 +140,10 @@ Scaffold new components:
 Generate an optimized production distribution in the `dist/` folder:
 
 ```bash
-asok build
+asok build                     # Standard optimized build
+asok build --with-db           # Include current database
+asok build --output my-dist    # Custom output folder
+asok build --keep-source       # Keep .py files alongside .pyc
 ```
 
 The build process includes:

@@ -19,7 +19,18 @@ This command creates a new directory (default: `dist/`) containing a self-contai
 3.  **HTML Optimization**: Templates are minified to remove unnecessary whitespace and comments, significantly reducing TTFB.
 4.  **Bytecode Compilation**: All Python source files are compiled into `.pyc` files. By default, the original `.py` files are removed to create a "locked" distribution.
 5.  **Image Optimization**: If `IMAGE_OPTIMIZATION=true` is set, all project images are converted to WebP and originals are removed.
-6.  **Production Config**: A `.env.production` file is generated with `DEBUG=false` and security defaults.
+6.  **Migration Preservation**: The `src/migrations` directory is kept as source code (`.py`) to allow database synchronization in production.
+7.  **Production Config**: A `.env.production` file is generated with `DEBUG=false` and security defaults.
+
+## Production Migration Workflow
+
+For maximum safety, you should follow a strict migration lifecycle:
+
+1.  **Generate in Dev**: Run `asok make migration` on your development machine.
+2.  **Ship in Build**: Run `asok build` to include these migrations in your distribution.
+3.  **Apply in Prod**: Run `asok migrate` on your production server.
+
+> **Do not run `asok make migration` in production.** Your distribution should be considered immutable; migrations should be authored in development and deployed as part of your release.
 
 ## Command Options
 
@@ -27,6 +38,13 @@ This command creates a new directory (default: `dist/`) containing a self-contai
 | :--- | :--- | :--- |
 | `--output`, `-o` | Specify the output directory name. | `dist` |
 | `--keep-source` | Keep original `.py` files alongside `.pyc` files. | `False` |
+| `--with-db` | Include the current `db.sqlite3` in the build. | `False` |
+
+> [!TIP]
+> **Portfolio Tip**: Use `--with-db` if you want to ship a pre-populated database (e.g., for a portfolio) without running an admin or seeders in production.
+
+### Note on `.gitignore`
+During the build, Asok automatically **removes** your development `.gitignore` from the `dist/` folder. This prevents built assets (like `base.build.css`) from being accidentally ignored if you use Git-based deployment for your distribution.
 
 ## Deployment Workflow
 
@@ -37,7 +55,6 @@ cd dist
 asok preview
 ```
 
-> [!IMPORTANT]
 > The `asok preview` command in the build folder correctly identifies `wsgi.pyc` as the entry point. In production environments (Gunicorn/Uvicorn), you should point your WSGI server to `wsgi:app`.
 
 ## Performance Benefits

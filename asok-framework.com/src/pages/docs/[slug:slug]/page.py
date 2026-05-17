@@ -92,15 +92,32 @@ def render(request: Request):
         toc_tokens = []
 
     # Inject Single Page Application (SPA) attributes into internal links
-    # This ensures that clicking a link triggers a partial update instead of a full reload
-    def add_spa_attrs(match):
+    # External links are updated to open in a new tab
+    def add_link_attrs(match):
         opening_tag = match.group(0)
-        # Skip anchor links (internal section jumps)
-        if 'href="#' in opening_tag or 'class="heading-anchor"' in opening_tag:
+        
+        # Extract href to determine link type
+        href_match = re.search(r'href="([^"]*)"', opening_tag)
+        if not href_match:
             return opening_tag
+            
+        url = href_match.group(1)
+
+        # 1. Skip anchor links (internal section jumps)
+        if url.startswith('#') or 'class="heading-anchor"' in opening_tag:
+            return opening_tag
+            
+        # 2. Handle External Links
+        if url.startswith('http') and 'asok-framework.com' not in url:
+            # Open in new tab, no SPA attributes
+            if 'target=' not in opening_tag:
+                opening_tag = opening_tag.replace('<a ', '<a target="_blank" rel="noopener noreferrer" ')
+            return opening_tag
+
+        # 3. Handle Internal Links (SPA)
         return opening_tag.replace('<a ', '<a data-block="article_content,title,docs_menu" data-push-url data-trigger="click" ')
 
-    html_content = re.sub(r'<a\s[^>]*>', add_spa_attrs, html_content)
+    html_content = re.sub(r'<a\s[^>]*>', add_link_attrs, html_content)
     
     # Calculate Next and Previous page references for footer navigation
     menu = request.params.get("docs_menu", [])
@@ -141,7 +158,7 @@ def render(request: Request):
         }
     }, indent=2)
 
-    return request.stream("page.html",
+    return request.stream("page.asok",
         content=html_content,
         slug=slug,
         title=doc_title,

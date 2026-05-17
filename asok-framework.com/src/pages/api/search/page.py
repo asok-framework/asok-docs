@@ -7,7 +7,7 @@ from asok.templates import render_template_string
 from models.docs_index import DocsIndex
 
 _TPL_DIR = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(_TPL_DIR, "page.html"), "r") as _f:
+with open(os.path.join(_TPL_DIR, "page.asok"), "r") as _f:
     _RESULTS_TPL = _f.read()
 
 

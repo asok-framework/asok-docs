@@ -27,7 +27,9 @@ Before deploying, it is highly recommended to generate an optimized distribution
 asok build
 ```
 
-This command generates a `dist/` folder. You should deploy the **contents** of this folder to your production server instead of your raw source code. See the [Production Build Guide](44-production-build.md) for more details.
+This command generates a `dist/` folder. You should deploy the **contents** of this folder to your production server instead of your raw source code. 
+
+> **Migrations in Build**: By default, `asok build` preserves your `src/migrations/` directory as source code (`.py`) even if you don't use `--keep-source`. This allows you to run `asok migrate` on your production server to keep your database in sync.
 
 ## 3. Server Setup (Ubuntu/Debian)
 

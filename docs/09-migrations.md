@@ -90,12 +90,15 @@ asok migrate --fake
 
 This marks pending migrations as applied in the tracking table without actually running the SQL. It also works with `--rollback`.
 
-### Why Versioned Migrations?
-While Asok supports "Auto-Evolution" (automatic `ALTER TABLE` on app start), versioned migrations are recommended for:
-1. **Team Collaboration**: Everyone has the same database state.
-2. **Production Safety**: You can review the SQL before it runs.
-3. **Traceability**: You know exactly when and why a change was made.
-4. **Rollbacks**: Easy recovery from schema mistakes.
+## 7. Production Workflow (Best Practices)
+
+To ensure the stability and reliability of your production database, always follow this workflow:
+
+1.  **Generate in Dev**: Run `asok make migration` on your development machine.
+2.  **Ship in Build**: Run `asok build` to include these migrations in your distribution.
+3.  **Apply in Prod**: Run `asok migrate` on your production server.
+
+> **Do not run `asok make migration` in production.** Your distribution should be considered immutable; migrations should be authored in development and deployed as part of your release.
 
 > Always review generated migration files before applying them, especially in production environments.
 

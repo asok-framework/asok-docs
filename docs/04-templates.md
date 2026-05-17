@@ -2,6 +2,14 @@
 
 Asok features a powerful, built-in template engine with an elegant, intuitive syntax. Designed for performance and security, it requires no external dependencies.
 
+## Template Files
+
+Asok supports two file extensions for templates:
+- **`.html`**: Support for standard templates.
+- **`.asok`**: **Highly recommended** for templates using reactive directives. This extension triggers advanced syntax highlighting and code intelligence in the [Asok VS Code Extension](https://marketplace.visualstudio.com/items?itemName=AsokFramework.asok-vscode).
+
+The framework treats both extensions identically; you can use whichever you prefer for your pages, components, and partials.
+
 ## Variables
 
 ```html

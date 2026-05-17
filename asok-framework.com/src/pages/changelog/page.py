@@ -43,4 +43,4 @@ def render(request: Request):
     except:
         toc_tokens = []
 
-    return request.stream("page.html", content=html_content, toc_tokens=toc_tokens)
+    return request.stream("page.asok", content=html_content, toc_tokens=toc_tokens)
