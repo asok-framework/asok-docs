@@ -259,9 +259,9 @@
                                 class="footer-link">Routing</a></li>
                         <li><a href="/docs/07-orm" data-block="main,title" data-push-url class="footer-link">ORM</a>
                         </li>
-                        <li><a href="/docs/42-component-api" data-block="main,title" data-push-url
+                        <li><a href="/docs/48-component-api" data-block="main,title" data-push-url
                                 class="footer-link">Components</a></li>
-                        <li><a href="/docs/34-cli-reference" data-block="main,title" data-push-url
+                        <li><a href="/docs/38-cli-reference" data-block="main,title" data-push-url
                                 class="footer-link">CLI</a>
                         </li>
                     </ul>
