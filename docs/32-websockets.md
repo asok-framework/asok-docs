@@ -12,7 +12,7 @@ from asok import Asok, WebSocketServer
 app = Asok()
 ws = WebSocketServer(port=8001)
 
-# Handlers go here...
+# Handler registration goes here...
 
 ws.start()  # Spawns daemon threads; returns immediately
 ```

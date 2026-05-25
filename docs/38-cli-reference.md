@@ -99,7 +99,7 @@ asok shell
 # Asok Shell (Interactive Python)
 # ℹ️ All models and 'app' instance pre-imported.
 #
-# Asok shell — models loaded: User, Post, Comment
+# Output: Asok shell with models loaded (User, Post, Comment)
 # Python 3.12
 # >>> User.count()
 ```

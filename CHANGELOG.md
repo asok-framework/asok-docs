@@ -5,6 +5,182 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.1.7] - 2026-05-25
+
+### 🏗️ Major Release: Framework Refactoring & Architecture Overhaul
+
+This release focuses on **long-term maintainability** and **code organization**, transforming Asok from monolithic files into a clean, modular architecture. This major refactoring lays the foundation for future scalability while maintaining 100% backward compatibility.
+
+---
+
+### 🔧 Architecture & Refactoring
+
+**Complete Module Restructuring** - Monolithic files split into organized packages:
+
+#### Core Modules Refactored
+- **CLI Module** (`asok/cli/` ← `asok/cli.py`):
+  - `main.py` - Main CLI entry point
+  - `build.py` - Production build system
+  - `database.py` - Database management commands
+  - `deploy.py` - Deployment utilities
+  - `generators.py` - Code generation tools
+  - `runner.py` - Development server
+  - `scaffold.py` - Project scaffolding
+  - `server.py` - WSGI server management
+  - `style.py` - Styling utilities
+  - `tools.py` - CLI helper functions
+
+- **Core Engine** (`asok/core/` ← `asok/core.py`):
+  - `asok.py` - Main framework class
+  - `assets.py` - Asset management and compilation
+  - `errors.py` - Error handling
+  - `lifecycle.py` - Application lifecycle hooks
+  - `loaders.py` - Module and resource loaders
+  - `routing.py` - URL routing engine
+  - `security.py` - Security middleware
+  - `smart_streamer.py` - HTML streaming
+  - `static.py` - Static file serving
+  - `wsgi.py` - WSGI application interface
+
+- **Forms System** (`asok/forms/` ← `asok/forms.py`):
+  - `field.py` - Form field definitions
+  - `form.py` - Form class and validation
+  - `mixins.py` - Reusable form mixins
+  - `render.py` - Form rendering engine
+  - `utils.py` - Form utilities
+
+- **ORM Module** (`asok/orm/` ← `asok/orm.py`):
+  - `model.py` - Model base class
+  - `field.py` - Field types and validation
+  - `query.py` - Query builder
+  - `relation.py` - Relationship management
+  - `migrations.py` - Schema migrations
+  - `fileref.py` - File reference handling
+  - `list.py` - Model list utilities
+  - `proxy.py` - Lazy loading proxies
+  - `utils.py` - ORM utilities
+  - `exceptions.py` - ORM-specific exceptions
+
+- **Request Handling** (`asok/request/` ← `asok/request.py`):
+  - `request.py` - Request object
+  - `response.py` - Response handling
+  - `auth.py` - Authentication utilities
+  - `csrf.py` - CSRF protection
+  - `session.py` - Session management
+  - `template.py` - Template rendering context
+  - `upload.py` - File upload handling
+  - `metadata.py` - Request metadata
+  - `query_dict.py` - Query string parser
+  - `env.py` - Environment utilities
+  - `user_agent.py` - User agent parsing
+
+- **Template Engine** (`asok/templates/` ← `asok/templates.py`):
+  - `compiler.py` - Template compilation
+  - `engine.py` - Template rendering engine
+  - `preprocessor.py` - Template preprocessing
+  - `resolver.py` - Variable resolution
+  - `filters.py` - Template filters
+  - `tests.py` - Template test functions
+  - `loop.py` - Loop utilities
+  - `safestring.py` - HTML safety
+  - `sandbox.py` - Template sandboxing
+
+- **Validation System** (`asok/validation/` ← `asok/validation.py`):
+  - `validator.py` - Main validation engine
+  - `schema.py` - Schema definitions
+  - `rules.py` - Validation rules
+  - `registry.py` - Rule registration
+  - `interpolation.py` - Error message interpolation
+
+- **WebSocket Module** (`asok/ws/` ← `asok/ws.py`):
+  - `server.py` - WebSocket server
+  - `connection.py` - Connection management
+  - `protocol.py` - WebSocket protocol
+  - `live.py` - Live component updates
+
+#### Admin Panel Refactored
+- **Admin Architecture** (`asok/admin/`):
+  - `core.py` - Admin core functionality
+  - `models.py` - Admin model definitions
+  - `views/` - Organized view modules
+  - `forms.py` - Admin form handling
+  - `widgets.py` - Custom form widgets
+  - `utils.py` - Admin utilities
+  - `rbac.py` - Role-based access control
+  - `logs.py` - Admin logging
+  - `constants.py` - Admin constants
+
+---
+
+### 📦 Build & Distribution
+
+- **Asset Compilation**:
+  - Pre-compiled minified assets for admin, API, toolbar, and core
+  - Optimized MANIFEST.in for minimal package size
+  - Only minified files included in PyPI distribution
+  - Updated package metadata for Python 3.13 support
+
+- **Package Structure**:
+  - Cleaner import paths maintained via `__init__.py` exports
+  - 100% backward compatibility - all existing imports still work
+  - ~20,000 lines of code reorganized into logical modules
+
+---
+
+### 📝 Documentation
+
+- **README Improvements**:
+  - Updated framework overview and feature highlights
+  - Improved quick start examples
+  - Enhanced reactive component examples
+  - Better structured documentation links
+
+---
+
+### 🧪 Testing
+
+- **New Test Coverage**:
+  - `test_api_static_files.py` - API static file serving
+  - `test_csrf_rotation_ajax.py` - CSRF token rotation in AJAX
+  - `test_reactive_spa_fixes.py` - SPA navigation and reactivity
+  - `test_toolbar_injection.py` - Developer toolbar integration
+  - Enhanced file streaming tests
+
+---
+
+### 🔄 Migration Notes
+
+**Breaking Changes**: None - this is a purely internal refactoring.
+
+**What Changed**:
+- File structure reorganized from flat files to packages
+- All public APIs remain identical
+- Imports like `from asok import Asok, Model, Form` still work
+- Entry point `asok` CLI unchanged
+
+**Benefits for Developers**:
+- Easier to navigate codebase
+- Better IDE support for go-to-definition
+- Clearer separation of concerns
+- Simplified future contributions
+- Foundation for plugin system (future)
+
+---
+
+### Performance
+
+- No performance regression - refactoring is purely organizational
+- Slightly improved import times due to better module granularity
+- Asset compilation reduces runtime overhead
+
+---
+
+### Dependencies
+
+No new dependencies added. Framework remains **100% zero-dependency** with only Python 3.10+ standard library.
+
+---
+
 ## [0.1.6] - 2026-05-15
 
 ### 🎉 Major Release: Security 10/10 & Enhanced UX

@@ -20,13 +20,97 @@ def render(request: Request):
 
 Sessions are lazy-loaded on first access. Modified sessions are automatically saved when the response is sent.
 
+`SESSION_MAX_AGE` controls the browser cookie lifetime, while `SESSION_TTL` controls how long the server keeps session data before expiring it.
+
 ## Configuration
 
 | Key | Default | Description |
 |---|---|---|
 | `SESSION_BACKEND` | `"memory"` | `"memory"` or `"file"` |
 | `SESSION_PATH` | `".sessions"` | Directory for file backend |
+| `SESSION_MAX_AGE` | `2592000` | Browser cookie lifetime in seconds |
 | `SESSION_TTL` | `86400` | Session lifetime in seconds |
+
+## Cookie Security
+
+### SameSite attribute
+
+Asok uses two types of session cookies with different security policies:
+
+1. **Primary session cookie (`asok_sid`)**: Uses `SameSite=Strict` for maximum CSRF protection. This is the main session identifier used by the framework.
+
+2. **Public session cookie (`asok_session`)**: Uses `SameSite=Lax` by default, which is appropriate for public-facing applications where users may arrive via external links (email, social media, etc.).
+
+The `Lax` policy allows the cookie to be sent on top-level navigations (e.g., clicking a link from another site), while still preventing it from being sent in most cross-site scenarios. This provides a good balance between security and usability for public applications.
+
+#### Configure SameSite policy
+
+You can override the default `Lax` policy if needed:
+
+```python
+# In wsgi.py
+app.config["SESSION_SAMESITE"] = "Strict"  # or "Lax" (default) or "None"
+```
+
+Or via `.env`:
+
+```env
+SESSION_SAMESITE=Strict
+```
+
+> **Note**: Using `SameSite=Strict` provides stronger CSRF protection but may break user experience in scenarios where users arrive from external links (they will need to login again). `SameSite=Lax` (default) is the recommended setting for most public-facing applications.
+
+> **Warning**: Setting `SameSite=None` requires the `Secure` flag (HTTPS only) and should only be used in specific cross-site scenarios (e.g., embedded iframes).
+
+### Session Lifetime (TTL)
+
+The `SESSION_TTL` configuration controls how long session data persists on the server before expiring. The default value is **86400 seconds (24 hours)**.
+
+#### Production Security Recommendations
+
+For security-sensitive applications (financial, healthcare, admin panels), reduce the session lifetime to **1-2 hours** to minimize the window of opportunity for session hijacking attacks:
+
+```env
+# .env - Recommended for sensitive applications
+SESSION_TTL=3600   # 1 hour
+# or
+SESSION_TTL=7200   # 2 hours
+```
+
+Or in `wsgi.py`:
+
+```python
+app.config["SESSION_TTL"] = 3600  # 1 hour
+```
+
+#### Guidelines by Application Type
+
+| Application Type | Recommended TTL | Reasoning |
+|---|---|---|
+| **Public websites** | 86400s (24h) | Default - Good balance between UX and security |
+| **E-commerce** | 7200s (2h) | Moderate security, prevents abandoned cart session reuse |
+| **Banking/Finance** | 1800-3600s (30min-1h) | High security, short exposure window |
+| **Admin panels** | 3600s (1h) | High security, administrative privileges require shorter sessions |
+| **Healthcare (HIPAA)** | 900-1800s (15-30min) | Compliance requirement, PHI protection |
+
+> **Note**: `SESSION_TTL` differs from `SESSION_MAX_AGE`:
+> - `SESSION_TTL`: Server-side session data lifetime (how long data is stored)
+> - `SESSION_MAX_AGE`: Client-side cookie lifetime (how long browser keeps the cookie)
+>
+> For maximum security, set both to the same value. For better UX, you can set `SESSION_MAX_AGE` longer and implement "remember me" functionality separately.
+
+#### Auto-expiration
+
+Sessions automatically expire after `SESSION_TTL` seconds of inactivity. The timer resets on each request that modifies the session. Expired sessions are:
+- Removed from memory backend automatically
+- Cleaned up from file backend on next access attempt
+
+> **Production Tip**: For file-based sessions, implement a cron job to periodically clean up expired session files:
+
+```bash
+# Cleanup sessions older than SESSION_TTL
+find /run/asok/sessions -type f -mtime +1 -delete
+```
 
 ### File backend
 
@@ -73,6 +157,8 @@ SESSION_PATH=/run/asok/sessions
 ```
 
 > **Note**: If you are using SystemD `RuntimeDirectory=asok`, the path `/run/asok` is automatically managed and has the correct permissions for the web server user.
+
+Adjust `SESSION_MAX_AGE` and `SESSION_TTL` separately if you want the cookie lifetime and server-side lifetime to differ.
 
 For RHEL/AlmaLinux servers, see the [Deployment](39-deployment.md) guide for handling SELinux permissions.
 

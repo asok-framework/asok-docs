@@ -1,14 +1,14 @@
 # Asok Documentation
 
-> **Latest Version: v0.1.6** (Production-Ready)
-> - **MIME Type Validation**: Automatic file upload validation with magic bytes detection (50+ formats: images, audio, video, documents).
-> - **Enhanced Transitions**: 6 built-in animations (fade, slide, scale, fly, blur, bounce) with SvelteKit-quality easing curves.
-> - **Security Score 10/10**: Complete OWASP Top 10 protection with AST validation, rate limiting, timing-safe auth, and strict origin checks.
-> - **Deep UI Customization**: Unified `prefix__attribute` targeting for Forms, Tables, and ORM Fields.
-> - **Unified Exception Hierarchy**: Centralized error handling under `AsokException` with improved middleware trapping.
-> - **ORM Power User**: Automated attribute propagation from ORM Fields to UI components.
+> **Latest Version: v0.1.7**
+>
+> * **Module Restructuring**: Reorganized monolithic files into clean, modular packages (`asok/core/`, `asok/orm/`, `asok/cli/`, etc.) to improve maintainability with 100% backward compatibility.
+> * **Asset Compilation**: Pre-compiled minified assets for admin, API, and developer toolbar. Added official Python 3.13 support.
+> * **New Test Suites**: Enhanced coverage with tests for AJAX CSRF rotation, SPA reactivity, API static files, and developer toolbar.
 
-Welcome to the official Asok Framework documentation. This guide is organized sequentially to take you from a total beginner to an advanced contributor.
+
+
+Welcome to the Asok Framework documentation. This guide is organized sequentially to take you from a total beginner to an advanced contributor.
 
 ## 🟢 Foundations
 01. [Getting Started](01-getting-started.md) — Installation and your first app.
@@ -22,7 +22,7 @@ Welcome to the official Asok Framework documentation. This guide is organized se
 07. [ORM Basics](07-orm.md) — Models and basic Queries.
 08. [Advanced ORM](08-advanced-orm.md) — Indexes, Union/Intersect, Subqueries, and complex filtering.
 09. [Migrations](09-migrations.md) — Versioned database schema management.
-10. [Native Vector Search](10-vector-search.md) — AI-ready semantic search with SQLite.
+10. [Native Vector Search](10-vector-search.md) — Semantic search with SQLite.
 
 ## 📝 Forms & Data
 11. [Forms](11-forms.md) — Declarative HTML forms and model mapping.
@@ -43,11 +43,11 @@ Welcome to the official Asok Framework documentation. This guide is organized se
 
 ## ✨ Reactive UI
 24. [Reactive Components](24-reactive-components.md) — Stateful WebSocket-powered UI.
-25. [Transitions](25-transitions.md) — Svelte-like animations for your UI.
+25. [Transitions](25-transitions.md) — Animations for your UI.
 26. [HTML Streaming](26-html-streaming.md) — Optimizing TTFB with chunked delivery.
 27. [Scoped JS & CSS](27-scoped-assets.md) — Page-specific, isolated assets.
-28. [Intelligent Prefetching](28-intelligent-prefetching.md) — Instant-feel navigation.
-29. [Asok Directives](29-asok-directives.md) — Lightweight client-side reactivity.
+28. [Intelligent Prefetching](28-intelligent-prefetching.md) — Fast navigation.
+29. [Asok Directives](29-asok-directives.md) — Client-side reactivity helpers.
 
 ## 🛠️ Internal Tools
 30. [Admin Interface](30-admin-interface.md) — 2FA, Roles, Impersonation & Media.
@@ -66,12 +66,12 @@ Welcome to the official Asok Framework documentation. This guide is organized se
 41. [Logging](41-logging.md) — Request and application logs.
 42. [Optimization](42-optimization.md) — Minification, WebP, and performance tips.
 43. [Static Versioning](43-static-versioning.md) — Cache busting for static assets.
-44. [Production Build](44-production-build.md) — Packaging and obfuscation.
-45. [Data Tables](45-data-tables.md) — High-performance interactive tables.
+44. [Production Build](44-production-build.md) — Packaging and production distribution.
+45. [Data Tables](45-data-tables.md) — Interactive tables.
 46. [Developer Toolbar](46-developer-toolbar.md) — Real-time SQL profiler, AJAX/SPA support, and reactive state inspector.
 
 ## 📚 References & Advanced
 47. [Utilities](47-utilities.md) — Humanize, Minifiers, and Helpers.
-48. [Component API](48-component-api.md) — Full reference for Alive Components.
+48. [Component API](48-component-api.md) — Full reference for Live Components.
 49. [SEO Management](49-seo-management.md) — Titles, Meta tags, and Social sharing.
 50. [Tailwind CSS](50-tailwind-css.md) — Integrating and customizing Tailwind.

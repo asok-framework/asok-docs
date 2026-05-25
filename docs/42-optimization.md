@@ -1,9 +1,9 @@
 # Optimization
 
-Asok features a built-in optimization engine designed to make your application production-ready with zero external dependencies.
+Asok includes a built-in optimization engine for production builds.
 
-### Build-time Optimization
-While Asok can minify HTML at runtime during development, the recommended approach for production is to use the `asok build` command. This performs a one-shot minification of all your templates, allowing the production server to skip this processing entirely, saving CPU cycles on every request.
+### Build-Time Optimization
+While Asok can minify HTML at runtime during development, the recommended approach for production is to use the `asok build` command. This performs a one-shot minification of all your templates so the production server can skip this processing.
 
 ## 2. Image Optimization (WebP)
 
@@ -13,6 +13,13 @@ Asok can automatically convert your images to the modern **WebP** format.
 - **On-the-fly serving**: The `static()` helper automatically redirects to the `.webp` version if it exists.
 - **Auto-Conversion**: Images uploaded via the Admin are automatically optimized.
 - **Standalone Binary**: Uses Google's `cwebp` binary (downloaded into `.asok/bin/`).
+
+### Naming Convention & Rationale (Double Extension)
+
+When an image like `photo.png` is optimized, Asok saves it with a double extension (e.g., `photo.png.webp`). This specific design choice provides several key benefits:
+- **Collision Prevention**: If a directory contains both `avatar.png` and `avatar.jpg`, compiling both simply to `avatar.webp` would result in a naming conflict. Retaining the original extension (producing `avatar.png.webp` and `avatar.jpg.webp`) ensures each optimized file remains unique.
+- **Source Format Traceability**: The framework can instantly identify the original image format from the filename alone. This is essential for serving the original file as a fallback to older clients that do not support WebP, or when `IMAGE_KEEP_ORIGINAL=true` is enabled.
+- **Stateless Mapping**: It avoids the need for an external database or metadata mapping file to link an optimized asset back to its source file.
 
 ### Quick Start
 Enable it during project creation:

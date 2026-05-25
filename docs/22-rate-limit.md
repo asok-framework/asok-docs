@@ -2,7 +2,7 @@
 
 Protect your application from brute-force attacks and abuse with Asok's built-in rate limiter.
 
-## 1. Quick Start (Decorator)
+## Quick Start (Decorator)
 
 The easiest way to protect a specific page is using the `@rate_limit` decorator in your `page.py`:
 
@@ -15,7 +15,7 @@ def render(request):
     return "This page is protected!"
 ```
 
-## 2. Limit Syntax
+## Limit Syntax
 
 Asok supports human-readable strings for defining limits:
 
@@ -24,7 +24,7 @@ Asok supports human-readable strings for defining limits:
 - `"1000/h"`: 1000 requests per hour
 - `"5000/d"`: 5000 requests per day
 
-## 3. Global Middleware
+## Global Middleware
 
 To apply a global rate limit, create `src/middlewares/ratelimit.py`:
 

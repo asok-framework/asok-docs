@@ -2,7 +2,7 @@
 
 Run heavy functions in background threads so your pages respond instantly. Asok manages a thread pool automatically for you.
 
-## 1. Usage (Recommended)
+## Usage
 
 The recommended way to dispatch background tasks is via the `app.background()` method. This ensures the tasks are managed by the application's lifecycle and correctly shut down on exit.
 

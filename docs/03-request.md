@@ -6,7 +6,7 @@ Every `render()` function receives a `Request` object. It handles input, output,
 
 ```python
 def render(request: Request):
-    # URL: /search?q=hello
+    # URL example: /search?q=hello
     request.args['q']              # "hello"
     or request.args.get('q')
     # POST form data
@@ -53,7 +53,7 @@ def render(request: Request):
     request.geo['lat']             # 48.8566
     request.geo['lon']             # 2.3522
     
-    # Note: request.location is a legacy alias for request.geo
+    # Note: request.location is a legacy alias for request.geo; prefer request.geo in new code
 ```
 
 ## Rendering responses
@@ -86,6 +86,8 @@ def render(request: Request):
 ```
 
 This returns only the content inside `{% block main %}...{% endblock %}`, without the surrounding layout (`<html>`, `<head>`, `<nav>`, etc.).
+
+You may also see this described as a block swap or partial swap elsewhere in the docs.
 
 #### Native block swap (no HTMX needed)
 

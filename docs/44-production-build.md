@@ -1,23 +1,23 @@
 # Production Build System
 
-Asok provides a powerful, zero-dependency build pipeline designed to generate lean, optimized, and secure distributions for production environments. The `asok build` command handles everything from asset minification to bytecode compilation.
+Asok provides a build pipeline for generating optimized distributions for production environments. The `asok build` command handles asset minification and bytecode compilation.
 
 ## The `asok build` Command
 
-To generate a production-ready distribution of your project, run:
+To generate a production distribution of your project, run:
 
 ```bash
 asok build
 ```
 
-This command creates a new directory (default: `dist/`) containing a self-contained, optimized version of your project.
+This command creates a new directory (default: `dist/`) containing an optimized version of your project.
 
 ### What happens during the build?
 
 1.  **Cloning**: The project structure is replicated into the output directory, excluding development artifacts like `venv`, `.git`, or `.asok`.
 2.  **Asset Minification**: All JS and CSS files within `src/partials` are recursively minified using `esbuild`.
 3.  **HTML Optimization**: Templates are minified to remove unnecessary whitespace and comments, significantly reducing TTFB.
-4.  **Bytecode Compilation**: All Python source files are compiled into `.pyc` files. By default, the original `.py` files are removed to create a "locked" distribution.
+4.  **Bytecode Compilation**: All Python source files are compiled into `.pyc` files. By default, the original `.py` files are removed from the build output.
 5.  **Image Optimization**: If `IMAGE_OPTIMIZATION=true` is set, all project images are converted to WebP and originals are removed.
 6.  **Migration Preservation**: The `src/migrations` directory is kept as source code (`.py`) to allow database synchronization in production.
 7.  **Production Config**: A `.env.production` file is generated with `DEBUG=false` and security defaults.
@@ -64,7 +64,7 @@ By using `asok build`, you gain several performance advantages:
 - **Zero Runtime Minification**: In production mode (`DEBUG=false`), Asok detects that templates are already optimized and skips on-the-fly minification, saving CPU cycles.
 - **Fast Startup**: Bytecode compilation (`.pyc`) allows the Python interpreter to load modules faster.
 - **Optimized Assets**: Small JS/CSS bundles and WebP images ensure faster page loads and lower bandwidth usage.
-- **Security**: Shipping bytecode instead of source code adds a layer of obfuscation and prevents accidental source leaks.
+- **Security**: Shipping bytecode instead of source code reduces exposure of application source files.
 
 ## Requirements
 

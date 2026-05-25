@@ -37,8 +37,8 @@ app.config["SECURITY_HEADERS"] = {
 ### Zero-Eval Content Security Policy
 
 Asok directives (`asok-*`) and Live Components are built with **Zero-Eval Security**:
-- **No `'unsafe-eval'` required**: All expressions are precompiled on the server and safely registered on the client using cryptographically nonced `<script>` elements. Asok never invokes `eval()` or `new Function()` in the browser for directives or component state synchronization.
-- **Strict CSP out-of-the-box**: This enables your production applications to run with an exceptionally secure, strict Content Security Policy that completely bans `'unsafe-eval'`.
+- **No `'unsafe-eval'` required**: All expressions are precompiled on the server and safely registered on the client using cryptographically nonced `<script>` elements. Asok does not invoke `eval()` or `new Function()` in the browser for directives or component state synchronization.
+- **Strict CSP out-of-the-box**: This allows production applications to use a strict Content Security Policy that can omit `'unsafe-eval'` by default.
 - **Manual Control**: If you use external third-party JavaScript libraries that strictly require `eval()`, you can force `'unsafe-eval'` in the CSP via:
 
 ```python

@@ -2,7 +2,7 @@
 
 Asok includes a premium built-in developer toolbar that appears in your browser when `DEBUG = True`. 
 
-Designed with a modern, glassmorphic aesthetic, it allows you to monitor your application's state in real-time without ever leaving your UI.
+Designed with a modern, translucent aesthetic, it allows you to monitor your application's state in real-time without leaving your UI.
 
 ## 1. Real-time SQL Profiler
 The SQL Profiler is one of the most powerful tools in the console. It captures every query executed, even during complex workflows.

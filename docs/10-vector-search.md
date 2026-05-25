@@ -1,6 +1,6 @@
 # Native Vector Search
 
-Asok is one of the few frameworks to offer **native Vector Search** without any external dependencies or extensions. This makes it a perfect fit for building AI-powered features like semantic search, recommendation engines, and RAG (Retrieval-Augmented Generation) applications.
+Asok includes a built-in **native Vector Search** implementation that avoids heavy external dependencies or extensions where possible. This makes it a practical option for building AI-powered features like semantic search, recommendation engines, and RAG (Retrieval-Augmented Generation) applications.
 
 ## 1. Defining a Vector Field
 
@@ -58,7 +58,7 @@ Asok injects custom mathematics functions directly into the SQLite engine.
 - **Cosine Similarity**: Returns a score between -1 and 1 (where 1 is identical).
 - **Euclidean Distance**: Returns the geometric distance.
 
-Because these calculations happen inside the database engine, they are extremely efficient for thousands of rows, all while maintaining the "Zero Dependency" promise.
+Because these calculations happen inside the database engine, they are efficient for thousands of rows while keeping external dependency use minimal and optional.
 
 ---
 [← Previous: Database Migrations](09-migrations.md) | [Documentation](README.md) | [Next: Forms →](11-forms.md)

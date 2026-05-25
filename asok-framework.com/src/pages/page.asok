@@ -42,7 +42,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    0 Dependencies
+                    Production Ready
                 </span>
             </div>
 
@@ -70,10 +70,8 @@
 
             <!-- Subheading -->
             <p class="text-xl md:text-2xl max-w-4xl mb-14 font-medium leading-relaxed" style="color: var(--text-secondary)">
-                <strong style="color: var(--accent-primary)">Zero dependencies.</strong> Just Python's standard library.
-                Build AI-ready apps with <strong style="color: var(--accent-primary)">Vector Search</strong>, Enterprise APIs,
-                ORM, Auth, Reactive UI, and
-                native HTML streaming—all in <strong>~20,000 lines of code</strong>.
+                A Python framework focused on built-in tooling, security features, and the standard library.
+                Single-package installation. Fast startup. Minimal external dependencies.
             </p>
 
             <!-- CTAs -->
@@ -127,22 +125,22 @@
                                 style="color: var(--editor-tab-label)">Examples</div>
                             <button
                                 asok-on:click="activeTab = 'basic'"
-                                asok-bind:class="'p-3 rounded-xl text-xs cursor-pointer transition-all text-left ' + (activeTab === 'basic' ? 'active font-bold' : 'font-medium')"
-                                asok-bind:style="activeTab === 'basic' ? 'background: var(--editor-tab-active-bg); color: var(--accent-primary); border: 1px solid var(--editor-tab-active-border)' : 'color: var(--editor-tab-inactive); border: 1px solid transparent'">
+                                class="editor-sidebar-btn"
+                                asok-class="activeTab === 'basic' ? 'active' : ''">
                                 Hello World</button>
                             <button
                                 asok-on:click="activeTab = 'component'"
-                                asok-bind:class="'p-3 rounded-xl text-xs cursor-pointer transition-all text-left hover:bg-white/5 ' + (activeTab === 'component' ? 'active font-bold' : 'font-medium')"
-                                asok-bind:style="activeTab === 'component' ? 'background: var(--editor-tab-active-bg); color: var(--accent-primary); border: 1px solid var(--editor-tab-active-border)' : 'color: var(--editor-tab-inactive); border: 1px solid transparent'">Live
+                                class="editor-sidebar-btn"
+                                asok-class="activeTab === 'component' ? 'active' : ''">Live
                                 Component</button>
                             <button
                                 asok-on:click="activeTab = 'directives'"
-                                asok-bind:class="'p-3 rounded-xl text-xs cursor-pointer transition-all text-left hover:bg-white/5 ' + (activeTab === 'directives' ? 'active font-bold' : 'font-medium')"
-                                asok-bind:style="activeTab === 'directives' ? 'background: var(--editor-tab-active-bg); color: var(--accent-primary); border: 1px solid var(--editor-tab-active-border)' : 'color: var(--editor-tab-inactive); border: 1px solid transparent'">Reactive UI</button>
+                                class="editor-sidebar-btn"
+                                asok-class="activeTab === 'directives' ? 'active' : ''">Reactive UI</button>
                             <button
                                 asok-on:click="activeTab = 'api'"
-                                asok-bind:class="'p-3 rounded-xl text-xs cursor-pointer transition-all text-left hover:bg-white/5 ' + (activeTab === 'api' ? 'active font-bold' : 'font-medium')"
-                                asok-bind:style="activeTab === 'api' ? 'background: var(--editor-tab-active-bg); color: var(--accent-primary); border: 1px solid var(--editor-tab-active-border)' : 'color: var(--editor-tab-inactive); border: 1px solid transparent'">Secure
+                                class="editor-sidebar-btn"
+                                asok-class="activeTab === 'api' ? 'active' : ''">Secure
                                 API</button>
                         </div>
                         <!-- Code (stays dark for readability) -->
@@ -341,12 +339,12 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Zero Dependencies -->
+                <!-- Standard Library First -->
                 <div class="p-8 rounded-4xl home-glass-card home-glass-card-hover group">
                     <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">📦</div>
-                    <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Zero Dependencies</h3>
+                    <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Standard Library First</h3>
                     <p class="text-sm leading-relaxed" style="color: var(--text-secondary)">
-                        Only Python's standard library. No npm install, no pip freeze conflicts, no security vulnerabilities from third-party packages.
+                        Built on Python's standard library. No npm conflicts, reduced security vulnerabilities, and faster updates.
                     </p>
                 </div>
 
@@ -355,16 +353,16 @@
                     <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">👁️</div>
                     <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Code Transparency</h3>
                     <p class="text-sm leading-relaxed" style="color: var(--text-secondary)">
-                        ~20,000 lines of readable Python. You can understand every part of your stack without digging through layers of abstractions.
+                        Readable Python codebase. Understand your entire stack without digging through layers of abstractions.
                     </p>
                 </div>
 
-                <!-- Ship Faster -->
+                <!-- Batteries Included -->
                 <div class="p-8 rounded-4xl home-glass-card home-glass-card-hover group">
                     <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🚀</div>
-                    <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Ship Faster</h3>
+                    <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Batteries Included</h3>
                     <p class="text-sm leading-relaxed" style="color: var(--text-secondary)">
-                        Everything included: ORM, Auth, Admin, Forms, API docs. Stop wiring libraries together and start building your product.
+                        ORM, Auth, Admin, Forms, API documentation. Focus on your product, not library integration.
                     </p>
                 </div>
 
@@ -384,8 +382,7 @@
             <div class="mb-20">
                 <h2 class="text-5xl font-black mb-6 tracking-tight" style="color: var(--text-primary)">Built for
                     Performance.</h2>
-                <p class="text-xl max-w-2xl mx-auto" style="color: var(--text-secondary)">Experience the power of a
-                    framework designed with zero external dependencies.</p>
+                <p class="text-xl max-w-2xl mx-auto" style="color: var(--text-secondary)">Fast startup, optimized routing, and production-ready security features.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
@@ -398,8 +395,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Ultra-Fast</h3>
-                    <p class="leading-relaxed text-sm" style="color: var(--text-secondary)">Zero dependencies, optimized
-                        routing, and a compiled template engine for maximum performance.</p>
+                    <p class="leading-relaxed text-sm" style="color: var(--text-secondary)">Optimized routing, compiled template engine, and efficient request handling for maximum performance.</p>
                 </div>
 
                 <div class="p-8 rounded-4xl home-glass-card home-glass-card-hover group">
@@ -412,8 +408,7 @@
                     </div>
                     <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Secure by Default
                     </h3>
-                    <p class="leading-relaxed text-sm" style="color: var(--text-secondary)">CSRF protection, Jinja Sandbox,
-                        automatic sanitization, and security headers configured out of the box.</p>
+                    <p class="leading-relaxed text-sm" style="color: var(--text-secondary)">CSRF protection, template sandbox, automatic sanitization, and security headers configured out of the box.</p>
                 </div>
 
                 <div class="p-8 rounded-4xl home-glass-card home-glass-card-hover group">
@@ -426,14 +421,13 @@
                     </div>
                     <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Live Components
                     </h3>
-                    <p class="leading-relaxed text-sm" style="color: var(--text-secondary)">Build reactive and real-time
-                        synchronized interfaces via native WebSockets without writing any JS.</p>
+                    <p class="leading-relaxed text-sm" style="color: var(--text-secondary)">Build reactive, real-time interfaces via native WebSockets with server-side state synchronization.</p>
                 </div>
             </div>
         </section>
 
         <!-- Built For Section -->
-        <section class="mt-60 max-w-6xl mx-auto w-full px-6">
+        <section class="mt-60 max-w-7xl mx-auto w-full px-6">
             <div class="text-center mb-20">
                 <h2 class="text-5xl font-black mb-6 tracking-tight" style="color: var(--text-primary)">Built For Everyone
                 </h2>
@@ -496,7 +490,7 @@
         </section>
 
         <!-- Core Modules Section -->
-        <section class="mt-60 max-w-6xl mx-auto w-full px-6">
+        <section class="mt-60 max-w-7xl mx-auto w-full px-6">
             <div class="text-center mb-20">
                 <h2 class="text-5xl font-black mb-6 tracking-tight" style="color: var(--text-primary)">Built-in Superpowers
                 </h2>
@@ -731,7 +725,7 @@
         </section>
 
         <!-- Comparison Section: The "Zen" Difference -->
-        <section class="mt-60 max-w-6xl mx-auto w-full px-6">
+        <section class="mt-60 max-w-7xl mx-auto w-full px-6">
             <div class="text-center mb-20">
                 <h2 class="text-5xl font-black mb-6 tracking-tighter" style="color: var(--text-primary)">Compare. Conquer.
                 </h2>
@@ -1038,7 +1032,7 @@
         </section>
 
         <!-- Comparison Table -->
-        <section class="mt-60 max-w-6xl mx-auto px-6">
+        <section class="mt-60 max-w-7xl mx-auto px-6">
             <div class="text-center mb-20">
                 <h2 class="text-5xl font-black mb-6 tracking-tight" style="color: var(--text-primary)">
                     Feature <span class="text-shimmer">Overview</span>

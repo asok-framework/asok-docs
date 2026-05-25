@@ -1,10 +1,10 @@
 # Security Audit
 
-Asok is built with a **Security-First** philosophy. This document summarizes the security measures integrated into the framework to protect your applications from common web vulnerabilities (OWASP Top 10).
+Asok includes built-in security measures. This document summarizes the protections integrated into the framework to help protect applications from common web vulnerabilities.
 
 ## Executive Summary
 
-Asok implements modern security protections by default. In most cases, you don't need to write any security-specific code to be protected against SQL injection, XSS, CSRF, and more.
+Asok includes modern security protections by default. In most cases, you do not need to write security-specific code to get baseline protection against SQL injection, XSS, CSRF, and related issues.
 
 ---
 
@@ -114,9 +114,9 @@ Asok provides built-in support for **Nonces**. You can access a unique cryptogra
 
 ---
 
-## 7. Comprehensive Security Audit Results (v0.1.6)
+## 7. Security Audit Results (v0.1.6)
 
-A thorough security audit has been conducted on Asok framework v0.1.6. Here are the detailed findings:
+The following notes summarize the main security mechanisms currently implemented in Asok v0.1.6:
 
 ### SQL Injection Protection ✅
 
@@ -193,23 +193,23 @@ A thorough security audit has been conducted on Asok framework v0.1.6. Here are 
 - **URL Validation**: Validates URL format and scheme
 - **HTML Sanitization**: Optional bleach integration for HTML whitelisting
 
-### Security Score Summary
+### Security Summary
 
-| Vulnerability Class | Protection Status | Score |
-|---------------------|-------------------|-------|
-| SQL Injection | ✅ Fully Protected | 10/10 |
-| XSS | ✅ Fully Protected | 10/10 |
-| CSRF | ✅ Fully Protected | 10/10 |
-| Path Traversal | ✅ Fully Protected | 10/10 |
-| Authentication | ✅ Secure Implementation | 10/10 |
-| Session Management | ✅ Secure Implementation | 10/10 |
-| Command Injection | ✅ No Vulnerabilities | 10/10 |
-| Log Injection | ✅ Protected | 10/10 |
-| Input Validation | ✅ Comprehensive | 9/10 |
+| Vulnerability Class | Protection Status |
+|---------------------|-------------------|
+| SQL Injection | ✅ Protected |
+| XSS | ✅ Protected |
+| CSRF | ✅ Protected |
+| Path Traversal | ✅ Protected |
+| Authentication | ✅ Hardened |
+| Session Management | ✅ Hardened |
+| Command Injection | ✅ No direct runtime exposure |
+| Log Injection | ✅ Protected |
+| Input Validation | ✅ Comprehensive |
 
 ### Conclusion
 
-**Asok framework follows OWASP security best practices and has passed comprehensive security audit with no critical vulnerabilities identified.** The framework provides secure defaults that protect developers from common security pitfalls while remaining flexible for advanced use cases.
+Asok provides secure defaults and layered defenses against common web vulnerabilities. As with any framework, applications still need sensible configuration, safe templates, and careful access control.
 
 ---
 [← Previous: Rate Limit](22-rate-limit.md) | [Documentation](README.md) | [Next: Reactive Components →](24-reactive-components.md)

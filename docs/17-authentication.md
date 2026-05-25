@@ -111,14 +111,14 @@ In templates:
 {% endif %}
 ```
 
-## How it works
+## How It Works
 
 1. `request.authenticate()` finds the user by credentials and checks the password
 2. `request.login(user)` creates a signed session cookie (`asok_session`)
 3. On each request, Asok reads the cookie, verifies the signature, and loads the user
 4. `request.logout()` clears the session cookie
 
-Sessions are signed with HMAC-SHA256 using your `SECRET_KEY`. The session cookie is HttpOnly, SameSite=Lax, and Secure in production.
+Sessions are signed with HMAC-SHA256 using your `SECRET_KEY`. The session cookie is `HttpOnly`, `SameSite=Strict`, and `Secure` in production.
 
 ## Configuration
 

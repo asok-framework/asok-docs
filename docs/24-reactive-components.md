@@ -2,13 +2,13 @@
 
 Reactive (Live) Components allow you to build interactive UI elements that update in real-time without manual JavaScript. They are isomorphic: rendered on the server as HTML, but reactive via WebSockets.
 
-## Key Features
+## Overview
 
-*   **Zero JavaScript**: Write your logic in Python; Asok handles the WebSocket synchronization.
+*   **No Manual JavaScript**: Write your logic in Python; Asok handles the WebSocket synchronization.
 *   **Stateful**: Components maintain their internal properties (`self.count`, etc.) across interactions.
 *   **Persistent Sessions**: Components can leverage `self.session` to persist state across page reloads.
 *   **Isomorphic**: Initial render is SEO-friendly HTML; subsequent updates send only necessary HTML fragments.
-*   **Alive Engine**: Powered by the "Alive" JS runtime, providing smart focus preservation and automatic CSRF synchronization.
+*   **Alive Engine**: Powered by the "Alive" JS runtime, providing focus preservation and automatic CSRF synchronization.
 
 ## Basic Example
 

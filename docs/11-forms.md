@@ -255,7 +255,7 @@ Asok includes 15 additional advanced form components for modern UIs.
 
 ### Toggle Switch
 
-Modern alternative to checkboxes with a sliding switch UI.
+A modern **sliding switch** — not a checkbox. Renders an animated toggle that the user slides on or off.
 
 ```python
 form = Form({
@@ -263,7 +263,21 @@ form = Form({
 }, request)
 ```
 
-Returns `"1"` when checked, `"0"` when unchecked. Perfect for settings and preferences.
+Returns `"1"` when on, `"0"` when off. Perfect for settings, feature flags, and preferences.
+
+You can style the switch sub-elements with nested kwargs:
+
+```python
+form = Form({
+    'active': Form.toggle(
+        'Active',
+        slider__class='bg-indigo-500',       # The sliding circle color when ON
+        container__class='p-4 bg-gray-50 rounded-lg',  # Wrapper
+    ),
+}, request)
+```
+
+> **Consistency note**: `Form.toggle()` and `Field.Boolean(form_type="toggle")` produce **identical** switch components. When using `Form.from_model()`, always use `form_type="toggle"` on the model field so the two approaches remain consistent.
 
 ### OTP Input
 

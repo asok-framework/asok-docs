@@ -83,3 +83,38 @@
 .footer-link:hover {
     color: var(--accent-primary);
 }
+
+/* Editor Sidebar Tabs styling */
+.editor-sidebar-btn {
+    display: block;
+    width: 100%;
+    text-align: left !important;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    cursor: pointer !important;
+    font-weight: 500;
+    border: 1px solid transparent;
+    transition: all 0.2s ease-in-out;
+    color: var(--editor-tab-inactive);
+    background: transparent;
+}
+
+.editor-sidebar-btn:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Light mode overrides for hover */
+body.light-mode .editor-sidebar-btn:hover {
+    background: rgba(0, 0, 0, 0.03) !important;
+    color: var(--text-primary) !important;
+}
+
+.editor-sidebar-btn.active {
+    background: var(--editor-tab-active-bg) !important;
+    color: var(--accent-primary) !important;
+    border-color: var(--editor-tab-active-border) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+}

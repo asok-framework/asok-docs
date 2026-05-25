@@ -1,6 +1,6 @@
-# ORM Basics
+# ORM
 
-Asok has a built-in SQLite ORM. Zero config — `db.sqlite3` is created automatically. Tables are auto-created from your model definitions on app start.
+Asok has a built-in SQLite ORM. Minimal setup — `db.sqlite3` is created automatically. Tables are auto-created from your model definitions on app start.
 
 ## Define a model
 
@@ -32,7 +32,7 @@ class Category(Model):
 
 ## Schema Evolution & Migrations
 
-Asok provides two ways to manage your database schema: **Zero-Config Auto-Evolution** for rapid prototyping, and **Versioned Migrations** for professional projects.
+Asok provides two ways to manage your database schema: an **Auto-Evolution** mode for rapid prototyping, and **Versioned Migrations** for professional projects.
 
 ### 1. Versioned Migrations (Recommended)
 This is the professional way to manage schema changes. Asok detects changes in your models and generates migration files that you can review, version-control, and apply.
@@ -44,7 +44,7 @@ asok migrate
 
 See the [Migrations Documentation](09-migrations.md) for full details.
 
-### 2. Auto-Evolution (Zero-Config)
+### 2. Auto-Evolution (minimal setup)
 For small projects or rapid prototyping, Asok can automatically update your database on app start. When `Model.create_table()` is called, the framework inspects the table and automatically adds any missing columns.
 
 - **Safe**: It only adds columns (`ALTER TABLE ... ADD COLUMN`), never deletes or renames.
@@ -84,7 +84,7 @@ The first argument to a scope is always the current `Query` object.
 | `Field.Boolean()` | INTEGER | 0/1 — rendered as `<input type="checkbox">` |
 | `Field.Date()` | TEXT | ISO format |
 | `Field.DateTime()` | TEXT | ISO format |
-| `Field.Password()` | TEXT | Auto-hashed (PBKDF2-SHA256, 100k) |
+| `Field.Password()` | TEXT | Auto-hashed (PBKDF2-SHA256, 600k) |
 | `Field.ForeignKey(Model)` | INTEGER | FK to another model. Use `dropdown=True` for rich select in forms. |
 | `Field.Dropdown(choices)` | TEXT | Fixed choices — renders as a premium searchable dropdown. |
 | `Field.File(upload_to='dir')` | TEXT | Stores filename, files saved under uploads/ |

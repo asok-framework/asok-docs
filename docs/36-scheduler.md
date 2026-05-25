@@ -2,7 +2,7 @@
 
 Run recurring functions at regular intervals. Asok provides a built-in scheduler integrated into the application lifecycle.
 
-## 1. Quick Start
+## Quick Start
 
 The recommended way to schedule tasks is via the `app.schedule()` method in your `wsgi.py`. This ensures tasks are automatically stopped when the server shuts down.
 

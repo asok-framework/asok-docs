@@ -1,6 +1,6 @@
 # Caching
 
-Asok comes with a lightning-fast, zero-dependency caching system built natively into the framework. It can drastically speed up your application by caching HTTP responses, database queries, and even template fragments.
+Asok comes with a built-in caching system. It can speed up your application by caching HTTP responses, database queries, and template fragments.
 
 ## 1. Template Fragment Caching
 
@@ -19,7 +19,7 @@ The template engine supports the `{% cache "key" ttl %}` tag to cache computatio
 
 ## 2. Caching HTTP Pages
 
-The easiest way to cache a full page is to use the `@cache_page` decorator. It will automatically intercept `GET` requests and serve the cached response without executing your view logic.
+The easiest way to cache a full page is to use the `@cache_page` decorator. It intercepts `GET` requests and serves the cached response without executing your view logic.
 
 ```python
 from asok.cache import cache_page

@@ -1,6 +1,6 @@
 # Configurations
 
-Asok is designed to be "zero-config" by default, but it provides a comprehensive set of options that can be tuned via environment variables or directly in your `wsgi.py` file.
+Asok is designed to require minimal configuration for common use-cases, but it provides a comprehensive set of options that can be tuned via environment variables or directly in your `wsgi.py` file.
 
 ## 1. Core Settings
 
@@ -49,7 +49,7 @@ Asok is designed to be "zero-config" by default, but it provides a comprehensive
 | `CSRF` | bool | `True` | Enables global Cross-Site Request Forgery protection for forms. |
 | `CORS_ORIGINS` | list/str | `None` | Allowed origins for cross-domain requests. Use `"*"` for all. |
 | `SECURITY_HEADERS` | bool/dict | `True` | Enables default security headers (CSP, HSTS, etc.). Can be customized with a dict. |
-| `CSP_UNSAFE_EVAL` | bool | `False` | Optional. Forces `'unsafe-eval'` in CSP script-src. **No longer required for Asok directives or Live Components in production** (thanks to server-side precompilation & cryptographically nonced dynamic registry script injection). |
+| `CSP_UNSAFE_EVAL` | bool | `False` | Optional. Forces `'unsafe-eval'` in CSP script-src. Asok directives and Live Components do not require it by default in production. |
 | `ETAG` | bool | `True` | Enables automatic conditional caching headers for responses. |
 
 ## 5. Performance & Optimization

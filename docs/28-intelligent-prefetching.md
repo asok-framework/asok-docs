@@ -1,6 +1,6 @@
 # Intelligent Prefetching
 
-Asok's Reactive Engine includes an intelligent prefetching system that makes navigation feel nearly instant. It works by background-loading HTML fragments before the user even clicks a link.
+Asok's Reactive Engine includes a prefetching system that can reduce navigation latency by background-loading HTML fragments before the user clicks a link.
 
 ## How it works
 
@@ -16,7 +16,7 @@ Asok's Reactive Engine includes an intelligent prefetching system that makes nav
 <a href="/profile" data-block="main" data-push-url>View Profile</a>
 ```
 
-You don't need to do anything to enable it — it's active by default for all `data-block` links.
+You do not need to configure it separately — it is active by default for all `data-block` links.
 
 ## Optimization Details
 

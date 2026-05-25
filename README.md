@@ -14,7 +14,7 @@
 
 Welcome to the official repository for the **Asok Framework** documentation and website. This repository hosts the source code for [asok-framework.com](https://asok-framework.com) and the complete set of documentation files.
 
-**Asok** is a powerful and elegant "zero-dependency" Python micro-framework designed for speed, simplicity, and professional web development.
+**Asok** is a Python-first micro-framework with minimal external dependencies, designed for speed, simplicity, and professional web development.
 
 > **💡 Note for VS Code Users:** For the best developer experience, we highly recommend installing the official **[Asok VS Code Extension](https://marketplace.visualstudio.com/items?itemName=AsokFramework.asok-vscode)**. It provides native autocompletion, reactive snippets, and integrated CLI commands directly in your editor.
 

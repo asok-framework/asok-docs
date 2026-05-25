@@ -6,7 +6,7 @@ Asok provides tools for building robust JSON APIs with consistent response forma
 
 ### `request.api(data, status=200)`
 
-Returns a standardized success response.
+Return a standardized success response.
 
 ```python
 from asok import Request

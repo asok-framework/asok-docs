@@ -1,10 +1,10 @@
 # Deployment
 
-Asok is designed to be extremely easy to deploy. The framework focuses on a performance-tuned stack using **Gunicorn**, **Nginx**, and **SystemD**.
+Asok is designed to be straightforward to deploy. The framework focuses on a documented production stack using **Gunicorn**, **Nginx**, and **SystemD**.
 
-## 1. Zero-Config Deployment
+## 1. Automated Deployment
 
-The `asok deploy` command automates the generation of a professional production stack.
+The `asok deploy` command automates the generation of a production stack.
 
 ### Workflow
 
@@ -21,7 +21,7 @@ Asok will generate a `deployment/` directory containing:
 
 ## 2. Build Pipeline (Recommended)
 
-Before deploying, it is highly recommended to generate an optimized distribution of your project using the Asok build engine. This will minify your assets, compile your Python source to bytecode, and optimize your images.
+Before deploying, it is recommended to generate an optimized distribution of your project using the Asok build engine. This will minify your assets, compile your Python source to bytecode, and optimize images when the relevant features are enabled.
 
 ```bash
 asok build
@@ -92,8 +92,8 @@ Deploying on RHEL-based systems like **AlmaLinux** or **Rocky Linux** requires h
 ### The Problem: init_t vs httpd_sys_rw_content_t
 By default, Gunicorn runs in the `init_t` domain. Even if you set your folder to `httpd_sys_rw_content_t`, the system may block the write operations.
 
-### Recommended Solution: SystemD RuntimeDirectory
-Instead of fighting with manual SELinux labels, use the **native SystemD way** to handle ephemeral state. This automatically grants correct permissions and SELinux contexts.
+### RuntimeDirectory Solution
+Instead of using manual SELinux labels, use the SystemD `RuntimeDirectory` setting to handle ephemeral state. This grants the required permissions and SELinux contexts.
 
 1. **Update your `.service` file**:
 ```ini

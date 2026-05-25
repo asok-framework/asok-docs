@@ -33,8 +33,8 @@ The watcher and one-shot builder are detected automatically by checking for `@im
 
 ```bash
 asok tailwind --install
-#   Downloading Tailwind v4.2.2 (macos-arm64)...
-#   Tailwind v4.2.2 installed
+#   Downloading Tailwind v4.3.0 (macos-arm64)...
+#   Tailwind v4.3.0 installed
 ```
 
 The binary is pinned to a specific version and stored in `.asok/bin/tailwindcss`. Re-running this only downloads if the version is missing or outdated.
@@ -90,7 +90,7 @@ See [Forms](11-forms.md#nested-attribute-targeting) for more details.
 
 ## Notes
 
-- The pinned version lives in `asok/cli.py` as `TAILWIND_VERSION` (currently `4.2.2`).
+- The pinned version lives in `asok/cli.py` as `TAILWIND_VERSION` (currently `4.3.0`).
 - The binary is **not** committed to git — `.asok/` should be in your `.gitignore` (the scaffold does this automatically).
 - The watcher logs are prefixed with `[tailwind]` so you can tell them apart from server logs.
 - The admin module does **not** use Tailwind — it ships with self-contained CSS so it works regardless of whether your project uses Tailwind.

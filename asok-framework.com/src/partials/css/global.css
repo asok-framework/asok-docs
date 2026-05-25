@@ -46,8 +46,8 @@
     --editor-body-bg: rgba(2, 6, 23, 0.6);
     --editor-body-color: #f8f8f2;
     --editor-tab-label: #475569;
-    --editor-tab-active-bg: rgba(99, 102, 241, 0.1);
-    --editor-tab-active-border: rgba(99, 102, 241, 0.2);
+    --editor-tab-active-bg: rgba(99, 102, 241, 0.15);
+    --editor-tab-active-border: rgba(99, 102, 241, 0.3);
     --editor-tab-inactive: #64748b;
     --editor-line-num: #334155;
     --comparison-header-bg: #0f172a;
@@ -115,8 +115,8 @@ body.light-mode {
     --editor-body-bg: #1e293b;
     --editor-body-color: #e2e8f0;
     --editor-tab-label: #475569;
-    --editor-tab-active-bg: rgba(79, 70, 229, 0.1);
-    --editor-tab-active-border: rgba(79, 70, 229, 0.2);
+    --editor-tab-active-bg: rgba(79, 70, 229, 0.15);
+    --editor-tab-active-border: rgba(79, 70, 229, 0.3);
     --editor-tab-inactive: #64748b;
     --editor-line-num: #64748b;
     --comparison-header-bg: #ffffff;
@@ -462,4 +462,38 @@ aside::-webkit-scrollbar-thumb:hover {
 }
 .pg-hidden {
     display: none;
+}
+
+/* Editor Sidebar Tabs styling (global fallback for playground) */
+.editor-sidebar-btn {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 0.75rem !important;
+    font-size: 0.75rem !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
+    border: 1px solid transparent !important;
+    transition: all 0.2s ease-in-out !important;
+    color: var(--editor-tab-inactive) !important;
+    background: transparent !important;
+}
+
+.editor-sidebar-btn:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: var(--text-primary) !important;
+}
+
+body.light-mode .editor-sidebar-btn:hover {
+    background: rgba(0, 0, 0, 0.03) !important;
+    color: var(--text-primary) !important;
+}
+
+.editor-sidebar-btn.active {
+    background: var(--editor-tab-active-bg) !important;
+    color: var(--accent-primary) !important;
+    border-color: var(--editor-tab-active-border) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08) !important;
 }

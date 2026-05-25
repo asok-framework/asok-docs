@@ -1,6 +1,6 @@
 # Advanced Authentication
 
-Asok provides built-in, zero-dependency tools for modern authentication methods like Magic Links and OAuth2 (Google, GitHub, etc.).
+Asok provides built-in tools for modern authentication methods like Magic Links and OAuth2 (Google, GitHub, etc.) without adding extra framework-specific packages.
 
 ## 1. Magic Links (Passwordless)
 
@@ -60,10 +60,12 @@ def get(request: Request):
         provider_name="google",
         client_id="YOUR_CLIENT_ID",
         redirect_uri="https://myapp.com/auth/google/callback",
-        state="optional-random-state"
+        state=request.session.get("oauth_state")
     )
     return request.redirect(auth_url)
 ```
+
+Store the generated `state` value server-side and verify it in the callback before exchanging the authorization code.
 
 #### Step 2: Handle Callback
 ```python
@@ -150,15 +152,24 @@ if request.user.can("posts.edit"):
 Asok supports TOTP-based 2FA (compatible with Google Authenticator, Authy, etc.).
 
 ### Enabling 2FA
-The built-in Admin interface provides a complete flow for enabling and verifying 2FA. See the [Admin 2FA documentation](26-admin-interface.md#%F0%9F%94%90-two-factor-authentication-2fa) for details.
+The built-in Admin interface provides a complete flow for enabling and verifying 2FA. See the [Admin 2FA documentation](30-admin-interface.md#%F0%9F%94%90-two-factor-authentication-2fa) for details.
 
 ### Manual Implementation
 If you are building your own 2FA flow, you can use the underlying TOTP helpers (currently part of the `asok.admin` module).
+
+Recommended flow:
+
+1. Generate a TOTP secret for the user and store it server-side.
+2. Display a QR code or provisioning URI once, during enrollment.
+3. Require a successful code entry before marking `totp_enabled = True`.
+4. Generate recovery codes and store only hashed versions.
+5. Rate-limit verification attempts to reduce brute-force risk.
 
 ## 6. Security Notes
 - **SECRET_KEY**: All tokens are signed using the `SECRET_KEY` configured in your `.env`. Never share this key.
 - **Expiration**: Magic Links expire in 1 hour by default.
 - **HTTPS**: OAuth2 requires HTTPS for redirect URIs in production.
+- **State**: Always generate and verify the OAuth `state` value to prevent CSRF.
 
 ---
 [← Previous: Authentication](17-authentication.md) | [Documentation](README.md) | [Next: Sessions →](19-sessions.md)
