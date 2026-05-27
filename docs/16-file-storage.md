@@ -300,6 +300,7 @@ def render(request: Request):
 
 ## Configuration
 
+### 1. Upload Size Limits
 You can limit the maximum upload size globally in your `Asok` app configuration:
 
 ```python
@@ -309,6 +310,40 @@ app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16 MB limit
 ```
 
 Default is **10 MB**. If a request exceeds this limit, Asok returns a `413 Payload Too Large` error.
+
+### 2. Storage Backends (S3 Cloud Storage)
+
+Asok supports abstract storage backends. By default, it uses `local` storage. You can switch to `s3` for storing uploads in Amazon S3 or S3-compatible endpoints (like MinIO or DigitalOcean Spaces).
+
+To use S3, install the optional extra:
+```bash
+pip install "asok[s3]"
+```
+
+Configure your `.env` file:
+```env
+# Enable S3 backend (default: local)
+ASOK_STORAGE_BACKEND=s3
+
+# S3 Credentials
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+
+# S3 Bucket configuration
+ASOK_S3_BUCKET=your-bucket-name
+ASOK_S3_REGION=us-east-1
+
+# Optional: Endpoint for S3-compatible storage (e.g. MinIO)
+# ASOK_S3_ENDPOINT=http://localhost:9000
+
+# Optional: Custom CDN Domain for URLs
+# ASOK_S3_CUSTOM_DOMAIN=cdn.myapp.com
+```
+
+When `s3` is enabled:
+*   `photo.save()` automatically uploads to S3 and returns the public S3 URL of the file.
+*   Your database (`Field.File` fields) continues to store the raw filename, maintaining storage independence.
+*   When retrieving the field, the `FileRef` string automatically resolves to the S3 cloud URL.
 
 ---
 [← Previous: Serialization (Schema)](15-serialization.md) | [Documentation](README.md) | [Next: Authentication →](17-authentication.md)

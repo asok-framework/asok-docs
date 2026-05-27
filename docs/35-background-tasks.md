@@ -22,18 +22,35 @@ def post(request):
     request.redirect('/success')
 ```
 
-## 2. Configuration
+## 2. Configuration & Backends
 
-You can control the size of the background worker pool via `app.config`.
+By default, Asok uses a local in-memory thread pool for background tasks (`ASOK_QUEUE_BACKEND=local`).
+
+For production environments, you should switch to the **Redis distributed task queue** backend. This persists tasks in Redis and executes them in separate worker processes, protecting against data loss on web server crashes.
+
+### Configuration Options
 
 | Key | Default | Description |
 |---|---|---|
-| `BG_WORKERS` | `10` | Maximum number of concurrent background threads. |
+| `ASOK_QUEUE_BACKEND` | `"local"` | Queue backend: `"local"` (thread pool) or `"redis"`. |
+| `REDIS_URL` | `None` | Redis connection URL (e.g. `redis://localhost:6379/0`). Also accepts `ASOK_REDIS_URL`. |
+| `BG_WORKERS` | `10` | Max threads in local pool (only applies when backend is `local`). |
 
-Example in `.env`:
+Example in `.env` for production:
 ```env
-BG_WORKERS=20
+ASOK_QUEUE_BACKEND=redis
+REDIS_URL=redis://localhost:6379/0
 ```
+
+### Running the Worker (Redis Mode Only)
+
+When using the `redis` backend, tasks are sent to Redis. You must start one or more standalone worker processes to execute them:
+
+```bash
+asok worker
+```
+
+*Note: Only module-level functions can be queued on Redis. Lambda functions or nested (local) functions cannot be serialized and will raise a `ValueError`.*
 
 ## 3. Standalone Usage
 

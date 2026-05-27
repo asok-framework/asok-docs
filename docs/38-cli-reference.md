@@ -164,5 +164,15 @@ asok preview
 # ℹ️ No auto-reload — restart manually after changes
 ```
 
+### `asok worker`
+
+Start the background task queue worker process (only when using the `redis` background queue backend):
+
+```bash
+asok worker
+#
+# [*] Asok Worker started. Listening to Redis queue 'asok:queue' on redis://localhost:6379/0...
+```
+
 ---
 [← Previous: Internationalization (i18n)](37-internationalization.md) | [Documentation](README.md) | [Next: Deployment →](39-deployment.md)
