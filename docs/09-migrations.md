@@ -51,6 +51,14 @@ To apply all pending migrations:
 asok migrate
 ```
 
+### Specifying a Database
+
+You can apply migrations to a specific database backend by using the `--database` option (accepts a configured database name or a DSN connection string):
+
+```bash
+asok migrate --database=read_replica
+```
+
 Asok tracks applied migrations in a special `_asok_migrations` table. Migrations are executed in **batches**. All migrations run in a single `asok migrate` call belong to the same batch.
 
 ## 4. Checking Status

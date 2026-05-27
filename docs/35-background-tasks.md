@@ -149,5 +149,28 @@ Mail.send(to='user@example.com', subject='Hello', body='World')
 - **Validation** — must happen before responding
 - **Anything the user expects to see immediately** — e.g. updating a counter shown on the page
 
+## Context propagation: `current_request` in background tasks
+
+When you dispatch a task with `background()` from inside a view, Asok **automatically copies the request context** into the background thread. This means `current_request` works transparently inside your task functions — no extra setup needed.
+
+```python
+from asok import Request, background, current_request
+
+def send_confirmation_email():
+    # current_request is available even though this runs in a background thread
+    user = current_request.user
+    lang = current_request.lang
+    subject = "Welcome!" if lang == "en" else "Bienvenue !"
+    Mail.send(to=user.email, subject=subject, body="...")
+
+def post(request: Request):
+    # Register user, then send email in background
+    User.create(email=request.form['email'])
+    background(send_confirmation_email)     # context is copied automatically
+    request.redirect('/success')
+```
+
+> **Important**: context propagation only works for tasks dispatched **during a request** (inside a `render()` / `post()` view). Tasks triggered outside a request (e.g., from a scheduled cron job) do not have a request context, and accessing `current_request` will raise a `RuntimeError`.
+
 ---
 [← Previous: Caching](34-caching.md) | [Documentation](README.md) | [Next: Scheduled Tasks →](36-scheduler.md)

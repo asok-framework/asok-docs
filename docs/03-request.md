@@ -327,5 +327,52 @@ from asok import ValidationError
 raise ValidationError("Invalid input", errors={"email": "Invalid format"})
 ```
 
+## Global Request Proxy: `current_request`
+
+In a view function, you always have the `request` parameter at hand. But when you call helpers, services, or utility functions from within a request, you would normally have to pass `request` as a parameter through every level of the call stack.
+
+`current_request` is a **thread-safe, context-local proxy** that always points to the active `Request` for the current HTTP or WebSocket context — without requiring you to pass anything manually.
+
+```python
+from asok import current_request
+
+# --- A service, completely decoupled from your views ---
+def get_personalized_greeting():
+    user = current_request.user
+    lang = current_request.lang
+    if user:
+        return f"Hello, {user.name}!" if lang == "en" else f"Bonjour, {user.name} !"
+    return "Hello, guest!"
+
+# --- Your view stays clean ---
+def render(request: Request):
+    greeting = get_personalized_greeting()   # no request parameter needed
+    return request.html("page.html", greeting=greeting)
+```
+
+### When to use `current_request` vs `request`
+
+| Use case | Recommended approach |
+|---|---|
+| Inside a `render()` / `post()` view | Use the `request` parameter directly |
+| In a helper, service, or utility function | Use `current_request` |
+| In a `Component.render()` method | Use `current_request` |
+| In a background task launched from a view | Use `current_request` (context is propagated automatically) |
+
+### Safety: outside a request context
+
+Accessing `current_request` outside of an active HTTP or WebSocket context raises a clear `RuntimeError`:
+
+```python
+from asok import current_request
+
+# At module level, during startup, or in an unmanaged thread:
+print(current_request.user)  # RuntimeError: Working outside of request context
+```
+
+This prevents silent failures — you always know immediately if you access the proxy at the wrong moment.
+
+> **Note**: `current_request` is the **only** global request proxy in Asok. There is no `request` alias.
+
 ---
 [← Previous: Routing](02-routing.md) | [Documentation](README.md) | [Next: Templates →](04-templates.md)

@@ -278,5 +278,175 @@ def get(request: Request):
         return request.api_error("User not found", status=404)
 ```
 
+## 5. Nested Eager Loading
+
+Optimize your database queries and avoid $N+1$ problems by eager-loading deeply nested relationships using dot notation:
+
+```python
+# Fetches all companies, their departments, and all employees in those departments in only 3 queries
+companies = Company.query().with_("departments.employees").get()
+
+for company in companies:
+    print(f"Company: {company.name}")
+    for dept in company.departments:
+        print(f"  Department: {dept.name}")
+        for emp in dept.employees:
+            print(f"    Employee: {emp.name}")
+```
+
+## 6. Polymorphic Relationships
+
+Polymorphic relationships allow a model to belong to more than one other model on a single association.
+
+### MorphTo
+
+Define a `MorphTo` relationship on the child model. The database table requires a string column to store the parent model type (e.g. `commentable_type`) and an integer column to store the parent ID (e.g. `commentable_id`).
+
+```python
+from asok import Model, Field, Relation
+
+class Comment(Model):
+    body = Field.Text()
+    commentable_id = Field.Integer()
+    commentable_type = Field.String()
+
+    commentable = Relation.MorphTo()
+```
+
+### MorphMany
+
+Define a `MorphMany` relationship on any parent model, specifying the target model name and the name of the relation definition on the target.
+
+```python
+class Article(Model):
+    title = Field.String()
+    comments = Relation.MorphMany("Comment", "commentable")
+
+class Video(Model):
+    title = Field.String()
+    comments = Relation.MorphMany("Comment", "commentable")
+```
+
+### Querying and Eager Loading Polymorphic Relations
+
+Asok supports dynamic and polymorphic eager loading to retrieve relationships in batches:
+
+```python
+# Eager load comments and their polymorphic commentables
+comments = Comment.query().with_("commentable").get()
+for c in comments:
+    # Resolves dynamically to either Article or Video instance
+    parent = c.commentable 
+    print(f"Comment '{c.body}' on {parent.__class__.__name__}: {getattr(parent, 'title', '')}")
+```
+
+## 7. Generic Global Scopes
+
+Global scopes allow you to add query constraints automatically to all queries for a given model.
+
+### Defining a Global Scope
+
+Specify global scopes using a `_global_scopes` dictionary mapping names to lambda query builders:
+
+```python
+class Product(Model):
+    name = Field.String()
+    active = Field.Integer(default=1)
+
+    _global_scopes = {
+        "active_only": lambda q: q.where("active", 1)
+    }
+
+# This automatically filters products where active = 1
+active_products = Product.query().get()
+```
+
+### Removing Global Scopes
+
+Disable specific or all global scopes when making queries:
+
+```python
+# Bypasses the active_only scope to return all products
+all_products = Product.query().without_global_scope("active_only").get()
+
+# Bypasses all active global scopes
+all_products = Product.query().without_global_scopes().get()
+```
+
+### Soft Deletes
+
+A soft delete column automatically adds a built-in `soft_delete` global scope. Use `.with_trashed()` to query soft-deleted records:
+
+```python
+class User(Model):
+    name = Field.String()
+    deleted_at = Field.SoftDelete() # Adds implicit soft_delete scope
+
+# Find only non-deleted users
+users = User.query().get()
+
+# Find all users, including soft-deleted ones
+all_users = User.query().with_trashed().get()
+```
+
+## 8. Savepoint-Based Nested Transactions
+
+Asok supports nested transactions using SQL savepoints. A nested transaction block will register a savepoint, allowing you to rollback or commit child operations independently of the outer transaction:
+
+```python
+with Company.transaction():
+    Company.create(name="MainCorp")
+
+    try:
+        with Company.transaction(): # Uses SAVEPOINT internally
+            Company.create(name="SubCorp")
+            raise ValueError("Rollback sub-operation")
+    except ValueError:
+        # Reverts only the creation of "SubCorp"
+        pass
+
+    Company.create(name="AnotherCorp")
+# Commits "MainCorp" and "AnotherCorp", but not "SubCorp"
+```
+
+## 9. PostgreSQL Connection Pooling
+
+For PostgreSQL environments, Asok dynamically integrates connection pooling using `psycopg_pool`. If a connection pool is initialized, database handles are transparently checked out and returned to the pool, optimizing concurrent request handling:
+
+```python
+# Configuration in .env
+DATABASE_URL=postgresql://user:pass@localhost/db?min_size=5&max_size=20
+```
+
+## 10. Database Fixtures (Backup & Restore)
+
+Asok provides fixture commands to serialize and deserialize model data to and from JSON formats. This is extremely useful for database backups, data migrations, and test seeding.
+
+### Exporting Data (`dumpdata`)
+
+Dump database records into a structured JSON fixture:
+
+```bash
+# Dump all registered models to output file
+asok dumpdata --output=fixtures.json
+
+# Dump a specific model only
+asok dumpdata User --output=users.json
+```
+
+Binary `bytes` fields are base64-encoded automatically as `"base64:<data>"`.
+
+### Importing Data (`loaddata`)
+
+Load data from a JSON fixture file back into the database:
+
+```bash
+asok loaddata fixtures.json
+```
+
+* **Updates & Inserts:** `loaddata` checks the database for existing records by matching primary keys. Existing records are updated via ORM `.save()`. Missing records are inserted directly via raw SQL queries to preserve original primary key IDs.
+* **Transactions:** The entire import is executed inside an atomic transaction.
+
 ---
 [← Previous: ORM Basics](07-orm.md) | [Documentation](README.md) | [Next: Database Migrations →](09-migrations.md)
+

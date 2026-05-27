@@ -54,14 +54,37 @@ Watches `.py`, `.html`, `.json`, `.css`, `.js` files and **`.env`** across the p
 
 ### `asok migrate`
 
-Apply pending database migrations. Supports status checking, rollbacks, and faking.
+Apply pending database migrations. Supports status checking, rollbacks, faking, and database routing.
 
 ```bash
-asok migrate           # Apply all pending
-asok migrate --status  # Show applied vs pending
-asok migrate --rollback # Undo last batch
-asok migrate --fake    # Mark as applied without running SQL
+asok migrate                     # Apply all pending on the default database
+asok migrate --status            # Show applied vs pending migrations
+asok migrate --rollback          # Undo the last batch of migrations
+asok migrate --fake              # Mark pending migrations as applied in tracking table
+asok migrate --database=replica  # Apply migrations to a specific database DSN/backend
 ```
+
+### `asok dumpdata`
+
+Export database records of registered models to a JSON fixture file.
+
+```bash
+asok dumpdata                  # Dump all models to stdout
+asok dumpdata --output=f.json  # Dump all models to f.json
+asok dumpdata User             # Dump only the 'User' model to stdout
+```
+
+Binary database column values (e.g. vector blobs or files) are encoded using Base64 with a `"base64:"` prefix.
+
+### `asok loaddata`
+
+Import/restore database records from a JSON fixture file.
+
+```bash
+asok loaddata fixtures.json
+```
+
+Existing records are updated (matched by primary key) using standard ORM `.save()`. Non-existent records are inserted using raw SQL statements to preserve the original primary key ID. The entire loading process is wrapped in a database transaction for performance and atomicity.
 
 ### `asok seed`
 

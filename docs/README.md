@@ -76,3 +76,5 @@ Welcome to the Asok Framework documentation. This guide is organized sequentiall
 49. [SEO Management](49-seo-management.md) — Titles, Meta tags, and Social sharing.
 50. [Tailwind CSS](50-tailwind-css.md) — Integrating and customizing Tailwind.
 51. [Async Concurrency](51-async-concurrency.md) — Dual ASGI/WSGI and async controller/ORM support.
+52. [Request Context](52-request-context.md) — `current_request` proxy: access the active request from anywhere.
+
