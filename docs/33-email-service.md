@@ -99,15 +99,22 @@ def render(request: Request):
 
 ## Background vs synchronous
 
-By default, `Mail.send()` runs in a background thread. The user gets an instant response.
+By default, `Mail.send()` runs asynchronously. The user gets an instant response.
 
-If you need to wait for the email to actually be sent (e.g. for error handling):
+### Execution Backends
+
+The asynchronous execution of `Mail.send()` depends on the configured background task backend:
+
+* **Local Thread (Default)**: If `ASOK_QUEUE_BACKEND` is set to `local` (or unset), a new `threading.Thread` is spawned immediately to send the email.
+* **Redis Task Queue**: If `ASOK_QUEUE_BACKEND=redis` is set, the email task is serialized and pushed into the Redis queue. A worker process (`asok worker`) will pick up the task and dispatch it. This is highly recommended for production to handle SMTP rate limits, retries, and failures gracefully.
+
+If you need to wait for the email to actually be sent (e.g. for error handling) on the current thread:
 
 ```python
 Mail.send(to='user@example.com', subject='Test', body='Hello', sync=True)
 ```
 
-Errors in background sends are logged via `asok.mail` logger.
+Errors in background/worker sends are logged via the `asok.mail` logger.
 
 ---
 [← Previous: WebSockets](32-websockets.md) | [Documentation](README.md) | [Next: Caching →](34-caching.md)

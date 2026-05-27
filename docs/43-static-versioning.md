@@ -18,9 +18,19 @@ The hash is the first 8 characters of the file's MD5 digest. It's computed once 
 
 The query string (`?v=...`) is ignored by the static file server since it uses `PATH_INFO`, not `QUERY_STRING`.
 
-## No configuration needed
+## S3 / CDN Cloud Serving ⭐ NEW in v0.1.7
 
-Static versioning is automatic — enabled in production (`DEBUG=false`), disabled in development.
+If you want to host your static assets on S3 or a CDN in production, Asok can automatically rewrite your static URLs.
+
+1. Configure your S3 storage backend in `.env` (see [File Storage](16-file-storage.md) for details).
+2. Enable static S3 serving:
+```env
+ASOK_SERVE_STATIC_FROM_S3=true
+```
+
+When enabled, the `static()` helper prefixes URLs with your S3 bucket or CDN domain:
+* **Without custom domain**: `https://my-bucket.s3.us-east-1.amazonaws.com/css/app.css?v=a1b2c3d4`
+* **With custom CDN domain**: `https://cdn.myapp.com/css/app.css?v=a1b2c3d4`
 
 ---
 [← Previous: Optimization](42-optimization.md) | [Documentation](README.md) | [Next: Production Build System →](44-production-build.md)
