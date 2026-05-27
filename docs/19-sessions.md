@@ -26,10 +26,11 @@ Sessions are lazy-loaded on first access. Modified sessions are automatically sa
 
 | Key | Default | Description |
 |---|---|---|
-| `SESSION_BACKEND` | `"memory"` | `"memory"` or `"file"` |
+| `SESSION_BACKEND` | `"memory"` | `"memory"`, `"file"`, or `"redis"` |
 | `SESSION_PATH` | `".sessions"` | Directory for file backend |
 | `SESSION_MAX_AGE` | `2592000` | Browser cookie lifetime in seconds |
 | `SESSION_TTL` | `86400` | Session lifetime in seconds |
+| `REDIS_URL` | `None` | Redis connection URL (e.g. `redis://localhost:6379/0`) |
 
 ## Cookie Security
 
@@ -104,6 +105,7 @@ app.config["SESSION_TTL"] = 3600  # 1 hour
 Sessions automatically expire after `SESSION_TTL` seconds of inactivity. The timer resets on each request that modifies the session. Expired sessions are:
 - Removed from memory backend automatically
 - Cleaned up from file backend on next access attempt
+- Cleaned up natively and automatically by Redis (when using the `redis` backend, which uses native Redis key expiration)
 
 > **Production Tip**: For file-based sessions, implement a cron job to periodically clean up expired session files:
 
@@ -144,11 +146,26 @@ All mutating operations automatically set `session.modified = True`.
 
 ## Production Persistence
 
-> In production environments using multi-worker servers like **Gunicorn**, you **must** use the `file` backend. 
+> In production environments using multi-worker servers like **Gunicorn**, you **must** use either the `file` or the `redis` backend. 
 > 
 > The default `memory` backend stores sessions in the RAM of the specific worker process. Since requests are distributed across multiple workers, a user will "lose" their session as soon as their request is handled by a different worker.
 
-To ensure persistence across workers, configure the `file` backend in your `.env` or `wsgi.py`:
+### Option A: Redis backend (Recommended)
+Redis stores sessions in-memory, sharing them instantly across all worker processes and even multiple servers, while remaining extremely fast.
+
+To use Redis, install the optional extra:
+```bash
+pip install "asok[redis]"
+```
+
+Configure your `.env` file:
+```env
+SESSION_BACKEND=redis
+REDIS_URL=redis://localhost:6379/0
+```
+
+### Option B: File backend
+To ensure persistence across workers using files, configure the `file` backend in your `.env` or `wsgi.py`:
 
 ```env
 # .env

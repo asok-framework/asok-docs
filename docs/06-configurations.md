@@ -30,16 +30,17 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 
 | Key | Type | Default | Description |
 |---|---|---|---|
-| `SESSION_BACKEND` | str | `"memory"` | Storage backend for sessions: `"memory"` or `"file"`. **Must be `"file"` in production.** |
+| `SESSION_BACKEND` | str | `"memory"` | Storage backend for sessions: `"memory"`, `"file"`, or `"redis"`. **`"file"` or `"redis"` recommended for production.** |
 | `SESSION_PATH` | str | `".asok/sessions"` | Directory path for file-based session storage. |
 | `SESSION_MAX_AGE` | int | `2592000` | Max age for the session cookie (in seconds, default 30 days). |
 | `SESSION_TTL` | int | `86400` | Server-side session expiration time (in seconds, default 24 hours). |
+| `REDIS_URL` | str | `None` | Connection string for Redis backend (e.g., `redis://localhost:6379/0`). Also accepts `ASOK_REDIS_URL`. |
 
 ## 4. Caching System
 
 | Key | Type | Default | Description |
 |---|---|---|---|
-| `ASOK_CACHE_BACKEND` | str | `"memory"` | Caching backend: `"memory"` or `"file"`. **`"file"` recommended for production persistence.** |
+| `ASOK_CACHE_BACKEND` | str | `"memory"` | Caching backend: `"memory"`, `"file"`, or `"redis"`. **`"file"` or `"redis"` recommended for production.** |
 | `ASOK_CACHE_PATH` | str | `".asok/cache"` | Directory path for file-based caching. |
 
 ## 5. Security & CORS
@@ -64,11 +65,11 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 
 ## 6. Database & ORM
 
-Asok uses SQLite for simplicity. Most database settings are handled automatically.
+Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL.
 
 | Key | Type | Default | Description |
 |---|---|---|---|
-| `DATABASE_URL` | str | `"sqlite:///db.sqlite3"` | Path to the SQLite database file. |
+| `DATABASE_URL` | str | `"sqlite:///db.sqlite3"` | Connection string. Can be SQLite (`sqlite:///db.sqlite3`), PostgreSQL (`postgresql://user:pass@host:5432/dbname`), or MySQL (`mysql://user:pass@host:3306/dbname`). |
 
 ## 7. Email Configuration
 

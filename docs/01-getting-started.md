@@ -4,8 +4,19 @@ Asok is a **zero-dependency** Python framework designed for speed, security, and
 
 ## Installation
 
+By default, Asok has **zero external dependencies** and works out of the box with SQLite.
+
 ```bash
+# Default installation (SQLite, zero dependencies)
 pip install asok
+
+# Optional backends (PostgreSQL, MySQL, Redis)
+pip install "asok[postgres]"
+pip install "asok[mysql]"
+pip install "asok[redis]"
+
+# Combined optional extras (e.g. Postgres + Redis)
+pip install "asok[postgres,redis]"
 ```
 
 > **💡 Note for VS Code Users:** For the best developer experience, we highly recommend installing the official **[Asok VS Code Extension](https://marketplace.visualstudio.com/items?itemName=AsokFramework.asok-vscode)**. It provides native autocompletion, reactive snippets, and integrated CLI commands directly in your editor.
@@ -108,7 +119,7 @@ request.env('DEBUG')  # Returns True (auto-cast)
 | Feature | How |
 |---|---|
 | Routing | Folder-based, automatic |
-| Database | SQLite ORM built-in |
+| Database | SQLite ORM built-in (0 dependencies) |
 | Templates | Built-in, high-performance engine |
 | Forms | Declarative, auto-validated |
 | Auth | Login/logout/sessions |
@@ -119,7 +130,7 @@ request.env('DEBUG')  # Returns True (auto-cast)
 | CLI | Generators, migrations, seeder |
 | Testing | WSGI test client |
 
-Everything runs on the Python standard library. No `pip install` needed beyond `asok` itself.
+Everything runs on the Python standard library by default. No `pip install` is needed beyond `asok` itself unless you opt-in to PostgreSQL, MySQL, or Redis backends.
 
 ---
 [Documentation](README.md) | [Next: Routing →](02-routing.md)
