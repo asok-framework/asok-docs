@@ -1,0 +1,1383 @@
+{% extends "html/base.asok" %}
+
+{% block main %}
+    <style>
+        /* Custom styled toggle switch overrides */
+        .asok-toggle {
+            width: 48px !important;
+            height: 24px !important;
+            position: relative;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .asok-toggle-slider {
+            background-color: #334155 !important;
+            border: 1px solid #475569 !important;
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            transition: all 0.3s;
+            border-radius: 9999px;
+        }
+        body.light-mode .asok-toggle-slider {
+            background-color: #e2e8f0 !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+        .asok-toggle-slider::before {
+            position: absolute;
+            content: "";
+            height: 16px !important;
+            width: 16px !important;
+            left: 3px !important;
+            bottom: 3px !important;
+            background-color: #f8fafc !important;
+            transition: transform 0.3s;
+            border-radius: 9999px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        body.light-mode .asok-toggle-slider::before {
+            background-color: #ffffff !important;
+        }
+        .asok-toggle input:checked + .asok-toggle-slider {
+            background-color: #6366f1 !important;
+            border-color: #818cf8 !important;
+        }
+        body.light-mode .asok-toggle input:checked + .asok-toggle-slider {
+            background-color: #4f46e5 !important;
+            border-color: #6366f1 !important;
+        }
+        .asok-toggle input:checked + .asok-toggle-slider::before {
+            transform: translateX(24px) !important;
+        }
+
+        /* Dropdown Theme Variables override */
+        .asok-dropdown {
+            --asok-input-bg: rgba(15, 23, 42, 0.6) !important;
+            --asok-border: #334155 !important;
+            --asok-dropdown-bg: #0f172a !important;
+            --asok-hover: #1e293b !important;
+            --asok-text: #f8fafc !important;
+            --asok-text-muted: #94a3b8 !important;
+        }
+        body.light-mode .asok-dropdown {
+            --asok-input-bg: #ffffff !important;
+            --asok-border: #cbd5e1 !important;
+            --asok-dropdown-bg: #ffffff !important;
+            --asok-hover: #f1f5f9 !important;
+            --asok-text: #0f172a !important;
+            --asok-text-muted: #64748b !important;
+        }
+
+        /* Phone code and standard options selects */
+        select option {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+        }
+        body.light-mode select option {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+
+        /* Search input styling in dropdowns */
+        .asok-dropdown-search {
+            padding: 0.5rem !important;
+            border-bottom: 1px solid #1e293b !important;
+        }
+        body.light-mode .asok-dropdown-search {
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        .asok-dropdown-search input {
+            width: 100% !important;
+            padding: 0.5rem 0.75rem !important;
+            border-radius: 8px !important;
+            border: 1px solid #334155 !important;
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+            font-size: 0.85rem !important;
+            transition: border-color 0.2s;
+        }
+        body.light-mode .asok-dropdown-search input {
+            border: 1px solid #cbd5e1 !important;
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+        .asok-dropdown-search input:focus {
+            outline: none !important;
+            border-color: #6366f1 !important;
+        }
+
+        /* Search input styling in tags menu */
+        .asok-tags-search {
+            width: 100% !important;
+            padding: 0.5rem 0.75rem !important;
+            border: none !important;
+            border-bottom: 1px solid #1e293b !important;
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+            font-size: 0.85rem !important;
+            transition: border-color 0.2s;
+            border-radius: 0 !important;
+        }
+        body.light-mode .asok-tags-search {
+            border-bottom: 1px solid #e2e8f0 !important;
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+        .asok-tags-search:focus {
+            outline: none !important;
+            border-bottom-color: #6366f1 !important;
+        }
+        .asok-tags-search::placeholder {
+            color: #475569 !important;
+        }
+        body.light-mode .asok-tags-search::placeholder {
+            color: #94a3b8 !important;
+        }
+        
+        /* Dropdown arrow rotation */
+        .asok-dropdown-arrow {
+            transition: transform 0.2s;
+            color: #94a3b8;
+        }
+        
+        /* Rating Hover Glow & Default States */
+        .asok-rating-star svg {
+            transition: transform 0.2s, fill 0.2s;
+            fill: #475569;
+        }
+        .asok-rating-star:hover svg {
+            transform: scale(1.2);
+        }
+        .asok-rating-star.is-active svg,
+        .asok-rating-star.is-hover svg {
+            fill: #f59e0b !important;
+        }
+        body.light-mode .asok-rating-star svg {
+            fill: #cbd5e1;
+        }
+        body.light-mode .asok-rating-star.is-active svg,
+        body.light-mode .asok-rating-star.is-hover svg {
+            fill: #d97706 !important;
+        }
+
+        /* Showcase inputs, textareas, selects & OTP/Phone Code defaults */
+        .showcase-card input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
+        .showcase-card textarea,
+        .showcase-card select,
+        .asok-otp-input,
+        .asok-phone-code,
+        .asok-phone input,
+        #form_demo_block input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
+        #form_demo_block select,
+        #form_demo_block textarea {
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            border: 1px solid #334155 !important;
+            color: #f8fafc !important;
+            transition: all 0.2s;
+        }
+
+        .showcase-card input::placeholder,
+        .showcase-card textarea::placeholder,
+        #form_demo_block input::placeholder {
+            color: #475569 !important;
+        }
+
+        /* Global Light mode inputs overrides (including validation section) */
+        body.light-mode input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
+        body.light-mode textarea,
+        body.light-mode select,
+        body.light-mode .asok-otp-input,
+        body.light-mode .asok-phone-code,
+        body.light-mode .asok-phone input {
+            background-color: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode input::placeholder,
+        body.light-mode textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        /* Labels styling */
+        .showcase-card label,
+        #form_demo_block label {
+            color: #94a3b8 !important;
+            transition: color 0.2s;
+        }
+        body.light-mode .showcase-card label,
+        body.light-mode #form_demo_block label {
+            color: #475569 !important;
+        }
+
+        /* Tags component overrides */
+        body.light-mode .asok-tags-selected {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.light-mode .asok-tag {
+            background-color: rgba(79, 70, 229, 0.08) !important;
+            color: #4f46e5 !important;
+            border-color: rgba(79, 70, 229, 0.2) !important;
+        }
+        body.light-mode .asok-tags-menu {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.light-mode .asok-tags-option {
+            color: #334155 !important;
+        }
+        body.light-mode .asok-tags-option:hover {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+
+        /* Signature canvas */
+        body.light-mode .asok-signature canvas {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.light-mode .asok-signature button {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+        }
+        body.light-mode .asok-signature button:hover {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+
+        /* Showcase Cards */
+        .showcase-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            transition: all 0.2s;
+            position: relative;
+            z-index: 1;
+        }
+        .showcase-card:hover {
+            z-index: 30 !important;
+        }
+        .showcase-card:focus-within {
+            z-index: 30 !important;
+        }
+        .showcase-card:has(.asok-dropdown-menu:not([style*="display: none"])),
+        .showcase-card:has(.asok-tags-menu:not([style*="display: none"])),
+        .showcase-card:has(.asok-autocomplete-menu:not([style*="display: none"])) {
+            z-index: 40 !important;
+        }
+        body.light-mode .showcase-card {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        /* Live reactive directives card */
+        body.light-mode div[asok-state-ref],
+        body.light-mode div[asok-state] {
+            background-color: rgba(255, 255, 255, 0.6) !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.light-mode div[asok-state-ref] label,
+        body.light-mode div[asok-state] label {
+            color: #334155 !important;
+        }
+
+        /* Custom Dropdown overrides for Light Mode (overrides hardcoded tailwind classes) */
+        body.light-mode .asok-dropdown-trigger {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        body.light-mode .asok-dropdown-menu {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05) !important;
+        }
+        body.light-mode .asok-dropdown-item {
+            color: #334155 !important;
+        }
+        body.light-mode .asok-dropdown-item:hover {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+
+        /* Date Range / Time Range input container overrides in Light Mode */
+        body.light-mode .asok-daterange input,
+        body.light-mode .asok-timerange input {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+
+        /* Autocomplete menu overrides in Light Mode */
+        body.light-mode .asok-autocomplete-menu {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.light-mode .asok-autocomplete-item {
+            color: #334155 !important;
+        }
+        body.light-mode .asok-autocomplete-item:hover {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+
+        /* Tree select container */
+        body.light-mode .asok-treeselect-tree {
+            background-color: rgba(255, 255, 255, 0.5) !important;
+            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+        }
+
+        /* Dual list box transfer */
+        body.light-mode .asok-transfer-avail,
+        body.light-mode .asok-transfer-selected {
+            background-color: rgba(255, 255, 255, 0.5) !important;
+            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+        }
+        body.light-mode .asok-transfer-avail select,
+        body.light-mode .asok-transfer-selected select {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.light-mode .asok-transfer-avail select option,
+        body.light-mode .asok-transfer-selected select option {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+
+        /* Dropzone area */
+        body.light-mode .asok-dropzone-area {
+            background-color: rgba(255, 255, 255, 0.5) !important;
+            border-color: #cbd5e1 !important;
+            color: #64748b !important;
+        }
+        body.light-mode .asok-dropzone-area:hover {
+            border-color: #4f46e5 !important;
+        }
+        body.light-mode .asok-dropzone-files li {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+        }
+
+        /* Multi-file items overrides in Light Mode */
+        body.light-mode .asok-file-item {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+        }
+
+        /* Rich text editor WYSIWYG overrides */
+        body.light-mode .asok-wysiwyg {
+            background-color: rgba(255, 255, 255, 0.5) !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.light-mode .asok-wysiwyg-toolbar {
+            background-color: #f1f5f9 !important;
+            border-bottom-color: #cbd5e1 !important;
+        }
+        body.light-mode .asok-wysiwyg-btn {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+        }
+        body.light-mode .asok-wysiwyg-btn:hover {
+            background-color: #f8fafc !important;
+        }
+        body.light-mode .asok-wysiwyg-editor {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+
+        /* Image preview border override */
+        body.light-mode .asok-image-preview {
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Override inline styles for dark mode borders */
+        .asok-wysiwyg-editor[contenteditable] {
+            border-color: #334155 !important;
+        }
+        body.light-mode .asok-wysiwyg-editor[contenteditable] {
+            border-color: #cbd5e1 !important;
+        }
+
+        #canvas_signature_fld,
+        .asok-signature canvas {
+            border-color: #334155 !important;
+            width: 100% !important;
+            height: 120px !important;
+            display: block !important;
+        }
+        body.light-mode #canvas_signature_fld,
+        body.light-mode .asok-signature canvas {
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Dropzone inline border override */
+        .asok-dropzone-area > div[style*="border"] {
+            border-color: #334155 !important;
+        }
+        body.light-mode .asok-dropzone-area > div[style*="border"] {
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Transfer list full width and select styling */
+        .asok-transfer-lists {
+            width: 100% !important;
+        }
+        .asok-transfer-lists select {
+            border: 1px solid #334155 !important;
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            color: #f8fafc !important;
+            border-radius: 0.75rem !important;
+            padding: 0.5rem !important;
+        }
+        .asok-transfer-lists select option {
+            padding: 0.5rem 0.75rem !important;
+            margin: 0.125rem 0 !important;
+        }
+        body.light-mode .asok-transfer-lists select {
+            border-color: #cbd5e1 !important;
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+
+        /* General text color overrides for Light Mode (ignoring pre blocks / syntax highlighting) */
+        body.light-mode .text-slate-100:not(pre *):not(.codehilite *):not(.bg-slate-950 *) { color: #0f172a !important; }
+        body.light-mode .text-slate-200:not(pre *):not(.codehilite *):not(.bg-slate-950 *) { color: #1e293b !important; }
+        body.light-mode .text-slate-300:not(pre *):not(.codehilite *):not(.bg-slate-950 *) { color: #334155 !important; }
+        body.light-mode .text-slate-400:not(pre *):not(.codehilite *):not(.bg-slate-950 *) { color: #475569 !important; }
+        body.light-mode .text-slate-500:not(pre *):not(.codehilite *):not(.bg-slate-950 *) { color: #64748b !important; }
+        body.light-mode .text-indigo-300:not(pre *):not(.codehilite *):not(.bg-slate-950 *) { color: #4f46e5 !important; }
+        body.light-mode .text-indigo-400:not(pre *):not(.codehilite *):not(.bg-slate-950 *) { color: #4338ca !important; }
+        body.light-mode .text-emerald-400:not(pre *):not(.codehilite *):not(.bg-slate-950 *) { color: #059669 !important; }
+        body.light-mode .text-rose-400:not(pre *):not(.codehilite *):not(.bg-slate-950 *) { color: #dc2626 !important; }
+
+        /* File picker custom style in light mode */
+        body.light-mode .showcase-card input[type="file"] {
+            background-color: transparent !important;
+            border: none !important;
+            color: #475569 !important;
+        }
+        body.light-mode .showcase-card input[type="file"]::file-selector-button {
+            background-color: #4f46e5 !important;
+            color: #ffffff !important;
+        }
+        body.light-mode .showcase-card input[type="file"]::file-selector-button:hover {
+            background-color: #4338ca !important;
+        }
+
+        /* Comprehensive Light Mode Component Overrides */
+
+        /* OTP Inputs */
+        body.light-mode .asok-otp-container {
+            background-color: transparent !important;
+        }
+
+        /* Phone Input */
+        body.light-mode .asok-phone {
+            background-color: transparent !important;
+        }
+
+        /* Cascading Select */
+        body.light-mode .asok-cascading {
+            background-color: transparent !important;
+        }
+        body.light-mode .asok-cascading select {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+
+        /* Tree Select */
+        body.light-mode .asok-treeselect {
+            background-color: transparent !important;
+        }
+        body.light-mode .asok-treeselect-item {
+            color: #334155 !important;
+        }
+        body.light-mode .asok-treeselect-item input[type="checkbox"] {
+            accent-color: #4f46e5 !important;
+        }
+
+        /* Date Range / Time Range */
+        body.light-mode .asok-daterange,
+        body.light-mode .asok-timerange {
+            background-color: transparent !important;
+        }
+        body.light-mode .asok-daterange-separator,
+        body.light-mode .asok-timerange-separator {
+            color: #64748b !important;
+        }
+
+        /* Rating Stars Container */
+        body.light-mode .asok-rating {
+            background-color: transparent !important;
+        }
+
+        /* Toggle Container */
+        body.light-mode .asok-toggle {
+            background-color: transparent !important;
+        }
+
+        /* Dropdown Arrow */
+        body.light-mode .asok-dropdown-arrow {
+            color: #64748b !important;
+        }
+
+        /* Tags Remove Button */
+        body.light-mode .asok-tag-remove {
+            color: #64748b !important;
+        }
+        body.light-mode .asok-tag-remove:hover {
+            color: #0f172a !important;
+        }
+
+        /* Tags Add Button */
+        body.light-mode .asok-tags-add {
+            color: #4f46e5 !important;
+        }
+        body.light-mode .asok-tags-add:hover {
+            color: #4338ca !important;
+        }
+
+        /* Signature Container */
+        body.light-mode .asok-signature {
+            background-color: transparent !important;
+        }
+
+        /* WYSIWYG Container */
+        body.light-mode .asok-wysiwyg {
+            background-color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        /* Dropzone Container */
+        body.light-mode .asok-dropzone {
+            background-color: transparent !important;
+        }
+
+        /* Multi-file Container */
+        body.light-mode .asok-multifile {
+            background-color: transparent !important;
+        }
+
+        /* Image Preview Container */
+        body.light-mode .asok-image-upload {
+            background-color: transparent !important;
+        }
+
+        /* Transfer List Headers */
+        body.light-mode .asok-transfer-avail h4,
+        body.light-mode .asok-transfer-selected h4 {
+            color: #334155 !important;
+        }
+
+        /* All asok component labels */
+        body.light-mode .asok-label {
+            color: #475569 !important;
+        }
+
+        /* Autocomplete in light mode */
+        body.light-mode .asok-autocomplete {
+            background-color: transparent !important;
+        }
+
+        /* Ensure consistent placeholder colors */
+        body.light-mode input::placeholder,
+        body.light-mode textarea::placeholder,
+        body.light-mode select::placeholder {
+            color: #94a3b8 !important;
+            opacity: 1 !important;
+        }
+
+        /* Additional Light Mode Overrides for validation playground, showcase, and tree components */
+
+        /* === SHOWCASE BLOCK: Fix dark hardcoded Tailwind backgrounds in light mode === */
+        body.light-mode #form_showcase_block input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+        body.light-mode #form_showcase_block select,
+        body.light-mode #form_showcase_block textarea {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode #form_showcase_block input::placeholder,
+        body.light-mode #form_showcase_block textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        body.light-mode #form_showcase_block input:focus:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+        body.light-mode #form_showcase_block select:focus,
+        body.light-mode #form_showcase_block textarea:focus {
+            border-color: #6366f1 !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+        }
+
+        body.light-mode #form_showcase_block .asok-dropdown-trigger {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode #form_showcase_block .asok-dropdown-menu {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        body.light-mode #form_showcase_block .asok-dropdown-item {
+            color: #334155 !important;
+        }
+
+        body.light-mode #form_showcase_block .asok-dropdown-item:hover {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode #form_showcase_block .text-slate-200,
+        body.light-mode #form_showcase_block .text-slate-300 {
+            color: #1e293b !important;
+        }
+
+        body.light-mode #form_showcase_block .text-slate-400,
+        body.light-mode #form_showcase_block .text-slate-500 {
+            color: #64748b !important;
+        }
+
+        body.light-mode #form_showcase_block .bg-slate-700 {
+            background-color: #e2e8f0 !important;
+        }
+
+        /* Card borders in showcase */
+        body.light-mode #form_showcase_block [class*="border-slate-7"],
+        body.light-mode #form_showcase_block [class*="border-slate-8"] {
+            border-color: #e2e8f0 !important;
+        }
+
+        body.light-mode .asok-tree {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+        }
+
+        body.light-mode .asok-transfer-avail,
+        body.light-mode .asok-transfer-selected {
+            background-color: rgba(0, 0, 0, 0.02) !important;
+            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+        }
+
+        body.light-mode #form_demo_block input,
+        body.light-mode #form_demo_block select,
+        body.light-mode #form_demo_block .asok-dropdown-trigger {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode #form_demo_block input::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        body.light-mode #form_demo_block input:focus,
+        body.light-mode #form_demo_block select:focus,
+        body.light-mode #form_demo_block .asok-dropdown-trigger:focus {
+            border-color: #6366f1 !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+        }
+
+        /* Override hardcoded Tailwind dark slate backgrounds within the demo form */
+        body.light-mode #form_demo_block [class*="bg-slate-8"],
+        body.light-mode #form_demo_block [class*="bg-slate-9"] {
+            background-color: #ffffff !important;
+        }
+
+        body.light-mode #form_demo_block [class*="border-slate-7"] {
+            border-color: #cbd5e1 !important;
+        }
+
+        body.light-mode #form_demo_block [class*="text-slate-2"] {
+            color: #1e293b !important;
+        }
+
+        body.light-mode #form_demo_block .bg-slate-800\/20 {
+            background-color: rgba(0, 0, 0, 0.02) !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        body.light-mode #form_demo_block label {
+            color: #475569 !important;
+        }
+
+        body.light-mode #form_demo_block .text-slate-300 {
+            color: #1e293b !important;
+        }
+
+        body.light-mode #form_demo_block .text-slate-400 {
+            color: #475569 !important;
+        }
+
+        body.light-mode #form_demo_block .text-slate-500 {
+            color: #64748b !important;
+        }
+
+        body.light-mode #form_demo_block .asok-dropdown-menu {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        body.light-mode #form_demo_block .asok-dropdown-search {
+            border-bottom-color: #f1f5f9 !important;
+        }
+
+        body.light-mode #form_demo_block .asok-dropdown-search input {
+            color: #0f172a !important;
+            background-color: transparent !important;
+        }
+
+        body.light-mode #form_demo_block .asok-dropdown-item {
+            color: #334155 !important;
+        }
+
+        body.light-mode #form_demo_block .asok-dropdown-item:hover {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+    </style>
+
+    {% macro card_header(label) %}
+        <div class="flex justify-between items-center mb-1">
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ label }}</label>
+            <button type="button" asok-on:click="showCode = !showCode" class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1 cursor-pointer">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <span asok-text="showCode ? 'Hide Code' : 'Show Code'"></span>
+            </button>
+        </div>
+    {% endmacro %}
+
+    {% macro code_panel(field_key) %}
+        <div asok-show="showCode" class="mt-4 pt-4 border-t border-slate-800 text-left space-y-3" asok-transition="slide-down 150 fade 150">
+            <div asok-state="{ tab: 'py' }" class="flex flex-col gap-2">
+                <div class="flex gap-2 bg-slate-950/60 p-1 rounded-lg self-start">
+                    <button type="button" asok-on:click="tab = 'py'" class="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded transition-colors" asok-class="tab === 'py' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-slate-300'">Python</button>
+                    <button type="button" asok-on:click="tab = 'html'" class="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded transition-colors" asok-class="tab === 'html' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-slate-300'">HTML</button>
+                </div>
+                <div asok-show="tab === 'py'" class="rounded-xl overflow-hidden bg-slate-950 p-3 text-[11px] font-mono text-slate-300">
+                    {{ codes[field_key].py|safe }}
+                </div>
+                <div asok-show="tab === 'html'" class="rounded-xl overflow-hidden bg-slate-950 p-3 text-[11px] font-mono text-slate-300">
+                    {{ codes[field_key].html|safe }}
+                </div>
+            </div>
+        </div>
+    {% endmacro %}
+
+    <div class="relative w-full overflow-visible">
+        <!-- Header -->
+        <section class="pt-32 pb-12 max-w-7xl mx-auto w-full px-6">
+            <!-- Back Button -->
+            <a href="/components" 
+               data-block="main,title" 
+               data-push-url 
+               class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider mb-6 hover:opacity-80 transition-opacity" 
+               style="color: var(--accent-primary)">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Components
+            </a>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-2" style="color: var(--text-primary)">
+                        Forms &amp; Input Widgets
+                    </h1>
+                    <p class="text-base max-w-2xl" style="color: var(--text-secondary)">
+                        A comprehensive set of native form controls and advanced widgets featuring live AJAX validations, rich HTML editors, and canvas drawers.
+                    </p>
+                </div>
+                
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold font-mono border" 
+                      style="background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.2); color: #818cf8">
+                    Field Reference &amp; Validation
+                </span>
+            </div>
+        </section>
+
+        <!-- Showcase Section: All Form Fields -->
+        <section id="form_showcase_block" class="max-w-7xl mx-auto w-full px-6 pb-12">
+            <h2 class="text-xl font-black text-slate-200 mb-6 flex items-center gap-2">
+                <span class="w-1.5 h-6 bg-indigo-500 rounded"></span>
+                Form Components Showcase
+            </h2>
+
+            <div class="space-y-12">
+                <!-- Group 1: Standard & Basic Inputs -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-indigo-400">1. Standard &amp; Basic Inputs</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Text -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Text') }}
+                            {{ showcase_form.txt.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm") }}
+                            {{ code_panel('txt') }}
+                        </div>
+                        <!-- Email -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Email') }}
+                            {{ showcase_form.email_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm") }}
+                            {{ code_panel('email') }}
+                        </div>
+                        <!-- Password -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Password') }}
+                            {{ showcase_form.pwd_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm") }}
+                            {{ code_panel('pwd') }}
+                        </div>
+                        <!-- Number -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Number') }}
+                            {{ showcase_form.num_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm") }}
+                            {{ code_panel('num') }}
+                        </div>
+                        <!-- Select -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Select') }}
+                            {{ showcase_form.select_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm cursor-pointer") }}
+                            {{ code_panel('select') }}
+                        </div>
+                        <!-- Radio -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Radio') }}
+                            <div class="flex py-2.5">
+                                {{ showcase_form.radio_fld.input(input__class="accent-indigo-600 mr-2 cursor-pointer w-4 h-4", label__class="inline-flex items-center text-sm text-slate-300 mr-6 cursor-pointer select-none") }}
+                            </div>
+                            {{ code_panel('radio') }}
+                        </div>
+                        <!-- Checkbox -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 justify-center relative" asok-state="{ showCode: false }">
+                            {{ card_header('Checkbox') }}
+                            <label class="inline-flex items-center text-sm text-slate-300 cursor-pointer select-none py-2.5">
+                                {{ showcase_form.checkbox_fld.input(class_="accent-indigo-600 w-4 h-4 rounded border-slate-700 bg-slate-800 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer mr-2.5") }}
+                                Checkbox Option
+                            </label>
+                            {{ code_panel('checkbox') }}
+                        </div>
+                        <!-- Date -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Date') }}
+                            {{ showcase_form.date_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm") }}
+                            {{ code_panel('date') }}
+                        </div>
+                        <!-- Time -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Time') }}
+                            {{ showcase_form.time_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm") }}
+                            {{ code_panel('time') }}
+                        </div>
+                        <!-- Datetime-Local -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Datetime-Local') }}
+                            {{ showcase_form.datetime_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm") }}
+                            {{ code_panel('datetime') }}
+                        </div>
+                        <!-- Month -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Month') }}
+                            {{ showcase_form.month_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm") }}
+                            {{ code_panel('month') }}
+                        </div>
+                        <!-- Textarea -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 md:col-span-2 lg:col-span-1 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Textarea') }}
+                            {{ showcase_form.txtarea_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm min-h-[46px]") }}
+                            {{ code_panel('textarea') }}
+                        </div>
+                        <!-- Search -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Search') }}
+                            {{ showcase_form.search_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm") }}
+                            {{ code_panel('search') }}
+                        </div>
+                        <!-- URL -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('URL') }}
+                            {{ showcase_form.url_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm") }}
+                            {{ code_panel('url') }}
+                        </div>
+                        <!-- Telephone -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Tel') }}
+                            {{ showcase_form.tel_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm") }}
+                            {{ code_panel('tel') }}
+                        </div>
+                        <!-- Color -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Color') }}
+                            {{ showcase_form.color_fld.input(class_="w-full h-[46px] p-1 rounded-xl bg-slate-800/60 border border-slate-700 cursor-pointer") }}
+                            {{ code_panel('color') }}
+                        </div>
+                        <!-- Range -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Range') }}
+                            {{ showcase_form.range_fld.input(class_="w-full accent-indigo-500 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer mt-3") }}
+                            {{ code_panel('range') }}
+                        </div>
+                        <!-- JSON -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('JSON') }}
+                            {{ showcase_form.json_fld.input(class_="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm font-mono min-h-[46px]") }}
+                            {{ code_panel('json') }}
+                        </div>
+                        <!-- File Picker -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 md:col-span-2 lg:col-span-1 justify-center relative" asok-state="{ showCode: false }">
+                            {{ card_header('File Upload') }}
+                            {{ showcase_form.file_fld.input(class_="w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 file:cursor-pointer transition-colors") }}
+                            {{ code_panel('file') }}
+                        </div>
+                        <!-- Hidden Field (Demonstrates rendering works without visible box) -->
+                        {{ showcase_form.hdn_fld.input }}
+                    </div>
+                </div>
+
+                <!-- Group 2: Advanced Selection Controls -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-indigo-400">2. Advanced &amp; Rich Selection Controls</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Dropdown -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Searchable Dropdown') }}
+                            {{ showcase_form.dropdown_fld.input(
+                                trigger__class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-slate-200 bg-slate-800/60 border border-slate-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all cursor-pointer",
+                                menu__class="absolute top-full left-0 right-0 z-50 mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden backdrop-blur-md",
+                                item__class="px-4 py-3 text-sm text-slate-300 hover:bg-indigo-600 hover:text-white cursor-pointer transition-colors"
+                            ) }}
+                            {{ code_panel('dropdown') }}
+                        </div>
+                        <!-- Tags -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative z-10" asok-state="{ showCode: false }">
+                            {{ card_header('Multi-Select Tags') }}
+                            {{ showcase_form.tags_fld.input(
+                                container__class="relative",
+                                selected__class="flex flex-wrap gap-1.5 p-2 bg-slate-800/60 border border-slate-700 rounded-xl min-h-[46px] items-center",
+                                tag__class="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-xs font-semibold",
+                                add__class="text-xs font-bold text-indigo-400 hover:text-indigo-300 px-2 py-1 transition-colors cursor-pointer",
+                                menu__class="absolute top-full left-0 right-0 z-[100] mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden backdrop-blur-md max-h-48 overflow-y-auto",
+                                option__class="flex px-4 py-3 text-sm text-slate-300 hover:bg-indigo-600 hover:text-white cursor-pointer transition-colors"
+                            ) }}
+                            {{ code_panel('tags') }}
+                        </div>
+                        <!-- Date Range -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Date Range') }}
+                            {{ showcase_form.daterange_fld.input(
+                                input__class="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 focus:outline-none focus:border-indigo-500 text-sm"
+                            ) }}
+                            {{ code_panel('daterange') }}
+                        </div>
+                        <!-- Time Range -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Time Range') }}
+                            {{ showcase_form.timerange_fld.input(
+                                input__class="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 focus:outline-none focus:border-indigo-500 text-sm"
+                            ) }}
+                            {{ code_panel('timerange') }}
+                        </div>
+                        <!-- Star Rating -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 items-center justify-center relative" asok-state="{ showCode: false }">
+                            {{ card_header('Star Rating') }}
+                            <div class="py-2.5 flex justify-center">
+                                {{ showcase_form.rating_fld.input(
+                                    container__class="flex gap-1",
+                                    star__class="text-amber-400 hover:scale-110 transition-transform cursor-pointer"
+                                ) }}
+                            </div>
+                            {{ code_panel('rating') }}
+                        </div>
+                        <!-- Toggle Switch -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Toggle Switch') }}
+                            <div class="flex items-center justify-between py-2.5">
+                                <span class="text-xs text-slate-400">Sliding check box control</span>
+                                {{ showcase_form.toggle_fld.input }}
+                            </div>
+                            {{ code_panel('toggle') }}
+                        </div>
+                        <!-- OTP Boxes -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 items-center justify-center relative" asok-state="{ showCode: false }">
+                            {{ card_header('OTP Inputs') }}
+                            <div class="py-2.5">
+                                {{ showcase_form.otp_fld.input(
+                                    input__class="w-8 h-8 text-center text-md font-bold rounded-xl text-slate-200 bg-slate-800/60 border border-slate-700 focus:outline-none focus:border-indigo-500 transition-all"
+                                ) }}
+                            </div>
+                            {{ code_panel('otp') }}
+                        </div>
+                        <!-- Autocomplete -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Autocomplete') }}
+                            {{ showcase_form.autocomplete_fld.input(
+                                input__class="w-full px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 focus:outline-none focus:border-indigo-500 text-sm",
+                                menu__class="absolute top-full left-0 right-0 z-[60] mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden backdrop-blur-md max-h-40 overflow-y-auto",
+                                item__class="flex px-4 py-3 text-sm text-slate-300 hover:bg-indigo-600 hover:text-white cursor-pointer transition-colors"
+                            ) }}
+                            {{ code_panel('autocomplete') }}
+                        </div>
+                        <!-- Cascading select -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Cascading Selection') }}
+                            {{ showcase_form.cascading_fld.input(
+                                container__class="flex flex-col gap-2",
+                                select__class="w-full px-4 py-3 rounded-xl text-sm font-medium text-slate-200 bg-slate-800/60 border border-slate-700 focus:outline-none focus:border-indigo-500 cursor-pointer"
+                            ) }}
+                            {{ code_panel('cascading') }}
+                        </div>
+                        <!-- Phone Dialer -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 md:col-span-2 lg:col-span-1 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Phone Selector') }}
+                            {{ showcase_form.phone_fld.input(
+                                select__class="px-3 py-3 rounded-xl text-sm font-medium text-slate-200 bg-slate-800/60 border border-slate-700 focus:outline-none focus:border-indigo-500 cursor-pointer max-w-[90px]",
+                                input__class="flex-1 px-4 py-3 rounded-xl text-sm font-medium text-slate-200 bg-slate-800/60 border border-slate-700 focus:outline-none focus:border-indigo-500"
+                            ) }}
+                            {{ code_panel('phone') }}
+                        </div>
+                        <!-- Transfer Dual Listbox -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 md:col-span-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Transfer List') }}
+                            {{ showcase_form.transfer_fld.input(
+                                container__class="flex gap-4 items-center",
+                                list__class="flex-1 flex flex-col gap-1 p-3 bg-slate-800/40 border border-slate-700 rounded-xl min-h-[160px] text-sm text-slate-300",
+                                option__class="px-3 py-2",
+                                button__class="p-2 px-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors cursor-pointer",
+                                actions__class="flex flex-col gap-2"
+                            ) }}
+                            {{ code_panel('transfer') }}
+                        </div>
+                        <!-- Tree select -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 md:col-span-2 lg:col-span-1 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Tree Selection') }}
+                            {{ showcase_form.treeselect_fld.input(
+                                tree__class="border border-slate-700 rounded-xl p-4 bg-slate-800/40 max-h-48 overflow-y-auto text-sm text-slate-300",
+                                item__class="mb-2"
+                            ) }}
+                            {{ code_panel('treeselect') }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 3: Media Uploads & Canvas Editors -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-indigo-400">3. Media Uploads &amp; Canvas Editors</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Image Upload with Live Preview -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 items-center justify-center relative" asok-state="{ showCode: false }">
+                            {{ card_header('Image Preview') }}
+                            <div class="w-full">
+                                {{ showcase_form.image_fld.input(
+                                    input__class="w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 file:cursor-pointer transition-colors",
+                                    preview__class="rounded-xl border border-slate-700 object-cover mt-2 shadow-lg"
+                                ) }}
+                            </div>
+                            {{ code_panel('image') }}
+                        </div>
+                        <!-- Multiple Files Upload -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Multi-Files List') }}
+                            {{ showcase_form.files_fld.input(
+                                input__class="w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 file:cursor-pointer transition-colors",
+                                item__class="inline-flex items-center gap-2 p-2 bg-slate-800/60 border border-slate-700 rounded-xl text-xs text-slate-300",
+                                img__class="w-8 h-8 rounded object-cover",
+                                btn__class="text-slate-400 hover:text-white font-bold px-1"
+                            ) }}
+                            {{ code_panel('files') }}
+                        </div>
+                        <!-- WYSIWYG Editor -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 md:col-span-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('WYSIWYG HTML Editor') }}
+                            {{ showcase_form.wysiwyg_fld.input(
+                                container__class="flex flex-col border border-slate-700 rounded-xl overflow-hidden bg-slate-800/40",
+                                toolbar__class="flex gap-2 p-2 border-b border-slate-700 bg-slate-900/50",
+                                btn__class="p-1.5 px-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-300 rounded transition-colors cursor-pointer",
+                                editor__class="p-4 text-sm text-slate-200 focus:outline-none min-h-[120px] bg-slate-900/20"
+                            ) }}
+                            {{ code_panel('wysiwyg') }}
+                        </div>
+                        <!-- Drag & Drop Zone -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Drag & Drop Zone') }}
+                            {{ showcase_form.dropzone_fld.input(
+                                area__class="border-2 border-dashed border-slate-700 hover:border-indigo-500 bg-slate-800/20 rounded-xl p-8 text-center text-sm text-slate-400 cursor-pointer transition-colors",
+                                input__class="hidden",
+                                list__class="space-y-1.5",
+                                item__class="flex items-center justify-between p-2.5 px-4 bg-slate-800/60 border border-slate-700 rounded-xl text-xs text-slate-300",
+                                btn__class="text-rose-400 hover:text-rose-300 font-bold"
+                            ) }}
+                            {{ code_panel('dropzone') }}
+                        </div>
+                        <!-- Signature Canvas -->
+                        <div class="p-6 rounded-2xl showcase-card flex flex-col gap-2 relative" asok-state="{ showCode: false }">
+                            {{ card_header('Signature Canvas Drawer') }}
+                            {{ showcase_form.signature_fld.input(
+                                container__class="w-full flex flex-col items-center gap-2",
+                                canvas__class="border border-slate-700 rounded-xl bg-slate-950 shadow-inner",
+                                btn__class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-300 rounded-lg transition-colors cursor-pointer"
+                            ) }}
+                            {{ code_panel('signature') }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 4: Live Client-side Validation (Zero-Eval) -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-indigo-400">4. Live Client-Side Validation (Zero-Eval)</h3>
+                    <div class="p-8 rounded-3xl border border-slate-700 bg-slate-800/30 text-left space-y-4" asok-state="{ username: '', email: '' }">
+                        <div class="flex items-center gap-2 mb-1">
+                            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Reactive Directive Checks</span>
+                        </div>
+                        <p class="text-xs text-slate-500">Try typing in the inputs below. Real-time validations evaluate instantly on the client using reactive expressions and directives.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                            <!-- Live Username -->
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-xs font-bold text-slate-300">Live Username Checker</label>
+                                <input type="text" asok-model="username" placeholder="Type a username..." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm">
+                                <p asok-show="username && username.length < 3" asok-text="username && username.length < 3 ? 'Username must be at least 3 characters.' : ''" asok-cloak class="text-[11px] text-rose-400 flex items-center gap-1 mt-1"></p>
+                                <p asok-show="username && username.length >= 3" asok-cloak class="text-[11px] text-emerald-400 flex items-center gap-1 mt-1">✓ Username looks good!</p>
+                            </div>
+
+                            <!-- Live Email -->
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-xs font-bold text-slate-300">Live Email Checker</label>
+                                <input type="text" asok-model="email" placeholder="Type an email..." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm">
+                                <p asok-show="email && !email.includes('@')" asok-text="email && !email.includes('@') ? 'Please enter a valid email address.' : ''" asok-cloak class="text-[11px] text-rose-400 flex items-center gap-1 mt-1"></p>
+                                <p asok-show="email && email.includes('@')" asok-cloak class="text-[11px] text-emerald-400 flex items-center gap-1 mt-1">✓ Email address looks valid!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Interactive Form Demo Playground -->
+        <section class="max-w-7xl mx-auto w-full px-6 pb-40">
+            <h2 class="text-xl font-black text-slate-200 mb-6 flex items-center gap-2">
+                <span class="w-1.5 h-6 bg-indigo-500 rounded"></span>
+                Demo Form Validation Playground
+            </h2>
+
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-12 items-start">
+                
+                <!-- Left: Form and Code -->
+                <div class="space-y-8 w-full">
+                    <!-- Interactive validation form -->
+                    <div class="p-8 md:p-12 rounded-4xl border min-h-[500px] flex items-center justify-center" 
+                         style="background: var(--glass-card-bg); border-color: var(--glass-card-border)">
+                        
+                        <div id="form_demo_block" data-block="form_demo_block" class="w-full max-w-xl">
+                            {% block form_demo_block %}
+                            {% if success %}
+                                <!-- Success State Checkmark Card -->
+                                <div class="flex flex-col items-center text-center p-8 rounded-3xl border border-emerald-500/20 bg-emerald-950/10 backdrop-blur-xl">
+                                    <div class="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 animate-bounce">
+                                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-black text-slate-100 mb-1">Form Validated Live!</h3>
+                                    <p class="text-sm text-slate-400 mb-6">The server validated all native inputs successfully.</p>
+                                    
+                                    <div class="w-full text-left bg-slate-950 border border-slate-800 rounded-2xl p-5 overflow-x-auto">
+                                        <div class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3 font-mono">Validated Payload (Jinja Data)</div>
+                                        <pre class="text-xs font-mono text-emerald-400 space-y-1">
+{
+  "country": "{{ validated_data.country }}",
+  "phone": "{{ validated_data.phone }}",
+  "otp": "{{ validated_data.otp }}",
+  "rating": {{ validated_data.rating }},
+  "daterange": {{ validated_data.daterange | safe }},
+  "toggle": "{{ validated_data.toggle }}"
+}
+                                        </pre>
+                                    </div>
+                                    
+                                    <button type="button" data-action="reset_demo" data-block="form_demo_block" class="mt-6 px-5 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors cursor-pointer select-none">
+                                        Reset Playground
+                                    </button>
+                                </div>
+                            {% else %}
+                                <!-- Form Block -->
+                                <form method="POST" data-action="submit_demo" data-block="form_demo_block" class="space-y-6 text-left">
+                                    {{ request.csrf_input() }}
+                                    
+                                    <div class="space-y-5">
+                                        <!-- Searchable Country Dropdown -->
+                                        <div class="flex flex-col gap-1.5">
+                                            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Searchable Dropdown</label>
+                                            {{ form.country.input }}
+                                            {% if form.country._error %}
+                                                <p class="text-[11px] text-rose-400 flex items-center gap-1 mt-1.5">
+                                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                                    {{ form.country._error }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <!-- Phone Number -->
+                                        <div class="flex flex-col gap-1.5">
+                                            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">International Telephone</label>
+                                            {{ form.phone.input }}
+                                            {% if form.phone._error %}
+                                                <p class="text-[11px] text-rose-400 flex items-center gap-1 mt-1.5">
+                                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                                    {{ form.phone._error }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <!-- OTP Code -->
+                                        <div class="flex flex-col gap-1.5">
+                                            <label class="text-xs font-bold uppercase tracking-wider text-slate-400 text-center">Verification Code (OTP)</label>
+                                            {{ form.otp.input }}
+                                            {% if form.otp._error %}
+                                                <p class="text-[11px] text-rose-400 flex items-center gap-1 mt-1.5 justify-center">
+                                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                                    {{ form.otp._error }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <!-- Date Range Picker -->
+                                        <div class="flex flex-col gap-1.5">
+                                            {{ form.daterange.input }}
+                                            {% if form.daterange._error %}
+                                                <p class="text-[11px] text-rose-400 flex items-center gap-1 mt-1.5">
+                                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                                    {{ form.daterange._error }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <!-- Toggle & Rating Row -->
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <!-- Rating -->
+                                            <div class="flex flex-col gap-1.5 items-center justify-center p-4 rounded-2xl bg-slate-800/20 border border-slate-700">
+                                                <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Playground Rating</label>
+                                                {{ form.rating.input }}
+                                                {% if form.rating._error %}
+                                                    <p class="text-[11px] text-rose-400 flex items-center gap-1 mt-1.5 text-center">
+                                                        {{ form.rating._error }}
+                                                    </p>
+                                                {% endif %}
+                                            </div>
+                                            
+                                            <!-- Toggle Switch -->
+                                            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/20 border border-slate-700">
+                                                <div class="flex flex-col gap-0.5">
+                                                    <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Accept Terms</span>
+                                                    <span class="text-[9px] text-slate-500">Require condition toggle</span>
+                                                </div>
+                                                <div class="flex flex-col items-end gap-1">
+                                                    {{ form.toggle.input }}
+                                                    {% if form.toggle._error %}
+                                                        <p class="text-[10px] text-rose-400 mt-1 text-right">
+                                                            {{ form.toggle._error }}
+                                                        </p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="w-full py-3.5 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-500 active:scale-98 text-white transition-all shadow-lg shadow-indigo-600/20 cursor-pointer select-none text-center">
+                                        Submit Demo &amp; Validate
+                                    </button>
+                                </form>
+                            {% endif %}
+                            {% endblock %}
+                        </div>
+                        
+                    </div>
+
+                    <!-- Code Viewer Section -->
+                    <div asok-state="{ codeTab: 'python' }" class="w-full">
+                        <div class="rounded-3xl overflow-hidden shadow-2xl relative" style="border: 1px solid var(--glass-card-border)">
+                            <!-- Code Tab Headers -->
+                            <div class="code-viewer-header">
+                                <div class="flex gap-4">
+                                    <button type="button" asok-on:click="codeTab = 'python'" 
+                                            class="code-viewer-btn"
+                                            asok-class="codeTab === 'python' ? 'bg-indigo-600 text-white' : 'code-viewer-btn-inactive'">
+                                        Python Schema Definition
+                                    </button>
+                                    <button type="button" asok-on:click="codeTab = 'html'" 
+                                            class="code-viewer-btn"
+                                            asok-class="codeTab === 'html' ? 'bg-indigo-600 text-white' : 'code-viewer-btn-inactive'">
+                                        HTML Template Example
+                                    </button>
+                                </div>
+                                <span class="code-viewer-label">Copy-Pasteable Integration</span>
+                            </div>
+                            
+                            <!-- Python Code Block -->
+                            <div asok-show="codeTab === 'python'" class="p-6 bg-slate-950 overflow-x-auto text-left text-sm">
+                                {{ python_html|safe }}
+                            </div>
+                            
+                            <!-- HTML Code Block -->
+                            <div asok-show="codeTab === 'html'" class="p-6 bg-slate-950 overflow-x-auto text-left text-sm">
+                                {{ html_html|safe }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Right: Rules and Features Reference Card -->
+                <div class="p-8 rounded-4xl border text-left space-y-6" 
+                     style="background: var(--glass-card-bg); border-color: var(--glass-card-border)">
+                    <h3 class="text-lg font-black text-slate-200">Validation Reference</h3>
+                    <p class="text-xs text-slate-400">This form utilizes native Asok widgets and automatic validation rules. Try the following tests:</p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex gap-3">
+                            <div class="w-5 h-5 rounded bg-indigo-500/10 flex items-center justify-center text-xs font-bold text-indigo-400 shrink-0 font-mono">1</div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-300">Submit Empty</h4>
+                                <p class="text-[11px] text-slate-500">Click submit directly. All required rules will trigger and show localized red validation error messages below each field.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-5 h-5 rounded bg-indigo-500/10 flex items-center justify-center text-xs font-bold text-indigo-400 shrink-0 font-mono">2</div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-300">OTP Input Boxes</h4>
+                                <p class="text-[11px] text-slate-500">Type digits into the OTP fields. The interface automatically shifts focus to the next block, submitting exactly 6 digits.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-5 h-5 rounded bg-indigo-500/10 flex items-center justify-center text-xs font-bold text-indigo-400 shrink-0 font-mono">3</div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-300">Date ordering constraints</h4>
+                                <p class="text-[11px] text-slate-500">The date picker rules validate that the end date is after or equal to the start date, preventing negative ranges.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-5 h-5 rounded bg-indigo-500/10 flex items-center justify-center text-xs font-bold text-indigo-400 shrink-0 font-mono">4</div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-300">Live AJAX Swaps</h4>
+                                <p class="text-[11px] text-slate-500">Submissions are intercepted by Asok's SPA engine, posting only the designated block and preventing page reloads.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}

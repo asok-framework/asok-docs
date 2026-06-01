@@ -1,0 +1,402 @@
+{% extends "html/base.asok" %}
+
+{% block main %}
+    <style>
+        /* Custom Table overrides to style native Asok Table elements beautifully in dark mode */
+        .asok-table-container {
+            border: 1px solid var(--border-primary) !important;
+            background: var(--glass-card-bg) !important;
+            backdrop-filter: blur(12px) !important;
+            border-radius: 24px !important;
+            overflow: hidden;
+            box-shadow: var(--card-shadow) !important;
+        }
+
+        .asok-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+
+        .asok-table-header {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 1rem !important;
+            width: 100% !important;
+            background-color: rgba(9, 15, 30, 0.4) !important;
+            border-bottom: 1px solid var(--border-primary) !important;
+            padding: 1.25rem 1.5rem !important;
+        }
+        body.light-mode .asok-table-header {
+            background-color: var(--bg-tertiary) !important;
+        }
+
+        .asok-table thead {
+            background-color: transparent !important;
+        }
+
+        .asok-table th {
+            background-color: rgba(9, 15, 30, 0.5) !important;
+            color: var(--text-secondary) !important;
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            padding: 1rem 1.5rem !important;
+            border-bottom: 1px solid var(--border-primary) !important;
+            text-align: left !important;
+        }
+        body.light-mode .asok-table th {
+            background-color: var(--bg-secondary) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .asok-table tr {
+            border-bottom: 1px solid var(--border-primary) !important;
+        }
+        .asok-table tr:last-child {
+            border-bottom: none !important;
+        }
+
+        .asok-table td {
+            padding: 1.25rem 1.5rem !important;
+            border-bottom: none !important; /* Managed by tr */
+            color: var(--text-secondary) !important;
+            font-size: 0.875rem !important;
+        }
+
+        .asok-table tr:hover {
+            background-color: transparent !important;
+        }
+
+        .asok-table tr:hover td {
+            background-color: var(--bg-tertiary) !important;
+            color: var(--text-primary) !important;
+        }
+
+        /* Checkbox styling */
+        .asok-table-checkbox input, 
+        .asok-table td input[type="checkbox"] {
+            width: 1.125rem !important;
+            height: 1.125rem !important;
+            accent-color: var(--accent-primary) !important;
+            cursor: pointer;
+        }
+
+        /* Sort headers cursor pointer */
+        .asok-sortable {
+            cursor: pointer !important;
+            user-select: none !important;
+        }
+
+        .asok-sortable:hover {
+            color: var(--text-primary) !important;
+        }
+
+        /* Sort indicators */
+        .asok-sort-icon {
+            display: inline-block;
+            margin-left: 0.5rem;
+            width: 0;
+            height: 0;
+            vertical-align: middle;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            transition: all 0.2s;
+            opacity: 0.4;
+        }
+
+        .asok-sort-asc {
+            border-bottom: 4px solid var(--accent-primary) !important;
+            opacity: 1 !important;
+        }
+
+        .asok-sort-desc {
+            border-top: 4px solid var(--accent-primary) !important;
+            opacity: 1 !important;
+        }
+
+        /* Bulk actions bar active status */
+        .asok-bulk-actions {
+            display: flex !important;
+            align-items: center !important;
+            background: var(--accent-bg) !important;
+            border: 1px solid var(--accent-border) !important;
+            color: var(--accent-primary) !important;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            margin-bottom: 0px !important;
+            width: 100% !important;
+        }
+        body.light-mode .asok-bulk-actions {
+            color: var(--accent-light) !important;
+        }
+
+        .asok-btn-bulk {
+            padding: 0.35rem 0.75rem !important;
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            border-radius: 8px !important;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .asok-btn-danger {
+            background-color: #ef4444 !important;
+            color: #ffffff !important;
+        }
+
+        .asok-btn-danger:hover {
+            background-color: #dc2626 !important;
+            transform: scale(1.02);
+        }
+
+        /* Search bar styles override - full width */
+        .asok-table-search {
+            width: 100% !important;
+        }
+        .asok-search-input {
+            background-color: var(--bg-primary) !important;
+            border: 1px solid var(--border-primary) !important;
+            color: var(--text-primary) !important;
+            border-radius: 12px !important;
+            padding: 0.75rem 1.25rem !important;
+            font-size: 0.85rem !important;
+            width: 100% !important;
+            max-width: none !important;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+            transition: all 0.2s !important;
+        }
+
+        .asok-search-input:focus {
+            outline: none !important;
+            border-color: var(--accent-primary) !important;
+            box-shadow: 0 0 0 3px var(--accent-border) !important;
+        }
+        .asok-search-input::placeholder {
+            color: var(--text-muted) !important;
+        }
+
+        /* Action buttons in rows */
+        .asok-btn-table {
+            background: rgba(239, 68, 68, 0.1) !important;
+            border: 1px solid rgba(239, 68, 68, 0.15) !important;
+            color: #ef4444 !important;
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            padding: 0.35rem 0.75rem !important;
+            border-radius: 8px !important;
+            transition: all 0.2s;
+        }
+
+        .asok-btn-table:hover {
+            background: #ef4444 !important;
+            color: #ffffff !important;
+            transform: scale(1.02);
+        }
+        body.light-mode .asok-btn-table {
+            background: rgba(239, 68, 68, 0.06) !important;
+            border: 1px solid rgba(239, 68, 68, 0.12) !important;
+            color: #dc2626 !important;
+        }
+
+        /* Pagination & Footer styling override */
+        .asok-table-footer {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 1rem !important;
+            background-color: rgba(9, 15, 30, 0.4) !important;
+            border-top: 1px solid var(--border-primary) !important;
+            padding: 1.25rem 1.5rem !important;
+            color: var(--text-secondary) !important;
+            font-size: 0.85rem !important;
+        }
+        body.light-mode .asok-table-footer {
+            background-color: var(--bg-tertiary) !important;
+        }
+        @media (min-width: 640px) {
+            .asok-table-footer {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+            }
+        }
+
+        .asok-page-link {
+            background: var(--bg-secondary) !important;
+            border: 1px solid var(--border-primary) !important;
+            color: var(--text-secondary) !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px !important;
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .asok-page-link:hover:not(:disabled) {
+            background: var(--sidebar-hover) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .asok-page-link:disabled {
+            opacity: 0.3 !important;
+            cursor: not-allowed !important;
+        }
+
+        /* Selected row visual styling */
+        .asok-row-selected {
+            background-color: transparent !important;
+        }
+        .asok-row-selected td {
+            background-color: var(--accent-bg) !important;
+            color: var(--accent-light) !important;
+        }
+        body.light-mode .asok-row-selected td {
+            color: var(--accent-primary) !important;
+        }
+
+        .asok-table-total {
+            color: var(--text-secondary) !important;
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            padding: 0.25rem 0.5rem !important;
+        }
+
+        /* Override Tailwind text color classes on table cells to use theme variables */
+        .asok-table td.text-slate-200,
+        .asok-table td.font-semibold {
+            color: var(--text-primary) !important;
+        }
+        .asok-table td.text-slate-400 {
+            color: var(--text-secondary) !important;
+        }
+
+        /* Status badge overrides */
+        .asok-table span.border {
+            border-radius: 9999px !important;
+            border: 1px solid var(--border-primary) !important;
+        }
+        .asok-table span.text-emerald-400 {
+            background-color: rgba(16, 185, 129, 0.1) !important;
+            border-color: rgba(16, 185, 129, 0.2) !important;
+            color: #34d399 !important;
+        }
+        body.light-mode .asok-table span.text-emerald-400 {
+            background-color: rgba(16, 185, 129, 0.08) !important;
+            border-color: rgba(16, 185, 129, 0.15) !important;
+            color: #059669 !important;
+        }
+        .asok-table span.text-rose-400 {
+            background-color: rgba(244, 63, 94, 0.1) !important;
+            border-color: rgba(244, 63, 94, 0.2) !important;
+            color: #f43f5e !important;
+        }
+        body.light-mode .asok-table span.text-rose-400 {
+            background-color: rgba(244, 63, 94, 0.06) !important;
+            border-color: rgba(244, 63, 94, 0.15) !important;
+            color: #e11d48 !important;
+        }
+
+        .asok-table img {
+            border-color: var(--border-secondary) !important;
+        }
+    </style>
+
+    <div class="relative w-full overflow-visible">
+        <!-- Header -->
+        <section class="pt-32 pb-16 max-w-7xl mx-auto w-full px-6">
+            <!-- Back Button -->
+            <a href="/components" 
+               data-block="main,title" 
+               data-push-url 
+               class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider mb-6 hover:opacity-80 transition-opacity" 
+               style="color: var(--accent-primary)">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Components
+            </a>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-2" style="color: var(--text-primary)">
+                        Data Tables
+                    </h1>
+                    <p class="text-base max-w-2xl" style="color: var(--text-secondary)">
+                        Reactive tables powered by client-side state and templates, featuring multi-column sorting, live debounced search, bulk action bars, and responsive pagination.
+                    </p>
+                </div>
+                
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold font-mono border" 
+                      style="background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.2); color: #818cf8">
+                    Table Component &amp; Actions
+                </span>
+            </div>
+        </section>
+
+        <!-- Interactive Playground Section -->
+        <section class="max-w-7xl mx-auto w-full px-6 pb-16">
+            <div class="grid grid-cols-1 gap-12 items-start">
+                
+                <!-- Table Playground Box -->
+                <div class="p-8 rounded-4xl border text-center space-y-6 relative" 
+                     style="background: var(--glass-card-bg); border-color: var(--glass-card-border)">
+                    
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-lg font-black text-slate-200 text-left">Interactive Data Table Demo</h3>
+                        <button type="button" 
+                                data-action="reset_users" 
+                                data-block="table_playground_block" 
+                                class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 active:scale-98 text-slate-200 border border-slate-700/50 transition-all cursor-pointer select-none">
+                            Reset Users List
+                        </button>
+                    </div>
+
+                    <!-- AJAX Swapped Block -->
+                    {% block table_playground_block %}
+                    <div id="table_playground_block" class="w-full">
+                        {{ table }}
+                    </div>
+                    {% endblock %}
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Code Viewer -->
+        <section class="max-w-7xl mx-auto w-full px-6 pb-40" asok-state="{ codeTab: 'python' }">
+            <div class="rounded-3xl overflow-hidden shadow-2xl relative" style="border: 1px solid var(--glass-card-border)">
+                <!-- Code Tab Headers -->
+                <div class="code-viewer-header">
+                    <div class="flex gap-4">
+                        <button type="button" asok-on:click="codeTab = 'python'" 
+                                class="code-viewer-btn"
+                                asok-class="codeTab === 'python' ? 'bg-indigo-600 text-white' : 'code-viewer-btn-inactive'">
+                            Python Controller (page.py)
+                        </button>
+                        <button type="button" asok-on:click="codeTab = 'html'" 
+                                class="code-viewer-btn"
+                                asok-class="codeTab === 'html' ? 'bg-indigo-600 text-white' : 'code-viewer-btn-inactive'">
+                            HTML Template (page.asok)
+                        </button>
+                    </div>
+                    <span class="code-viewer-label">Copy-Pasteable Integration</span>
+                </div>
+                
+                <!-- Python Code Block -->
+                <div asok-show="codeTab === 'python'" class="p-6 bg-slate-950 overflow-x-auto text-left text-sm">
+                    {{ python_html|safe }}
+                </div>
+                
+                <!-- HTML Code Block -->
+                <div asok-show="codeTab === 'html'" class="p-6 bg-slate-950 overflow-x-auto text-left text-sm">
+                    {{ html_html|safe }}
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}

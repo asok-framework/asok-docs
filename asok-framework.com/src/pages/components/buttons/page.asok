@@ -1,0 +1,119 @@
+{% extends "html/base.asok" %}
+
+{% block main %}
+    <div class="relative w-full overflow-visible">
+        <!-- Header -->
+        <section class="pt-32 pb-16 max-w-7xl mx-auto w-full px-6">
+            <!-- Back Button -->
+            <a href="/components" 
+               data-block="main,title" 
+               data-push-url 
+               class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider mb-6 hover:opacity-80 transition-opacity" 
+               style="color: var(--accent-primary)">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Components
+            </a>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-2" style="color: var(--text-primary)">
+                        Buttons
+                    </h1>
+                    <p class="text-base max-w-2xl" style="color: var(--text-secondary)">
+                        A collection of button styles, sizes, and states. Includes split button groups and interactive mock loaders with transition animations.
+                    </p>
+                </div>
+                
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold font-mono border" 
+                      style="background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.2); color: #818cf8">
+                    CSS &amp; Directives
+                </span>
+            </div>
+        </section>
+
+        <!-- Interactive Playground Section -->
+        <section class="max-w-7xl mx-auto w-full px-6 pb-40" asok-state="{ activeTab: 'buttons-variants' }">
+            <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-12 items-start">
+                
+                <!-- Sidebar Selector -->
+                <div class="flex flex-col gap-2 p-6 rounded-3xl text-left" style="background: var(--glass-card-bg); border: 1px solid var(--glass-card-border)">
+                    <div class="text-[10px] font-black uppercase tracking-widest px-3 mb-2" style="color: var(--text-muted)">
+                        Variants
+                    </div>
+                    <button asok-on:click="activeTab = 'buttons-variants'" 
+                            class="w-full text-left px-4 py-3 rounded-xl border font-bold text-sm transition-all cursor-pointer flex justify-between items-center"
+                            asok-class="activeTab === 'buttons-variants' ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400' : 'bg-transparent border-transparent text-slate-400 hover:text-white hover:bg-white/5'">
+                        Style Variants
+                    </button>
+                    <button asok-on:click="activeTab = 'buttons-sizes'" 
+                            class="w-full text-left px-4 py-3 rounded-xl border font-bold text-sm transition-all cursor-pointer flex justify-between items-center"
+                            asok-class="activeTab === 'buttons-sizes' ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400' : 'bg-transparent border-transparent text-slate-400 hover:text-white hover:bg-white/5'">
+                        Sizes
+                    </button>
+                    <button asok-on:click="activeTab = 'buttons-loading'" 
+                            class="w-full text-left px-4 py-3 rounded-xl border font-bold text-sm transition-all cursor-pointer flex justify-between items-center"
+                            asok-class="activeTab === 'buttons-loading' ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400' : 'bg-transparent border-transparent text-slate-400 hover:text-white hover:bg-white/5'">
+                        Icons &amp; Loaders
+                    </button>
+                    <button asok-on:click="activeTab = 'buttons-groups'" 
+                            class="w-full text-left px-4 py-3 rounded-xl border font-bold text-sm transition-all cursor-pointer flex justify-between items-center"
+                            asok-class="activeTab === 'buttons-groups' ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400' : 'bg-transparent border-transparent text-slate-400 hover:text-white hover:bg-white/5'">
+                        Button Groups
+                    </button>
+                </div>
+
+                <!-- Live Demo & Code Display Panel -->
+                <div class="space-y-8 flex-1 min-w-0">
+                    <!-- Live Demo Frame -->
+                    <div class="p-12 rounded-4xl home-glass-card border flex items-center justify-center min-h-[260px]" 
+                         style="background: var(--glass-card-bg); border-color: var(--glass-card-border)">
+                        
+                        <!-- 1. Style Variants -->
+                        <div asok-show="activeTab === 'buttons-variants'" class="w-full flex justify-center">
+                            {{ variants_raw|safe }}
+                        </div>
+
+                        <!-- 2. Sizes -->
+                        <div asok-show="activeTab === 'buttons-sizes'" class="w-full flex justify-center">
+                            {{ sizes_raw|safe }}
+                        </div>
+
+                        <!-- 3. Icons & Loaders -->
+                        <div asok-show="activeTab === 'buttons-loading'" class="w-full flex justify-center">
+                            {{ loading_raw|safe }}
+                        </div>
+
+                        <!-- 4. Button Groups -->
+                        <div asok-show="activeTab === 'buttons-groups'" class="w-full flex justify-center">
+                            {{ groups_raw|safe }}
+                        </div>
+                    </div>
+
+                    <!-- Syntax Highlighted Code Viewer -->
+                    <div class="rounded-3xl overflow-hidden shadow-2xl relative" style="border: 1px solid var(--glass-card-border)">
+                        <!-- Code Blocks with Codehilite structure -->
+                        <div asok-show="activeTab === 'buttons-variants'">
+                            {{ variants_html|safe }}
+                        </div>
+
+                        <div asok-show="activeTab === 'buttons-sizes'">
+                            {{ sizes_html|safe }}
+                        </div>
+
+                        <div asok-show="activeTab === 'buttons-loading'">
+                            {{ loading_html|safe }}
+                        </div>
+
+                        <div asok-show="activeTab === 'buttons-groups'">
+                            {{ groups_html|safe }}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+    </div>
+{% endblock %}
