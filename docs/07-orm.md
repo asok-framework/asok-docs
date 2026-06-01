@@ -1,6 +1,6 @@
-# ORM
+Asok includes a powerful, built-in ORM supporting **SQLite** (default, zero dependencies), **PostgreSQL**, and **MySQL**.
 
-Asok has a built-in SQLite ORM. Minimal setup — `db.sqlite3` is created automatically. Tables are auto-created from your model definitions on app start.
+By default, SQLite is used and a `db.sqlite3` file is created automatically. Database tables are auto-created or updated from your model definitions on application start.
 
 ## Define a model
 
@@ -86,12 +86,12 @@ The first argument to a scope is always the current `Query` object.
 | `Field.DateTime()` | TEXT | ISO format |
 | `Field.Password()` | TEXT | Auto-hashed (PBKDF2-SHA256, 600k) |
 | `Field.ForeignKey(Model)` | INTEGER | FK to another model. Use `dropdown=True` for rich select in forms. |
-| `Field.Dropdown(choices)` | TEXT | Fixed choices — renders as a premium searchable dropdown. |
+| `Field.Dropdown(choices)` | TEXT | Fixed choices (list of tuples `(value, label)`) — renders as a premium searchable dropdown. |
 | `Field.File(upload_to='dir')` | TEXT | Stores filename, files saved under uploads/ |
 | `Field.CreatedAt()` | TEXT | Set once on first save |
 | `Field.UpdatedAt()` | TEXT | Updated on every save |
 | `Field.SoftDelete()` | TEXT | Enables soft delete (see below) |
-| `Field.Dropdown(choices)` | TEXT | List of tuples `(value, label)`. |
+
 
 ### Common Field Parameters
 
@@ -258,6 +258,24 @@ Asok automatically combines:
 For example, the `name` field above will have these combined rules:
 ```
 required|max:100|min:4|alpha_spaces
+```
+
+## Database Engines & Drivers
+
+By default, Asok requires no configuration and uses SQLite. If you want to use PostgreSQL or MySQL, you must install the optional packages and define the `DATABASE_URL` in your `.env` file.
+
+### Supported Backends
+
+| Engine | Installation | `DATABASE_URL` Format |
+|---|---|---|
+| **SQLite** | *Included by default* | `sqlite:///db.sqlite3` or `sqlite:///:memory:` |
+| **PostgreSQL** | `pip install "asok[postgres]"` | `postgresql://user:password@localhost:5432/dbname` |
+| **MySQL** | `pip install "asok[mysql]"` | `mysql://user:password@localhost:3306/dbname` |
+
+### Installation Combined with other extras
+If you are also using Redis for caching/sessions, you can combine extras:
+```bash
+pip install "asok[postgres,redis]"
 ```
 
 ## CRUD
@@ -497,7 +515,7 @@ result['current_page']  # 2
 
 ## Password hashing
 
-`Field.Password()` auto-hashes on save (PBKDF2-SHA256, 100k iterations):
+`Field.Password()` auto-hashes on save (PBKDF2-SHA256, 600k iterations):
 
 ```python
 class User(Model):

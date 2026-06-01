@@ -22,17 +22,69 @@ def post(request):
     request.redirect('/success')
 ```
 
-## 2. Configuration
+## 2. Configuration & Backends
 
-You can control the size of the background worker pool via `app.config`.
+By default, Asok uses a local in-memory thread pool for background tasks (`ASOK_QUEUE_BACKEND=local`).
+
+For production environments, you should switch to the **Redis distributed task queue** backend. This persists tasks in Redis and executes them in separate worker processes, protecting against data loss on web server crashes.
+
+### Configuration Options
 
 | Key | Default | Description |
 |---|---|---|
-| `BG_WORKERS` | `10` | Maximum number of concurrent background threads. |
+| `ASOK_QUEUE_BACKEND` | `"local"` | Queue backend: `"local"` (thread pool) or `"redis"`. |
+| `REDIS_URL` | `None` | Redis connection URL (e.g. `redis://localhost:6379/0`). Also accepts `ASOK_REDIS_URL`. |
+| `BG_WORKERS` | `10` | Max threads in local pool (only applies when backend is `local`). |
 
-Example in `.env`:
+Example in `.env` for production:
 ```env
-BG_WORKERS=20
+ASOK_QUEUE_BACKEND=redis
+REDIS_URL=redis://localhost:6379/0
+```
+
+### Running the Worker (Redis Mode Only)
+
+When using the `redis` backend, tasks are sent to Redis. You must start one or more standalone worker processes to execute them:
+
+```bash
+asok worker
+```
+
+#### Inspecting the Queue Status
+
+You can check the status of the Redis queue at any time (e.g., number of pending tasks, next jobs to process) using the `status` command:
+
+```bash
+asok worker status
+```
+
+This connects to Redis and prints the total number of pending tasks and a list of the next tasks to be processed in execution order.
+
+*Note: Only module-level functions can be queued on Redis. Lambda functions or nested (local) functions cannot be serialized and will raise a `ValueError`.*
+
+### Production Deployment with Systemd
+
+In a production environment, running the worker in the foreground of a terminal is not suitable. Instead, you should manage it as a background service supervised by SystemD.
+
+When you run `asok deploy`, it automatically generates a `{your_project}-worker.service` file for your background worker. To deploy and run it:
+
+1. Copy the generated service file to the SystemD system directory:
+   ```bash
+   sudo cp deployment/{your_project}-worker.service /etc/systemd/system/
+   ```
+2. Reload SystemD and enable the service to start on boot:
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable {your_project}-worker
+   ```
+3. Start the worker service:
+   ```bash
+   sudo systemctl start {your_project}-worker
+   ```
+
+The service is configured to automatically restart if it encounters an unexpected error or crash. You can monitor the worker's real-time logs using:
+```bash
+journalctl -u {your_project}-worker -f
 ```
 
 ## 3. Standalone Usage
@@ -131,6 +183,29 @@ Mail.send(to='user@example.com', subject='Hello', body='World')
 - **Database reads needed for the response** — you need the result now
 - **Validation** — must happen before responding
 - **Anything the user expects to see immediately** — e.g. updating a counter shown on the page
+
+## Context propagation: `current_request` in background tasks
+
+When you dispatch a task with `background()` from inside a view, Asok **automatically copies the request context** into the background thread. This means `current_request` works transparently inside your task functions — no extra setup needed.
+
+```python
+from asok import Request, background, current_request
+
+def send_confirmation_email():
+    # current_request is available even though this runs in a background thread
+    user = current_request.user
+    lang = current_request.lang
+    subject = "Welcome!" if lang == "en" else "Bienvenue !"
+    Mail.send(to=user.email, subject=subject, body="...")
+
+def post(request: Request):
+    # Register user, then send email in background
+    User.create(email=request.form['email'])
+    background(send_confirmation_email)     # context is copied automatically
+    request.redirect('/success')
+```
+
+> **Important**: context propagation only works for tasks dispatched **during a request** (inside a `render()` / `post()` view). Tasks triggered outside a request (e.g., from a scheduled cron job) do not have a request context, and accessing `current_request` will raise a `RuntimeError`.
 
 ---
 [← Previous: Caching](34-caching.md) | [Documentation](README.md) | [Next: Scheduled Tasks →](36-scheduler.md)

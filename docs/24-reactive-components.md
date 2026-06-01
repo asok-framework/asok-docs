@@ -143,5 +143,32 @@ def increment(self):
  
 > Always set `self.session.modified = True` when updating session data within a component method to ensure the changes are saved to the persistent store.
 
+## Accessing the current request inside a component
+
+Live components run server-side during WebSocket re-renders. You can access the active request (path, user, session, language…) via `current_request`:
+
+```python
+from asok import Component, current_request
+from asok.component import exposed
+
+class UserCard(Component):
+    name = ""
+
+    def render(self):
+        # current_request is available during every server-side render
+        is_admin = current_request.user and current_request.user.is_admin
+        lang = current_request.lang
+
+        greeting = "Hello" if lang == "en" else "Bonjour"
+        return (
+            f"<div>"
+            f"  <p>{greeting}, {self.name}!</p>"
+            f"  {'<span class=\"badge\">Admin</span>' if is_admin else ''}"
+            f"</div>"
+        )
+```
+
+> `current_request` inside a component's `render()` method reflects the **original HTTP request** that loaded the page — specifically the path, user, and session stored in the WebSocket connection object. It behaves identically to the `request` parameter you would have in a normal view.
+
 ---
 [← Previous: Security Audit](23-security-audit.md) | [Documentation](README.md) | [Next: Transitions →](25-transitions.md)

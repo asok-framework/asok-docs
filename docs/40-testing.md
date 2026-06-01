@@ -118,7 +118,13 @@ def test_contact_form():
     assert resp.status_code == 302
 ```
 
-Run with:
+Run with the built-in test runner (discovers and executes unittest-based suites):
+
+```bash
+asok test
+```
+
+Or run with `pytest` if installed in your environment:
 
 ```bash
 python -m pytest tests/
@@ -126,3 +132,4 @@ python -m pytest tests/
 
 ---
 [← Previous: Deployment](39-deployment.md) | [Documentation](README.md) | [Next: Logging →](41-logging.md)
+

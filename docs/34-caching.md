@@ -55,10 +55,25 @@ By default, Asok uses a blazing fast **in-memory** cache (`backend="memory"`).
 
 In a production environment (especially when using **Gunicorn** with multiple workers), the `memory` backend is isolated to each process. This means a cache set by Worker A will not be visible to Worker B.
 
-To ensure cache consistency across all worker processes, you **should** use the file-based backend:
+To ensure cache consistency across all worker processes, you **should** use either the `file` or the `redis` backend.
 
+#### Option A: Redis backend (Recommended)
+Redis is ideal for high-performance production sites. It is fast, handles TTL natively, and shares cache values across all processes/servers.
+
+Install the optional package:
+```bash
+pip install "asok[redis]"
+```
+
+Configure your `.env` file:
 ```env
-# .env
+ASOK_CACHE_BACKEND=redis
+REDIS_URL=redis://localhost:6379/0
+```
+
+#### Option B: File backend
+Stores cached entries as JSON files in a local directory:
+```env
 ASOK_CACHE_BACKEND=file
 ASOK_CACHE_PATH=.asok/cache
 ```
@@ -69,6 +84,7 @@ ASOK_CACHE_PATH=.asok/cache
 |---|---|---|---|
 | `memory` | ⚡ Instant | No (Lost on restart) | No |
 | `file` | 🚀 Fast | Yes | **Yes** |
+| `redis` | ⚡ Instant | Yes | **Yes** (Shared & Distributed) |
 
 ---
 

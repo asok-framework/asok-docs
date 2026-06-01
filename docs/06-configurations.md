@@ -1,18 +1,24 @@
 # Configurations
 
-Asok is designed to require minimal configuration for common use-cases, but it provides a comprehensive set of options that can be tuned via environment variables or directly in your `wsgi.py` file.
+Asok is designed to require minimal configuration for common use-cases, but it provides a comprehensive set of options that can be tuned via environment variables or directly in your `wsgi.py` / `asgi.py` file.
+
+---
 
 ## 1. Core Settings
 
 | Key | Type | Default | Description |
 |---|---|---|---|
-| `DEBUG` | bool | `False` | Enables detailed error pages, auto-reloading. Set to `True` for development. |
+| `DEBUG` | bool | `False` | Enables detailed error pages and auto-reloading. Set to `True` for development. |
 | `SECRET_KEY` | str | *auto* | Used for signing cookies, tokens, and CSRF protection. **Required (min 32 chars)** in production. |
 | `INDEX` | str | `"page"` | The name of the default entry point file in your page directories. |
 | `LOCALE` | str | `"en"` | The default language code for translations. |
 | `PROJECT_NAME` | str | `"Asok App"` | The display name of your project. |
 | `VERSION` | str | `"0.1.0"` | Your application's current version. |
 | `ASOK_WRITE_BYTECODE` | bool | `False` | Set to `true` to allow Python to write `.pyc` files (disabled by default for a cleaner project). |
+| `AUTH_MODEL` | str | `"User"` | The class name of the User model used for authentication (e.g., `'User'`). |
+| `ASOK_ENV` | str | `None` | Environment mode (e.g., `"production"`). If set to `"production"`, stricter security rules apply. |
+
+---
 
 ## 2. Server & Routing
 
@@ -21,26 +27,36 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 | `APP_URL` | str | `None` | The base URL of your app (e.g., `https://example.com`). **Mandatory in production** for Magic Links. |
 | `ASOK_PORT` | int | `8000` | The default port for the `asok dev` and `asok preview` commands. |
 | `WS_PORT` | int | `8001` | The port used by the built-in WebSocket server. |
+| `WS_ALLOWED_ORIGINS` | list/str | `None` | Comma-separated list of allowed origins for WebSocket connections. If not set, falls back to `CORS_ORIGINS`. |
 | `MAX_CONTENT_LENGTH` | int | `10485760` | Maximum allowed size (in bytes) for request bodies (default 10 MB). |
 | `TRUSTED_PROXIES` | list/str | `None` | List of IP addresses (or `"*"` ) to trust for the `X-Forwarded-For` header. |
 | `ASOK_DOCS` | bool | `DEBUG` | Alias for `DOCS`. Set to `false` to hide the documentation UI entirely. |
 | `DOCS` | bool | `DEBUG` | Enables or disables the automatic documentation UI. |
 
+---
+
 ## 3. Session Management
 
-| Key | Type | Default | Description |
-|---|---|---|---|
-| `SESSION_BACKEND` | str | `"memory"` | Storage backend for sessions: `"memory"` or `"file"`. **Must be `"file"` in production.** |
-| `SESSION_PATH` | str | `".asok/sessions"` | Directory path for file-based session storage. |
-| `SESSION_MAX_AGE` | int | `2592000` | Max age for the session cookie (in seconds, default 30 days). |
-| `SESSION_TTL` | int | `86400` | Server-side session expiration time (in seconds, default 24 hours). |
+| Key               | Type | Default            | Description                                                                                                             |
+| ----------------- | ---- | ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| `SESSION_BACKEND` | str  | `"memory"`         | Storage backend for sessions: `"memory"`, `"file"`, or `"redis"`. **`"file"` or `"redis"` recommended for production.** |
+| `SESSION_PATH`    | str  | `".asok/sessions"` | Directory path for file-based session storage.                                                                          |
+| `SESSION_MAX_AGE` | int  | `2592000`          | Max age for the session cookie (in seconds, default 30 days).                                                           |
+| `SESSION_TTL`     | int  | `86400`            | Server-side session expiration time (in seconds, default 24 hours).                                                     |
+| `SESSION_SAMESITE` | str | `"Lax"`            | SameSite attribute for the session cookie (`Lax`, `Strict`, or `None`).                                                 |
+| `SESSION_SECURE`  | bool | *auto*             | Forces session cookie to be sent over HTTPS only. Defaults to `True` if not in `DEBUG`.                                 |
+| `REDIS_URL`       | str  | `None`             | Connection string for Redis backend (e.g., `redis://localhost:6379/0`). Also accepts `ASOK_REDIS_URL`.                  |
+
+---
 
 ## 4. Caching System
 
 | Key | Type | Default | Description |
 |---|---|---|---|
-| `ASOK_CACHE_BACKEND` | str | `"memory"` | Caching backend: `"memory"` or `"file"`. **`"file"` recommended for production persistence.** |
+| `ASOK_CACHE_BACKEND` | str | `"memory"` | Caching backend: `"memory"`, `"file"`, or `"redis"`. **`"file"` or `"redis"` recommended for production.** |
 | `ASOK_CACHE_PATH` | str | `".asok/cache"` | Directory path for file-based caching. |
+
+---
 
 ## 5. Security & CORS
 
@@ -49,10 +65,15 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 | `CSRF` | bool | `True` | Enables global Cross-Site Request Forgery protection for forms. |
 | `CORS_ORIGINS` | list/str | `None` | Allowed origins for cross-domain requests. Use `"*"` for all. |
 | `SECURITY_HEADERS` | bool/dict | `True` | Enables default security headers (CSP, HSTS, etc.). Can be customized with a dict. |
+| `CSP` | dict | `{}` | Dictionary of custom Content Security Policy (CSP) directives to extend or override defaults. |
 | `CSP_UNSAFE_EVAL` | bool | `False` | Optional. Forces `'unsafe-eval'` in CSP script-src. Asok directives and Live Components do not require it by default in production. |
+| `CSP_REPORT_URI` | str | `None` | Endpoint URL to receive Content Security Policy (CSP) violation reports. |
 | `ETAG` | bool | `True` | Enables automatic conditional caching headers for responses. |
+| `TOOLBAR` | bool | `DEBUG` | Enables or disables the developer debugging toolbar. Also accepts `ASOK_TOOLBAR`. |
 
-## 5. Performance & Optimization
+---
+
+## 6. Performance & Optimization
 
 | Key | Type | Default | Description |
 |---|---|---|---|
@@ -62,15 +83,46 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 | `IMAGE_OPTIMIZATION` | bool | `False` | Enables automatic WebP conversion for uploaded/served images. |
 | `IMAGE_KEEP_ORIGINAL` | bool | `True` | Retains the original uploaded file when generating optimized versions. |
 
-## 6. Database & ORM
+---
 
-Asok uses SQLite for simplicity. Most database settings are handled automatically.
+## 7. File Storage & Uploads
+
+Configure where and how files uploaded via forms are saved on the server.
 
 | Key | Type | Default | Description |
 |---|---|---|---|
-| `DATABASE_URL` | str | `"sqlite:///db.sqlite3"` | Path to the SQLite database file. |
+| `ASOK_STORAGE_BACKEND` | str | `"local"` | Storage backend: `"local"` (local disk uploads) or `"s3"` (Amazon S3 or compatible cloud storage). |
+| `ASOK_S3_BUCKET` | str | `None` | The name of the S3 bucket. Also accepts `S3_BUCKET`. |
+| `ASOK_S3_REGION` | str | `None` | The S3 region. Also accepts `AWS_DEFAULT_REGION`. |
+| `ASOK_S3_ENDPOINT` | str | `None` | Optional S3 endpoint URL (useful for custom endpoints like MinIO, DigitalOcean Spaces). |
+| `AWS_ACCESS_KEY_ID` | str | `None` | AWS access key credential. |
+| `AWS_SECRET_ACCESS_KEY` | str | `None` | AWS secret key credential. |
+| `ASOK_S3_CUSTOM_DOMAIN` | str | `None` | Optional custom CDN domain mapping (e.g. `cdn.myapp.com`) to prefix file URLs. |
+| `ASOK_SERVE_STATIC_FROM_S3` | bool | `False` | Optional. Set to `true` to serve static assets from the S3 bucket rather than local directories. |
 
-## 7. Email Configuration
+---
+
+## 8. Background Tasks & Queue
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `ASOK_QUEUE_BACKEND` | str | `"local"` | Tasks queue backend: `"local"` (in-process thread pool) or `"redis"` (Redis list queue). |
+| `BG_WORKERS` | int | `10` | Maximum background threads in the local thread pool. |
+| `REDIS_URL` | str | `None` | Redis connection URL (e.g. `redis://localhost:6379/0`). Also accepts `ASOK_REDIS_URL`. |
+
+---
+
+## 9. Database & ORM
+
+Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL.
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `DATABASE_URL` | str | `"sqlite:///db.sqlite3"` | Connection DSN. Can be SQLite (`sqlite:///db.sqlite3`), PostgreSQL (`postgresql://user:pass@host:5432/dbname`), or MySQL (`mysql://user:pass@host:3306/dbname`). |
+
+---
+
+## 10. Email Configuration
 
 | Key | Type | Default | Description |
 |---|---|---|---|
@@ -81,7 +133,9 @@ Asok uses SQLite for simplicity. Most database settings are handled automaticall
 | `MAIL_FROM` | str | `"noreply@..."` | Default sender address. |
 | `MAIL_TLS` | bool | `True` | Use TLS for secure email transmission. |
 
-## 8. Logging
+---
+
+## 11. Logging
 
 | Key | Type | Default | Description |
 |---|---|---|---|
@@ -89,7 +143,9 @@ Asok uses SQLite for simplicity. Most database settings are handled automaticall
 | `LOG_FILE` | str | `None` | Optional path to a file for persistent logging. |
 | `LOG_FORMAT` | str | `"text"` | Format of logs: `"text"` or `"json"` for structured logging. |
 
-## 9. API & Documentation UI
+---
+
+## 12. API & Documentation UI
 
 | Key | Type | Default | Description |
 |---|---|---|---|
@@ -98,7 +154,9 @@ Asok uses SQLite for simplicity. Most database settings are handled automaticall
 | `API_TITLE` | str | *PROJECT_NAME* | The title shown in the documentation UI. |
 | `API_LOGO` | str | *SITE_LOGO* | URL of the logo shown in the documentation UI. |
 
-## 10. Admin Interface
+---
+
+## 13. Admin Interface
 
 The Admin interface is initialized by passing parameters to the `Admin` extension class in `wsgi.py`.
 
@@ -110,14 +168,9 @@ The Admin interface is initialized by passing parameters to the `Admin` extensio
 | `favicon` | str | `None` | Path to a custom logo/favicon (resolves to `src/partials/` if path provided). |
 | `login_rate_limit`| tuple | `(5, 900)` | Bruteforce protection: `(max_attempts, window_seconds)`. |
 
-## 11. Advanced Session Settings
+---
 
-| Key | Type | Default | Description |
-|---|---|---|---|
-| `SESSION_SAMESITE` | str | `"Lax"` | SameSite attribute for the session cookie (`Lax`, `Strict`, or `None`). |
-| `SESSION_SECURE` | bool | *auto* | Forces session cookie to be sent over HTTPS only. Defaults to `True` if not in `DEBUG`. |
-
-## 12. Mandatory Production Settings
+## 14. Mandatory Production Settings
 
 When running Asok in production (`DEBUG=False`), certain configurations are strictly enforced to ensure the security of your application. The framework will raise a `RuntimeError` on startup if these are missing or insecure.
 

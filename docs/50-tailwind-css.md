@@ -96,4 +96,4 @@ See [Forms](11-forms.md#nested-attribute-targeting) for more details.
 - The admin module does **not** use Tailwind — it ships with self-contained CSS so it works regardless of whether your project uses Tailwind.
 
 ---
-[← Previous: SEO & Metadata Management](49-seo-management.md) | [Documentation](README.md)
+[← Previous: SEO & Metadata Management](49-seo-management.md) | [Documentation](README.md) | [Next: Async Concurrency →](51-async-concurrency.md)

@@ -29,14 +29,6 @@
                     MIT License
                 </span>
                 <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold"
-                    style="background: var(--hero-badge-bg); border: 1px solid var(--hero-badge-border); color: var(--text-secondary)">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                    </svg>
-                    ~20K LOC
-                </span>
-                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold"
                     style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #22c55e">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -70,8 +62,8 @@
 
             <!-- Subheading -->
             <p class="text-xl md:text-2xl max-w-4xl mb-14 font-medium leading-relaxed" style="color: var(--text-secondary)">
-                A Python framework focused on built-in tooling, security features, and the standard library.
-                Single-package installation. Fast startup. Minimal external dependencies.
+                Build production-ready, highly interactive web applications in Python with zero custom JavaScript.
+                Single-package installation. Instant startup. Zero configuration.
             </p>
 
             <!-- CTAs -->
@@ -303,15 +295,10 @@
 
         <!-- Stats Section -->
         <section class="mt-40 max-w-7xl mx-auto w-full px-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="p-8 rounded-4xl home-glass-card text-center">
                     <div class="text-5xl font-black mb-3" style="color: var(--accent-primary)">0</div>
                     <div class="text-sm font-bold uppercase tracking-widest" style="color: var(--text-muted)">Dependencies
-                    </div>
-                </div>
-                <div class="p-8 rounded-4xl home-glass-card text-center">
-                    <div class="text-5xl font-black mb-3" style="color: var(--accent-primary)">~20K</div>
-                    <div class="text-sm font-bold uppercase tracking-widest" style="color: var(--text-muted)">Lines of Code
                     </div>
                 </div>
                 <div class="p-8 rounded-4xl home-glass-card text-center">
@@ -320,8 +307,8 @@
                         Built-in</div>
                 </div>
                 <div class="p-8 rounded-4xl home-glass-card text-center">
-                    <div class="text-5xl font-black mb-3" style="color: var(--accent-primary)">100%</div>
-                    <div class="text-sm font-bold uppercase tracking-widest" style="color: var(--text-muted)">Python Stdlib
+                    <div class="text-5xl font-black mb-3" style="color: var(--accent-primary)">&lt; 50ms</div>
+                    <div class="text-sm font-bold uppercase tracking-widest" style="color: var(--text-muted)">Startup Time
                     </div>
                 </div>
             </div>
@@ -338,7 +325,7 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Standard Library First -->
                 <div class="p-8 rounded-4xl home-glass-card home-glass-card-hover group">
                     <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">📦</div>
@@ -365,16 +352,8 @@
                         ORM, Auth, Admin, Forms, API documentation. Focus on your product, not library integration.
                     </p>
                 </div>
-
-                <!-- Full Control -->
-                <div class="p-8 rounded-4xl home-glass-card home-glass-card-hover group">
-                    <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🎮</div>
-                    <h3 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Full Control</h3>
-                    <p class="text-sm leading-relaxed" style="color: var(--text-secondary)">
-                        No magic. No hidden behaviors. You own every line of code in your application, making debugging and customization effortless.
-                    </p>
-                </div>
             </div>
+
         </section>
 
         <!-- Features Grid -->
@@ -498,7 +477,7 @@
                     professional applications, included in the standard library.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- ORM -->
                 <div class="p-8 rounded-4xl home-glass-card home-glass-card-hover group">
                     <div
@@ -508,9 +487,8 @@
                                 d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
                         </svg>
                     </div>
-                    <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Zero-Config ORM</h4>
-                    <p class="text-sm leading-relaxed" style="color: var(--text-muted)">High-performance SQLite ORM with
-                        auto-migrations, eager loading, and soft deletes built-in.</p>
+                    <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Multi-Engine ORM</h4>
+                    <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Supports SQLite, PostgreSQL, and MySQL. High-performance querying with auto-migrations, eager loading, and soft deletes.</p>
                 </div>
 
                 <!-- API -->
@@ -596,10 +574,8 @@
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Background Jobs
-                    </h4>
-                    <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Built-in worker and scheduler.
-                        Run heavy tasks asynchronously without Redis, Celery, or extra infrastructure.</p>
+                    <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Background Workers</h4>
+                    <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Built-in worker and scheduler. Run tasks asynchronously in a local thread pool, or scale with a Redis task queue.</p>
                 </div>
 
                 <!-- Intelligent Prefetching -->
@@ -638,9 +614,8 @@
                                 d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                         </svg>
                     </div>
-                    <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Cache Layer</h4>
-                    <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Memory and file-based caching.
-                        Speed up expensive operations with automatic TTL and cache invalidation.</p>
+                    <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Distributed Caching</h4>
+                    <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Memory, file, or Redis-based caching. Speed up operations with automatic TTL, cache keys, and template fragment caching.</p>
                 </div>
 
                 <!-- i18n -->
@@ -720,6 +695,32 @@
                         Add <code class="text-xs px-1 rounded"
                             style="background: var(--code-inline-bg); color: var(--code-inline-color)">asok-transition</code>
                         attribute for instant polish.</p>
+                </div>
+
+                <!-- Async & Concurrency -->
+                <div class="p-8 rounded-4xl home-glass-card home-glass-card-hover group">
+                    <div
+                        class="text-red-400 mb-6 opacity-50 group-hover:opacity-100 transition-all group-hover:scale-110">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Dual-Core Async</h4>
+                    <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Run under ASGI (Uvicorn) or WSGI (Gunicorn). Supports async page controllers, async middleware, and non-blocking ORM queries.</p>
+                </div>
+
+                <!-- Cloud Storage -->
+                <div class="p-8 rounded-4xl home-glass-card home-glass-card-hover group">
+                    <div
+                        class="text-blue-500 mb-6 opacity-50 group-hover:opacity-100 transition-all group-hover:scale-110">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                        </svg>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 tracking-tight" style="color: var(--text-primary)">Cloud Storage</h4>
+                    <p class="text-sm leading-relaxed" style="color: var(--text-muted)">Seamless upload handling. Store uploaded files locally or stream directly to Amazon S3 (or any S3-compatible cloud storage).</p>
                 </div>
             </div>
         </section>
@@ -1070,7 +1071,7 @@
                             </td>
                             <td class="py-4 px-6 text-center" style="color: var(--text-secondary)">Built-in (complex)</td>
                             <td class="py-4 px-6 text-center font-bold" style="color: var(--accent-primary)">Built-in
-                                (simple)</td>
+                                (SQLite, Postgres, MySQL)</td>
                         </tr>
                         <tr style="border-bottom: 1px solid var(--border-primary)">
                             <td class="py-4 px-6 font-medium" style="color: var(--text-primary)">Migrations</td>
@@ -1129,6 +1130,12 @@
                             <td class="py-4 px-6 text-center font-bold" style="color: var(--accent-primary)">Gentle</td>
                         </tr>
                         <tr style="border-bottom: 1px solid var(--border-primary)">
+                            <td class="py-4 px-6 font-medium" style="color: var(--text-primary)">Deployment</td>
+                            <td class="py-4 px-6 text-center" style="color: var(--text-secondary)">Manual WSGI &amp; task runner</td>
+                            <td class="py-4 px-6 text-center" style="color: var(--text-secondary)">Complex settings &amp; static files</td>
+                            <td class="py-4 px-6 text-center font-bold" style="color: var(--accent-primary)">Single-command deploy</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-primary)">
                             <td class="py-4 px-6 font-medium" style="color: var(--text-primary)">Vector Search (AI)</td>
                             <td class="py-4 px-6 text-center" style="color: var(--text-secondary)">❌ No</td>
                             <td class="py-4 px-6 text-center" style="color: var(--text-secondary)">❌ No</td>
@@ -1141,10 +1148,22 @@
                             <td class="py-4 px-6 text-center font-bold" style="color: var(--accent-primary)">✅ Native</td>
                         </tr>
                         <tr style="border-bottom: 1px solid var(--border-primary)">
+                            <td class="py-4 px-6 font-medium" style="color: var(--text-primary)">Async & Concurrency</td>
+                            <td class="py-4 px-6 text-center" style="color: var(--text-secondary)">Flask-Aiohttp (external)</td>
+                            <td class="py-4 px-6 text-center" style="color: var(--text-secondary)">ASGI support (complex)</td>
+                            <td class="py-4 px-6 text-center font-bold" style="color: var(--accent-primary)">✅ ASGI & WSGI (Unified)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-primary)">
+                            <td class="py-4 px-6 font-medium" style="color: var(--text-primary)">Cloud File Storage</td>
+                            <td class="py-4 px-6 text-center" style="color: var(--text-secondary)">❌ No</td>
+                            <td class="py-4 px-6 text-center" style="color: var(--text-secondary)">django-storages (external)</td>
+                            <td class="py-4 px-6 text-center font-bold" style="color: var(--accent-primary)">✅ Built-in (Local/S3)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-primary)">
                             <td class="py-4 px-6 font-medium" style="color: var(--text-primary)">Background Jobs</td>
                             <td class="py-4 px-6 text-center" style="color: var(--text-secondary)">Celery/Redis needed</td>
                             <td class="py-4 px-6 text-center" style="color: var(--text-secondary)">Celery/Redis needed</td>
-                            <td class="py-4 px-6 text-center font-bold" style="color: var(--accent-primary)">✅ Built-in</td>
+                            <td class="py-4 px-6 text-center font-bold" style="color: var(--accent-primary)">✅ Built-in (Local/Redis)</td>
                         </tr>
                         <tr style="border-bottom: 1px solid var(--border-primary)">
                             <td class="py-4 px-6 font-medium" style="color: var(--text-primary)">Lines of Code</td>

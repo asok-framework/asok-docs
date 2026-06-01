@@ -59,6 +59,9 @@ from asok import Asok, WebSocketServer
 
 
 app = Asok()
+app.config["CSP"] = {
+    "img-src": ["https://images.unsplash.com"]
+}
 app.share(
     version=app.version,
     year=datetime.now(timezone.utc).year

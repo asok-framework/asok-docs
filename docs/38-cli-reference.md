@@ -54,14 +54,37 @@ Watches `.py`, `.html`, `.json`, `.css`, `.js` files and **`.env`** across the p
 
 ### `asok migrate`
 
-Apply pending database migrations. Supports status checking, rollbacks, and faking.
+Apply pending database migrations. Supports status checking, rollbacks, faking, and database routing.
 
 ```bash
-asok migrate           # Apply all pending
-asok migrate --status  # Show applied vs pending
-asok migrate --rollback # Undo last batch
-asok migrate --fake    # Mark as applied without running SQL
+asok migrate                     # Apply all pending on the default database
+asok migrate --status            # Show applied vs pending migrations
+asok migrate --rollback          # Undo the last batch of migrations
+asok migrate --fake              # Mark pending migrations as applied in tracking table
+asok migrate --database=replica  # Apply migrations to a specific database DSN/backend
 ```
+
+### `asok dumpdata`
+
+Export database records of registered models to a JSON fixture file.
+
+```bash
+asok dumpdata                  # Dump all models to stdout
+asok dumpdata --output=f.json  # Dump all models to f.json
+asok dumpdata User             # Dump only the 'User' model to stdout
+```
+
+Binary database column values (e.g. vector blobs or files) are encoded using Base64 with a `"base64:"` prefix.
+
+### `asok loaddata`
+
+Import/restore database records from a JSON fixture file.
+
+```bash
+asok loaddata fixtures.json
+```
+
+Existing records are updated (matched by primary key) using standard ORM `.save()`. Non-existent records are inserted using raw SQL statements to preserve the original primary key ID. The entire loading process is wrapped in a database transaction for performance and atomicity.
 
 ### `asok seed`
 
@@ -164,5 +187,52 @@ asok preview
 # ℹ️ No auto-reload — restart manually after changes
 ```
 
+### `asok worker [action]`
+
+Start the background task queue worker process, or view queue status (only when using the `redis` background queue backend):
+
+* `asok worker` (or `asok worker run`): Starts the worker process to listen to `asok:queue`.
+* `asok worker status`: Connects to Redis and displays the total number of pending tasks and a list of the next tasks to be processed.
+
+```bash
+asok worker status
+#
+# ASOK QUEUE STATUS
+#   Backend: redis
+#   Redis URL: redis://localhost:6379/0
+#   Pending tasks: 2
+# --------------------------------------------------
+#   Next tasks to process:
+#
+#    1. src.tasks.send_email('user@example.com')
+#    2. src.tasks.generate_report(42)
+```
+
+### `asok test [path]`
+
+Discover and run unit tests in your project using the built-in test runner.
+
+```bash
+asok test            # Run all tests in the 'tests/' directory
+asok test tests/unit # Run tests in a specific directory or file
+```
+
+### `asok deploy`
+
+Generate production deployment configuration files (Nginx, Gunicorn, SystemD, setup script) for your project.
+
+```bash
+asok deploy                     # Standard configuration setup
+asok deploy --prod-dir=/var/www # Custom production directory path
+```
+
+### `asok assets`
+
+Manage JavaScript and CSS assets in your project.
+
+* `asok assets --install`: Download the `esbuild` standalone binary for asset minification.
+* `asok assets --minify`: Minify JS/CSS assets in `src/partials` recursively.
+
 ---
 [← Previous: Internationalization (i18n)](37-internationalization.md) | [Documentation](README.md) | [Next: Deployment →](39-deployment.md)
+

@@ -278,5 +278,278 @@ def get(request: Request):
         return request.api_error("User not found", status=404)
 ```
 
+## 5. Nested Eager Loading
+
+Optimize your database queries and avoid $N+1$ problems by eager-loading deeply nested relationships using dot notation:
+
+```python
+# Fetches all companies, their departments, and all employees in those departments in only 3 queries
+companies = Company.query().with_("departments.employees").get()
+
+for company in companies:
+    print(f"Company: {company.name}")
+    for dept in company.departments:
+        print(f"  Department: {dept.name}")
+        for emp in dept.employees:
+            print(f"    Employee: {emp.name}")
+```
+
+## 6. Polymorphic Relationships
+
+Polymorphic relationships allow a model to belong to more than one other model on a single association.
+
+### MorphTo
+
+Define a `MorphTo` relationship on the child model. The database table requires a string column to store the parent model type (e.g. `commentable_type`) and an integer column to store the parent ID (e.g. `commentable_id`).
+
+```python
+from asok import Model, Field, Relation
+
+class Comment(Model):
+    body = Field.Text()
+    commentable_id = Field.Integer()
+    commentable_type = Field.String()
+
+    commentable = Relation.MorphTo()
+```
+
+### MorphMany
+
+Define a `MorphMany` relationship on any parent model, specifying the target model name and the name of the relation definition on the target.
+
+```python
+class Article(Model):
+    title = Field.String()
+    comments = Relation.MorphMany("Comment", "commentable")
+
+class Video(Model):
+    title = Field.String()
+    comments = Relation.MorphMany("Comment", "commentable")
+```
+
+### Querying and Eager Loading Polymorphic Relations
+
+Asok supports dynamic and polymorphic eager loading to retrieve relationships in batches:
+
+```python
+# Eager load comments and their polymorphic commentables
+comments = Comment.query().with_("commentable").get()
+for c in comments:
+    # Resolves dynamically to either Article or Video instance
+    parent = c.commentable 
+    print(f"Comment '{c.body}' on {parent.__class__.__name__}: {getattr(parent, 'title', '')}")
+```
+
+## 7. Generic Global Scopes
+
+Global scopes allow you to add query constraints automatically to all queries for a given model.
+
+### Defining a Global Scope
+
+Specify global scopes using a `_global_scopes` dictionary mapping names to lambda query builders:
+
+```python
+class Product(Model):
+    name = Field.String()
+    active = Field.Integer(default=1)
+
+    _global_scopes = {
+        "active_only": lambda q: q.where("active", 1)
+    }
+
+# This automatically filters products where active = 1
+active_products = Product.query().get()
+```
+
+### Removing Global Scopes
+
+Disable specific or all global scopes when making queries:
+
+```python
+# Bypasses the active_only scope to return all products
+all_products = Product.query().without_global_scope("active_only").get()
+
+# Bypasses all active global scopes
+all_products = Product.query().without_global_scopes().get()
+```
+
+### Soft Deletes
+
+A soft delete column automatically adds a built-in `soft_delete` global scope. Use `.with_trashed()` to query soft-deleted records:
+
+```python
+class User(Model):
+    name = Field.String()
+    deleted_at = Field.SoftDelete() # Adds implicit soft_delete scope
+
+# Find only non-deleted users
+users = User.query().get()
+
+# Find all users, including soft-deleted ones
+all_users = User.query().with_trashed().get()
+```
+
+## 8. Savepoint-Based Nested Transactions
+
+Asok supports nested transactions using SQL savepoints. A nested transaction block will register a savepoint, allowing you to rollback or commit child operations independently of the outer transaction:
+
+```python
+with Company.transaction():
+    Company.create(name="MainCorp")
+
+    try:
+        with Company.transaction(): # Uses SAVEPOINT internally
+            Company.create(name="SubCorp")
+            raise ValueError("Rollback sub-operation")
+    except ValueError:
+        # Reverts only the creation of "SubCorp"
+        pass
+
+    Company.create(name="AnotherCorp")
+# Commits "MainCorp" and "AnotherCorp", but not "SubCorp"
+```
+
+## 9. PostgreSQL Connection Pooling
+
+For PostgreSQL environments, Asok dynamically integrates connection pooling using `psycopg_pool`. If a connection pool is initialized, database handles are transparently checked out and returned to the pool, optimizing concurrent request handling:
+
+```python
+# Configuration in .env
+DATABASE_URL=postgresql://user:pass@localhost/db?min_size=5&max_size=20
+```
+
+## 10. Database Fixtures (Backup & Restore)
+
+Asok provides fixture commands to serialize and deserialize model data to and from JSON formats. This is extremely useful for database backups, data migrations, and test seeding.
+
+### Exporting Data (`dumpdata`)
+
+Dump database records into a structured JSON fixture:
+
+```bash
+# Dump all registered models to output file
+asok dumpdata --output=fixtures.json
+
+# Dump a specific model only
+asok dumpdata User --output=users.json
+```
+
+Binary `bytes` fields are base64-encoded automatically as `"base64:<data>"`.
+
+### Importing Data (`loaddata`)
+
+Load data from a JSON fixture file back into the database:
+
+```bash
+asok loaddata fixtures.json
+```
+
+* **Updates & Inserts:** `loaddata` checks the database for existing records by matching primary keys. Existing records are updated via ORM `.save()`. Missing records are inserted directly via raw SQL queries to preserve original primary key IDs.
+* **Transactions:** The entire import is executed inside an atomic transaction.
+
+## 11. Transparent Multi-Language Support
+
+Asok models automatically support database-backed multi-language fields. When you define language-specific columns using standard suffix notation (e.g., `_fr`, `_en`, `_es`), the ORM dynamically exposes base properties (e.g., `title` and `content`) that automatically route accesses to the active request's language, with smart fallbacks.
+
+### Two Modeling Styles Supported
+
+#### Style A: Base Field + Translation Fields
+The base field represents the default language configured in the application (via `app.config['LOCALE']`, which defaults to `'en'`).
+```python
+class Post(Model):
+    title = Field.String()      # Stores English (default language)
+    title_fr = Field.String()   # Translation for French
+    title_es = Field.String()   # Translation for Spanish
+```
+
+#### Style B: Suffixed Fields Only
+All translation fields use explicit language suffixes.
+```python
+class Post(Model):
+    title_en = Field.String()   # English
+    title_fr = Field.String()   # French
+    title_es = Field.String()   # Spanish
+```
+
+### Usage
+Whether using Style A or Style B, you can access or update the active translation transparently:
+
+```python
+post = Post(title="Hello English", title_fr="Bonjour Français")
+
+# 1. Reading values (resolves automatically using current_request.lang)
+print(post.title)  # "Hello English" (under English request context)
+print(post.title)  # "Bonjour Français" (under French request context)
+
+# 2. Writing values
+post.title = "Hi English"  # Updates base column 'title' under English context
+post.title = "Salut"       # Updates 'title_fr' under French context
+```
+
+### Cascade Fallback Order
+If the translation for the active request's language is empty or not defined, the getter falls back in this order:
+1. Active request language column (e.g., `title_fr`).
+2. Default application locale (configured via `app.config['LOCALE']`, default is `'en'`).
+3. English (`'en'`), then French (`'fr'`) column.
+4. Any first populated translation column found.
+5. The base column value (`title`).
+
+### Bypassing During DB Loading
+When models are populated from database query results, all setters are bypassed to load the database columns exactly as they are without side-effects.
+
+---
+
+## 12. Multiple Database Connections
+
+Asok's ORM natively supports connecting different models to different database engines. Rather than needing a global registry or routing rules, you simply specify the database target directly on the model class.
+
+### 1. Model-Level Database Paths
+
+By default, all models share the main application database (`DATABASE_URL`). To bind a model (or a subset of models) to a separate database, override the class-level `_db_path` attribute:
+
+```python
+from asok import Model, Field
+
+# Uses default DATABASE_URL from .env
+class User(Model):
+    __tablename__ = "users"
+    name = Field.String()
+
+# Uses a separate SQLite database file for logs
+class SystemLog(Model):
+    __tablename__ = "system_logs"
+    _db_path = "sqlite:///logs.db"
+    
+    message = Field.Text()
+```
+
+When you query or save instances of `SystemLog`, the ORM automatically routes all SQL operations to the `logs.db` connection.
+
+### 2. Environment Variable Resolution
+
+To avoid committing sensitive credentials (passwords, hosts) or hardcoding paths directly in your source code, you can set `_db_path` to the **name** of an environment variable. The framework will automatically resolve its value at runtime:
+
+**Fichier `.env`**:
+```env
+DATABASE_URL=sqlite:///db.sqlite3
+LOGS_DATABASE_URL=postgresql://user:pass@localhost:5432/logs_db
+```
+
+**Modèles Python**:
+```python
+from asok import Model, Field
+
+class SystemLog(Model):
+    __tablename__ = "system_logs"
+    
+    # Asok automatically detects that "LOGS_DATABASE_URL" is an env variable
+    # and resolves its value securely from the environment.
+    _db_path = "LOGS_DATABASE_URL"
+    
+    message = Field.Text()
+```
+
 ---
 [← Previous: ORM Basics](07-orm.md) | [Documentation](README.md) | [Next: Database Migrations →](09-migrations.md)
+
+
