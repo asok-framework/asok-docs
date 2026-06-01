@@ -447,6 +447,109 @@ asok loaddata fixtures.json
 * **Updates & Inserts:** `loaddata` checks the database for existing records by matching primary keys. Existing records are updated via ORM `.save()`. Missing records are inserted directly via raw SQL queries to preserve original primary key IDs.
 * **Transactions:** The entire import is executed inside an atomic transaction.
 
+## 11. Transparent Multi-Language Support
+
+Asok models automatically support database-backed multi-language fields. When you define language-specific columns using standard suffix notation (e.g., `_fr`, `_en`, `_es`), the ORM dynamically exposes base properties (e.g., `title` and `content`) that automatically route accesses to the active request's language, with smart fallbacks.
+
+### Two Modeling Styles Supported
+
+#### Style A: Base Field + Translation Fields
+The base field represents the default language configured in the application (via `app.config['LOCALE']`, which defaults to `'en'`).
+```python
+class Post(Model):
+    title = Field.String()      # Stores English (default language)
+    title_fr = Field.String()   # Translation for French
+    title_es = Field.String()   # Translation for Spanish
+```
+
+#### Style B: Suffixed Fields Only
+All translation fields use explicit language suffixes.
+```python
+class Post(Model):
+    title_en = Field.String()   # English
+    title_fr = Field.String()   # French
+    title_es = Field.String()   # Spanish
+```
+
+### Usage
+Whether using Style A or Style B, you can access or update the active translation transparently:
+
+```python
+post = Post(title="Hello English", title_fr="Bonjour Français")
+
+# 1. Reading values (resolves automatically using current_request.lang)
+print(post.title)  # "Hello English" (under English request context)
+print(post.title)  # "Bonjour Français" (under French request context)
+
+# 2. Writing values
+post.title = "Hi English"  # Updates base column 'title' under English context
+post.title = "Salut"       # Updates 'title_fr' under French context
+```
+
+### Cascade Fallback Order
+If the translation for the active request's language is empty or not defined, the getter falls back in this order:
+1. Active request language column (e.g., `title_fr`).
+2. Default application locale (configured via `app.config['LOCALE']`, default is `'en'`).
+3. English (`'en'`), then French (`'fr'`) column.
+4. Any first populated translation column found.
+5. The base column value (`title`).
+
+### Bypassing During DB Loading
+When models are populated from database query results, all setters are bypassed to load the database columns exactly as they are without side-effects.
+
+---
+
+## 12. Multiple Database Connections
+
+Asok's ORM natively supports connecting different models to different database engines. Rather than needing a global registry or routing rules, you simply specify the database target directly on the model class.
+
+### 1. Model-Level Database Paths
+
+By default, all models share the main application database (`DATABASE_URL`). To bind a model (or a subset of models) to a separate database, override the class-level `_db_path` attribute:
+
+```python
+from asok import Model, Field
+
+# Uses default DATABASE_URL from .env
+class User(Model):
+    __tablename__ = "users"
+    name = Field.String()
+
+# Uses a separate SQLite database file for logs
+class SystemLog(Model):
+    __tablename__ = "system_logs"
+    _db_path = "sqlite:///logs.db"
+    
+    message = Field.Text()
+```
+
+When you query or save instances of `SystemLog`, the ORM automatically routes all SQL operations to the `logs.db` connection.
+
+### 2. Environment Variable Resolution
+
+To avoid committing sensitive credentials (passwords, hosts) or hardcoding paths directly in your source code, you can set `_db_path` to the **name** of an environment variable. The framework will automatically resolve its value at runtime:
+
+**Fichier `.env`**:
+```env
+DATABASE_URL=sqlite:///db.sqlite3
+LOGS_DATABASE_URL=postgresql://user:pass@localhost:5432/logs_db
+```
+
+**Modèles Python**:
+```python
+from asok import Model, Field
+
+class SystemLog(Model):
+    __tablename__ = "system_logs"
+    
+    # Asok automatically detects that "LOGS_DATABASE_URL" is an env variable
+    # and resolves its value securely from the environment.
+    _db_path = "LOGS_DATABASE_URL"
+    
+    message = Field.Text()
+```
+
 ---
 [← Previous: ORM Basics](07-orm.md) | [Documentation](README.md) | [Next: Database Migrations →](09-migrations.md)
+
 

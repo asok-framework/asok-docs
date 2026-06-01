@@ -64,6 +64,21 @@
     --social-color: #475569;
     --social-hover: var(--text-primary);
 
+    /* Map Asok Framework CSS variables to doc site theme variables */
+    --asok-border: var(--border-primary);
+    --asok-input-bg: var(--bg-secondary);
+    --asok-dropdown-bg: var(--bg-tertiary);
+    --asok-text: var(--text-primary);
+    --asok-text-muted: var(--text-secondary);
+    --asok-table-bg: var(--bg-secondary);
+    --asok-table-header-bg: var(--bg-tertiary);
+    --asok-hover: rgba(255, 255, 255, 0.05);
+    --asok-accent: var(--accent-primary);
+    --asok-accent-light: var(--accent-bg);
+    --asok-accent-dark: var(--accent-light);
+    --asok-toggle-bg: var(--border-secondary);
+    --asok-toggle-active-bg: var(--accent-primary);
+
     font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     scroll-behavior: smooth;
 }
@@ -132,6 +147,9 @@ body.light-mode {
     --phone-counter-bg: rgba(79, 70, 229, 0.08);
     --social-color: #64748b;
     --social-hover: var(--text-primary);
+
+    /* Light mode specific overrides for Asok mapping */
+    --asok-hover: rgba(0, 0, 0, 0.03);
 }
 
 body {
@@ -497,3 +515,57 @@ body.light-mode .editor-sidebar-btn:hover {
     font-weight: 700 !important;
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08) !important;
 }
+
+/* Code Viewer Tab Bar */
+.code-viewer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background: #0f172a !important; /* Solid dark slate for both modes by default */
+    border-bottom: 1px solid #1e293b !important;
+}
+
+body.light-mode .code-viewer-header {
+    background: #f1f5f9 !important; /* Light slate in light mode */
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.code-viewer-btn {
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 0.375rem 0.75rem !important;
+    border-radius: 0.5rem !important;
+    transition: all 0.2s !important;
+    cursor: pointer !important;
+    user-select: none !important;
+}
+
+/* Inactive button text colors */
+.code-viewer-btn-inactive {
+    color: #94a3b8 !important; /* text-slate-400 */
+}
+.code-viewer-btn-inactive:hover {
+    color: #e2e8f0 !important; /* text-slate-200 */
+}
+
+body.light-mode .code-viewer-btn-inactive {
+    color: #64748b !important; /* text-slate-500 */
+}
+body.light-mode .code-viewer-btn-inactive:hover {
+    color: #0f172a !important; /* text-slate-900 */
+}
+
+/* Copy-Pasteable Integration label */
+.code-viewer-label {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    font-family: monospace !important;
+    color: #64748b !important; /* text-slate-500 */
+}
+body.light-mode .code-viewer-label {
+    color: #94a3b8 !important; /* text-slate-400 */
+}
+

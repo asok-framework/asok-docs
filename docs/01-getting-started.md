@@ -10,13 +10,15 @@ By default, Asok has **zero external dependencies** and works out of the box wit
 # Default installation (SQLite, zero dependencies)
 pip install asok
 
-# Optional backends (PostgreSQL, MySQL, Redis)
+# Optional backends & capabilities (PostgreSQL, MySQL, Redis, Async)
 pip install "asok[postgres]"
 pip install "asok[mysql]"
 pip install "asok[redis]"
+pip install "asok[async]"
 
 # Combined optional extras (e.g. Postgres + Redis)
 pip install "asok[postgres,redis]"
+
 ```
 
 > **💡 Note for VS Code Users:** For the best developer experience, we highly recommend installing the official **[Asok VS Code Extension](https://marketplace.visualstudio.com/items?itemName=AsokFramework.asok-vscode)**. It provides native autocompletion, reactive snippets, and integrated CLI commands directly in your editor.

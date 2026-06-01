@@ -110,6 +110,10 @@ Validation errors use `v_` prefixed keys automatically:
 { "v_required": "Ce champ est obligatoire.", "v_email": "Adresse email invalide." }
 ```
 
+## Translating models (Database)
+
+Asok supports database-backed dynamic field translations on models (e.g., fallback routing on `post.title` to `title_fr` or the base field `title` depending on `request.lang`). See [Advanced ORM - Transparent Multi-Language Support](08-advanced-orm.md#11-transparent-multi-language-support).
+
 ## Default language
 
 In `wsgi.py`:

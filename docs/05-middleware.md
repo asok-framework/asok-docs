@@ -20,6 +20,10 @@ That's it. The file must export a `handle(request, next)` function.
 - `next` — call this to continue to the next middleware (or the page handler)
 - Return the response from `next(request)`
 
+## Asynchronous Middleware
+
+Middleware can also be declared using `async def` for non-blocking operations (e.g., calling external APIs or querying the database with async ORM methods). Asok automatically resolves mixed sync/async chains under both ASGI and WSGI servers. For details, see [Async & Concurrency](51-async-concurrency.md).
+
 ## Execution order
 
 Middleware files are loaded in **alphabetical order**. To control the order, prefix filenames with numbers:

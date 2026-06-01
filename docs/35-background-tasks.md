@@ -50,7 +50,42 @@ When using the `redis` backend, tasks are sent to Redis. You must start one or m
 asok worker
 ```
 
+#### Inspecting the Queue Status
+
+You can check the status of the Redis queue at any time (e.g., number of pending tasks, next jobs to process) using the `status` command:
+
+```bash
+asok worker status
+```
+
+This connects to Redis and prints the total number of pending tasks and a list of the next tasks to be processed in execution order.
+
 *Note: Only module-level functions can be queued on Redis. Lambda functions or nested (local) functions cannot be serialized and will raise a `ValueError`.*
+
+### Production Deployment with Systemd
+
+In a production environment, running the worker in the foreground of a terminal is not suitable. Instead, you should manage it as a background service supervised by SystemD.
+
+When you run `asok deploy`, it automatically generates a `{your_project}-worker.service` file for your background worker. To deploy and run it:
+
+1. Copy the generated service file to the SystemD system directory:
+   ```bash
+   sudo cp deployment/{your_project}-worker.service /etc/systemd/system/
+   ```
+2. Reload SystemD and enable the service to start on boot:
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable {your_project}-worker
+   ```
+3. Start the worker service:
+   ```bash
+   sudo systemctl start {your_project}-worker
+   ```
+
+The service is configured to automatically restart if it encounters an unexpected error or crash. You can monitor the worker's real-time logs using:
+```bash
+journalctl -u {your_project}-worker -f
+```
 
 ## 3. Standalone Usage
 

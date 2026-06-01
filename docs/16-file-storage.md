@@ -293,10 +293,10 @@ def render(request: Request):
 ```
 
 ### Path Resolution
-- **Absolute paths**: Used as-is.
-- **Relative paths**: Resolved relative to `src/partials/uploads`.
+All paths passed to `request.send_file()` are resolved relative to `src/partials/uploads/` (leading and root slash prefixes are stripped for security).
 
-> For security, `request.send_file()` only allows serving files from within the `src/partials/uploads` directory. Attempts to access files outside this directory will return a `403 Forbidden` error.
+> For security, `request.send_file()` only allows serving files from within the `src/partials/uploads` directory. Attempts to escape or access files outside this directory will return a `403 Forbidden` error.
+
 
 ## Configuration
 

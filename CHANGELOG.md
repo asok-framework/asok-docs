@@ -5,6 +5,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.3.0] - 2026-06-01
+
+### Added
+- **Async Concurrency & ASGI/WSGI Dual Engine**: Added support for asynchronous programming, including `async def` page controllers, asynchronous middlewares, and non-blocking database queries (via `*_async` ORM methods). Built-in seamless interoperability allows sync and async middlewares/handlers to be mixed freely under both ASGI (Uvicorn) and WSGI (Gunicorn) servers.
+- **Config-driven DB Binds (Multi-DB & Cross-Engine)**: Support for connecting models to multiple databases simultaneously across SQLite, PostgreSQL, and MySQL backends by binding model classes to specific environment variables (e.g., `_db_path = "LOGS_DATABASE_URL"`), keeping credentials out of the codebase.
+- **Advanced PostgreSQL & MySQL Support**: Built-in support for PostgreSQL connection pooling (via `psycopg_pool`), MySQL thread-safe connections, automatic schema migration handling, full-text GIN indexing, and vector similarity search.
+- **Redis Cache & Session Backends**: Introduced native Redis support for high-performance caching and session persistence.
+- **S3 Cloud Storage**: Built-in support for AWS S3 file storage with automatic mime-type guessing and region-specific subdomain routing to avoid broken media links.
+- **Automatic DB Connection Teardown**: Auto-release database connections back to pools (for PostgreSQL, MySQL, and SQLite) at the end of every ASGI and WSGI request, preventing resource leaks and database locking issues.
+- **Database Fixtures Commands**: Added new CLI commands `asok dumpdata` (to dump database records to a JSON fixture file) and `asok loaddata` (to load records from a JSON fixture file), simplifying data seeding and environment migrations.
+- **CLI Background Task Worker**: Added `asok worker` command to start a dedicated background task processing worker with built-in Redis connection resilience, automatic reconnection recovery on connection loss, and silent socket timeout handling during idle queue periods.
+
+### Improved
+- **Async Concurrency & Interoperability**:
+  - Resolved `TypeError: 'str' object can't be awaited` when async middlewares wrap sync controllers under ASGI by introducing safe async wrappers.
+  - Resolved issue where async middlewares under WSGI returned raw, unawaited coroutines; now run seamlessly using a thread-safe `async_to_sync` event-loop bridge.
+  - Enhanced ASGI startup/shutdown lifespan hooks to support partial async functions (`functools.partial`) and custom callables returning coroutines.
+- **Locale-based GeoIP Fallback**: The GeoIP lookup engine now falls back to request locale (e.g., `fr` -> `FR` / `+33` / `Paris`) when looking up private/localhost IPs.
+- **Timezone Mapping**: Added `"CD": "Africa/Kinshasa"` to the country-to-timezone mapping.
+- **Client-Side Directives & SPA Reactivity**:
+  - Propagated dynamic element initialization (`window.Asok.init`) inside structural directives like `asok-if` and `asok-for`.
+  - Preserved cursor focus and selection on active inputs during virtual DOM patches.
+  - Avoided circular dependency JSON crashes in client-side state serialization.
+
+### Security
+- **Timing Attack Prevention**: Prevented password-reset and login timing attacks by applying a 150ms delay + random jitter on all Magic Link checks.
+- **Host Header Injection Protection**: Blocked Host Header injection in production by forcing validation against `APP_URL`.
+
+
 ## [0.1.7] - 2026-05-25
 
 ### 🏗️ Major Release: Framework Refactoring & Architecture Overhaul

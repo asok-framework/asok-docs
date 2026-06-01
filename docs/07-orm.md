@@ -86,12 +86,12 @@ The first argument to a scope is always the current `Query` object.
 | `Field.DateTime()` | TEXT | ISO format |
 | `Field.Password()` | TEXT | Auto-hashed (PBKDF2-SHA256, 600k) |
 | `Field.ForeignKey(Model)` | INTEGER | FK to another model. Use `dropdown=True` for rich select in forms. |
-| `Field.Dropdown(choices)` | TEXT | Fixed choices — renders as a premium searchable dropdown. |
+| `Field.Dropdown(choices)` | TEXT | Fixed choices (list of tuples `(value, label)`) — renders as a premium searchable dropdown. |
 | `Field.File(upload_to='dir')` | TEXT | Stores filename, files saved under uploads/ |
 | `Field.CreatedAt()` | TEXT | Set once on first save |
 | `Field.UpdatedAt()` | TEXT | Updated on every save |
 | `Field.SoftDelete()` | TEXT | Enables soft delete (see below) |
-| `Field.Dropdown(choices)` | TEXT | List of tuples `(value, label)`. |
+
 
 ### Common Field Parameters
 
@@ -515,7 +515,7 @@ result['current_page']  # 2
 
 ## Password hashing
 
-`Field.Password()` auto-hashes on save (PBKDF2-SHA256, 100k iterations):
+`Field.Password()` auto-hashes on save (PBKDF2-SHA256, 600k iterations):
 
 ```python
 class User(Model):

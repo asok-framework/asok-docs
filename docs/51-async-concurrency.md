@@ -16,7 +16,6 @@ pip install "asok[async]"
 
 This installs:
 - `uvicorn` — A lightning-fast ASGI server.
-- `aiosqlite` — An asynchronous driver for SQLite database operations.
 
 ---
 
@@ -25,14 +24,15 @@ This installs:
 To start the development server using the ASGI interface rather than the default WSGI server, run:
 
 ```bash
-uvicorn src.app:app --reload
+uvicorn wsgi:app --reload
 ```
 
 In production, you can deploy your application with:
 
 ```bash
-uvicorn src.app:app --host 0.0.0.0 --port 8000 --workers 4
+uvicorn wsgi:app --host 0.0.0.0 --port 8000 --workers 4
 ```
+
 
 ---
 
@@ -41,14 +41,14 @@ uvicorn src.app:app --host 0.0.0.0 --port 8000 --workers 4
 You can write standard synchronous controllers or asynchronous `async def` page controllers. Asok automatically detects if the controller is a coroutine function and handles it appropriately.
 
 ```python
-# src/pages/users.py
-from asok.orm import User
+# src/pages/users/page.py
+from models.user import User
 
 async def get(request):
     # Perform non-blocking database query
     users = await User.all_async()
     
-    return request.render("users.html", users=users)
+    return request.html("page.html", users=users)
 ```
 
 ---
@@ -95,8 +95,8 @@ Asok Models expose async variants of all standard querying and saving methods.
 ### Example usage:
 
 ```python
-# src/pages/profile.py
-from asok.orm import User
+# src/pages/profile/page.py
+from models.user import User
 
 async def get(request):
     user_id = request.query.get("id")
@@ -107,7 +107,7 @@ async def get(request):
         request.status(404)
         return "User not found"
         
-    return request.render("profile.html", user=user)
+    return request.html("page.html", user=user)
 
 async def post(request):
     name = request.form.get("name")

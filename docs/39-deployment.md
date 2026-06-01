@@ -16,7 +16,8 @@ asok deploy
 Asok will generate a `deployment/` directory containing:
 - `gunicorn_conf.py`: Optimized worker settings based on your server's CPU.
 - `nginx.conf`: Nginx reverse-proxy with **Gzip compression** and **Security headers**.
-- `myapp.service`: SystemD unit file configured with your current `SECRET_KEY`.
+- `myapp.service`: SystemD unit file for the main Gunicorn web server, configured with your current `SECRET_KEY`.
+- `myapp-worker.service`: SystemD unit file for the background task worker (`asok worker`) in Redis queue mode.
 - `setup.sh`: A comprehensive installation script for Ubuntu/Debian.
 
 ## 2. Build Pipeline (Recommended)
@@ -40,8 +41,12 @@ This command generates a `dist/` folder. You should deploy the **contents** of t
    ```
 
 ### What the script does:
-- Installs `nginx`, `python3-pip`, and `python3-venv`.
-- Creates a virtual environment and installs `gunicorn`.
+- Installs `nginx`, `python3-pip`, `python3-venv`, and `redis-server`.
+- Configures, starts, and enables the local Redis service.
+- Creates a Python virtual environment and installs `gunicorn`, `asok`, and `redis`.
+- Installs project dependencies from `requirements.txt`.
+- Sets correct permissions for the `www-data` user on the database and uploads directory.
+- Copies both SystemD service files (`.service` and `-worker.service`) to the system directory, reloads SystemD, enables both services to start on boot, and starts them automatically.
 ## 4. Directory Permissions
 
 For the `file` backend to work correctly, the directories used for sessions and caching must be writable by the user running the web server (Gunicorn).
