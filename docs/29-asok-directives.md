@@ -270,6 +270,20 @@ For more control, use async JavaScript expressions:
 </div>
 ```
 
+**Attributes & Behavior:**
+- **Trigger**: Defaults to `click` (ideal for buttons). You can set `asok-fetch-on="load"` to run it automatically when the component mounts/loads.
+- **Assignment**: Unlike `asok-fetch`, it does **not** use `asok-fetch-as`. You must assign the returned data directly inside the expression (e.g. `my_var = await ...`).
+
+### Choosing between `asok-fetch` and `asok-fetch-async`
+
+| Use Case | `asok-fetch` | `asok-fetch-async` |
+|---|---|---|
+| **URL Type** | Static strings only (e.g., `"/api/users"`) | Dynamic expressions (e.g., `"/api/users/" + userId`) |
+| **Default Trigger** | `load` (executes immediately on mount) | `click` (executes on click, customize with `asok-fetch-on`) |
+| **Usage Style** | Declarative (zero custom JavaScript) | Code expression (using native `await fetch(...)`) |
+| **HTTP Methods** | `GET` requests only | Any method (`GET`, `POST`, `PUT`, `DELETE`, headers, etc.) |
+| **Capabilities** | ❌ Basic property binding only |  Can chain `.then()` or parallelize with `Promise.all()` |
+
 ## Advanced
 
 ### `asok-ref`

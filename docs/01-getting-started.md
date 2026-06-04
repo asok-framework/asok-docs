@@ -11,13 +11,14 @@ By default, Asok has **zero external dependencies** and works out of the box wit
 pip install asok
 
 # Optional backends & capabilities (PostgreSQL, MySQL, Redis, Async)
-pip install "asok[postgres]"
+pip install "asok[postgres]"        # Standard (requires system libpq)
+pip install "asok[postgres-binary]" # Binarized (no system dependencies, great for dev)
 pip install "asok[mysql]"
 pip install "asok[redis]"
 pip install "asok[async]"
 
 # Combined optional extras (e.g. Postgres + Redis)
-pip install "asok[postgres,redis]"
+pip install "asok[postgres-binary,redis]"
 
 ```
 

@@ -269,13 +269,13 @@ By default, Asok requires no configuration and uses SQLite. If you want to use P
 | Engine | Installation | `DATABASE_URL` Format |
 |---|---|---|
 | **SQLite** | *Included by default* | `sqlite:///db.sqlite3` or `sqlite:///:memory:` |
-| **PostgreSQL** | `pip install "asok[postgres]"` | `postgresql://user:password@localhost:5432/dbname` |
+| **PostgreSQL** | `pip install "asok[postgres]"` (or `"asok[postgres-binary]"`) | `postgresql://user:password@localhost:5432/dbname` |
 | **MySQL** | `pip install "asok[mysql]"` | `mysql://user:password@localhost:3306/dbname` |
 
 ### Installation Combined with other extras
 If you are also using Redis for caching/sessions, you can combine extras:
 ```bash
-pip install "asok[postgres,redis]"
+pip install "asok[postgres-binary,redis]"
 ```
 
 ## CRUD
