@@ -13,7 +13,15 @@ Asok achieves **Zero-Eval Security** in production for all reactive directives:
 
 If you are using third-party libraries that require `eval()`, you can still manually force it by adding `CSP_UNSAFE_EVAL=true` to your `.env` file. Otherwise, no configuration is required!
 
+## Directives & Islands Architecture (Selective Hydration)
+
+With the introduction of the **Islands Architecture**, `asok-*` directives are integrated with selective client-side hydration:
+* **Inside Islands**: Directives within components using `client:load`, `client:visible`, or `client:idle` are hydrated dynamically according to their respective triggers.
+* **Outside Islands (Static)**: Directives outside of interactive islands are served statically as plain HTML, avoiding any overhead on the client side.
+* **Zero JS Overhead**: If a page contains no interactive components or active directives, Asok skips injecting the directives runtime (`asok_directives.min.js`) completely.
+
 ## State Management
+
 
 ### `asok-state` — Component state
 
