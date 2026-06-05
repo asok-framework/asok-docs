@@ -95,6 +95,36 @@ Asok includes the **Alive** engine, a lightweight (< 2KB) JavaScript runtime tha
 -   **Security**: Synchronizes signed state and CSRF tokens for every interaction.
 -   **UX Polish**: Restores input focus and text selection after a component update, preventing "jumping" inputs during fast typing.
 
+## Islands Architecture & Selective Hydration
+
+Instead of scanning and hydrating the entire webpage, Asok supports **Islands Architecture**. This allows you to serve pure, lightweight HTML for static parts of your page and selectively hydrate interactive elements (islands) when specific conditions are met.
+
+### Hydration Attributes
+
+You can control when and how a component is hydrated by using `client:` attributes:
+
+| Attribute | Trigger Strategy | Description |
+| :--- | :--- | :--- |
+| `client:load` | Immediate | Hydrates the component as soon as the page loads. |
+| `client:visible` | Intersection | Hydrates the component only when it enters the viewport (using `IntersectionObserver`). Excellent for comments, interactive widgets in the page body, etc. |
+| `client:idle` | Browser Idle | Hydrates when the browser main thread is idle (using `requestIdleCallback`). Ideal for lower-priority or secondary widgets. |
+
+### Usage Example
+
+```html
+<!-- Hydrates immediately -->
+{{ component('HeaderCart', client='load') }}
+
+<!-- Remains static until scrolled into view -->
+{{ component('CommentsSection', client='visible') }}
+
+<!-- Hydrates during browser idle time -->
+{{ component('NewsletterSignup', client='idle') }}
+```
+
+When using Islands, pages without any active directives or interactive components will send **zero JavaScript payload** to the client. If components are present, they are only hydrated when their respective strategy is triggered, leaving the surrounding static HTML untouched and fast.
+
+
 ## Real-time Model Subscriptions (`data-subscribe`)
 
 Beyond stateful components, Asok allows any HTML element to become "real-time" by subscribing to database changes.
