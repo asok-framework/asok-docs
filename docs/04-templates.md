@@ -811,9 +811,34 @@ sock.send('hello');
 
 `asokWS(path)` returns a `WebSocket` instance and resolves the URL automatically: `ws://localhost:8001/chat` in dev, `wss://yoursite.com/ws/chat` in production (assuming nginx proxies `/ws/` to your WebSocket port). The port can be configured via `app.config['WS_PORT']` (defaults to `8001`).
 
+## Interactive Components & Islands
+
+You can render stateful, WebSocket-powered interactive components in your templates. Asok supports **Islands Architecture** via the `client` argument to control when components hydrate on the client side:
+
+1. **Inline Helper**:
+```html
+{{ component('Counter', count=10, client='visible') }}
+```
+
+2. **Block Helper** (useful when passing slots/nested HTML):
+```html
+{% component "Counter", count=10, client='idle' %}
+    <p>Loading interactive counter...</p>
+{% endcomponent %}
+```
+
+### Hydration Strategies (`client`)
+
+* `client="load"`: Hydrates immediately on page load.
+* `client="visible"`: Hydrates only when the component enters the browser viewport.
+* `client="idle"`: Hydrates when the browser main thread is idle.
+
+If no `client` argument is specified, the component defaults to immediate hydration.
+
 ## Component Slots (Transclusion)
 
 Asok supports passing arbitrary HTML blocks into components using the `{% component %}...{% endcomponent %}` block tag. This is useful for creating layout components (like cards, modals, or page layouts) where the content isn't known in advance.
+
 
 Inside the component, you access the passed content via the `{{ slot }}` variable.
 
