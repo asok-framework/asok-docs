@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.4.0] - 2026-06-07
+
+### Added
+- **Community Extensions System**: Introduced a fully modular plug-and-play extension architecture that allows third-party packages to seamlessly register custom pages/controllers, templates/partials, and static assets. Includes rigorous path safety verification to prevent directory traversal vulnerabilities in extension layouts.
+- **Hybrid SSR & Hydration (Islands, SSG & ISR)**: 
+  - Selective hydration for islands architecture.
+  - Static Site Generation (SSG) to pre-render parameterless pages during compilation (`asok build`).
+  - Incremental Static Regeneration (ISR) with background stale-cache warming and revalidation intervals (`REVALIDATE`).
+- **Built-in GraphQL Engine**: Seamless GraphQL server integration supporting model-to-schema auto-generation, WebSocket subscriptions, query complexity validation limits, and an embedded GraphQL playground in debug mode.
+- **API Versioning Negotiation**: Professional API versioning management supporting URL-based (`/api/v1/`) and header-based versioning, negotiation headers, and deprecation sunset notifications.
+- **Advanced WebSockets**: Real-time user presence tracking and status updates, room authorization hooks, direct messaging (DMs), typing indicators, and read receipts.
+- **Multi-Database ORM Router**: Advanced ORM database router supporting read replicas, automatic write-master/read-replica query splitting, and sharding strategies.
+
+### Improved
+- **Top-level Extension API**: Exposed `AsokExtension` directly at the root of the `asok` package for cleaner third-party imports.
+- **SSG Build Imports Isolation**: Wrapped SSG generation in `asok build` with a dynamic `sys.path` injection and cleanup of the build directory, avoiding `ModuleNotFoundError` during compilation of pages containing local imports.
+
+---
+
 ## [0.3.0] - 2026-06-01
 
 ### Added
