@@ -1,11 +1,11 @@
 # Asok Documentation
 
-> **Latest Version: v0.3.0**
+> **Latest Version: v0.4.0**
 >
-> * **Encrypted Fields**: New `Field.EncryptedString()` stores sensitive data (SSN, API keys, card numbers) encrypted with AES-256 (Fernet) using the application's `SECRET_KEY`. Fully transparent: plaintext in Python, ciphertext in the database. Install with `pip install "asok[security]"`.
-> * **Distributed Rate Limiting**: The rate limiter now automatically uses Redis or file cache backends when configured, enabling consistent cross-worker and multi-node limiting in production.
-> * **Python 3.14 Support**: Added official Python 3.14 classifier and tested compatibility.
-> * **Module Restructuring**: Reorganized monolithic files into clean, modular packages (`asok/core/`, `asok/orm/`, `asok/cli/`, etc.) to improve maintainability with 100% backward compatibility.
+> * **Community Extensions System**: Fully modular plug-and-play extension architecture allowing third-party packages to register custom controllers, templates, static assets, and custom CLI commands.
+> * **Hybrid SSR & Hydration (Islands, SSG & ISR)**: High-performance pre-rendering supporting Static Site Generation (`asok build`) and Incremental Static Regeneration (ISR) with selective islands hydration.
+> * **GraphQL & API Versioning**: Native GraphQL engine with schema auto-generation, complexity validation, and professional API version negotiation (URL and header-based).
+> * **Advanced WebSockets & Multi-DB**: Real-time user presence, authorized rooms, replica-router split for database replica routing (read master/replica query routing).
 
 
 
