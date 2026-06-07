@@ -227,3 +227,4 @@ db.sqlite3-wal
 src/migrations/
 .DS_Store 
 
+.obsidian/
