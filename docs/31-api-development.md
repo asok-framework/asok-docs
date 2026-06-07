@@ -181,5 +181,135 @@ For complex models, use the `Schema` class to control which fields are exposed a
 
 See the [Serialization Guide](15-serialization.md) for full details on building Schemas.
 
+## API Versioning
+
+Asok provides native support for versioning your JSON APIs using three main strategies: URL versioning, request headers, and media type headers. It also automates sunset dates and deprecation announcements via standard HTTP response headers (RFC 8594).
+
+### Supported Versioning Strategies
+
+1. **URL Versioning**: Path-based segmentation (e.g., `/api/v1/users` and `/api/v2/users`). This resolves naturally via file-system routing when placed in versioned subdirectories (e.g., `src/pages/api/v1/users.py`).
+2. **Custom Header**: Clients specify the version in the `X-API-Version` header (e.g., `X-API-Version: v1`).
+3. **Accept Header**: Clients specify the version in the `Accept` media type header (e.g., `Accept: application/vnd.asok.v2+json`).
+
+### Unified Routing
+If a client requests an unversioned URL (e.g., `/api/users`), the Asok router checks the request headers (`X-API-Version` or `Accept`). If a version header is found and a matching versioned file-system controller exists (such as `src/pages/api/v1/users.py`), the router automatically matches the requested version dynamically.
+
+### Deprecation & Sunset Headers
+If an API version is deprecated, you can configure sunset dates. Asok will automatically append `Deprecation: true` and `Sunset: <HTTP-date>` response headers.
+
+#### Module-level Configuration
+To set metadata for an entire file-system controller:
+```python
+# src/pages/api/v1/users.py
+__api_deprecated__ = True
+__api_sunset__ = "2026-12-31T00:00:00Z"
+
+def get(request):
+    return request.json({"users": []})
+```
+
+#### Inline Routing & Decorators
+You can manage versions inside a single controller file using `versioned_response` and the `@api_version` decorator:
+```python
+# src/pages/api/users.py
+from asok.api.versioning import api_version, versioned_response
+
+@api_version(version="v1", deprecated=True, sunset="2026-12-31T00:00:00Z")
+def get_v1(request):
+    return request.json({"users": ["Alice"]})
+
+@api_version(version="v2")
+def get_v2(request):
+    return request.json({"data": {"users": ["Alice"]}})
+
+def get(request):
+    return versioned_response(request, {
+        "v1": get_v1,
+        "v2": get_v2,
+    }, default="v2")
+```
+
+---
+
+## Native GraphQL Server
+
+Asok includes a native, zero-dependency GraphQL server. It automatically maps your ORM models to a GraphQL schema, validates query complexity, hosts the GraphiQL playground in development, and handles real-time subscriptions over WebSockets.
+
+### Activation
+
+The GraphQL HTTP endpoint (`/graphql`) is **always active** — no configuration needed. It is handled directly by the WSGI/ASGI core.
+
+The GraphQL WebSocket endpoint (for subscriptions) is registered automatically when `WebSocketServer` is initialized alongside your app.
+
+To show a **"GraphQL Explorer" link** in the `/docs` sidebar, add to your config:
+
+```python
+app.config["GRAPHQL_ENABLED"] = True          # Show link in docs sidebar
+app.config["GRAPHQL_PATH"] = "/graphql"       # Optional, /graphql is the default
+```
+
+### 1. Automatic ORM Schema Generation
+The GraphQL engine automatically maps your ORM models to GraphQL types, queries, and mutations — with **zero code to write**:
+
+* **Object Types**: Mapped 1:1 from ORM models (fields and relations — `HasMany`, `BelongsTo`, `BelongsToMany`, `MorphMany`).
+* **Root Queries**:
+  - **List query** — plural form of the table name, with optional `limit`, `offset`, and field filters:
+    ```graphql
+    { users(limit: 10, active: 1) { id name email } }
+    ```
+  - **Single record query** — model name with a required `id` argument:
+    ```graphql
+    { user(id: 42) { name posts { title } } }
+    ```
+* **Root Mutations** — auto-generated for every registered model:
+  ```graphql
+  mutation {
+    createUser(name: "Alice", email: "alice@ex.com") { id name }
+    updateUser(id: 1, name: "Bob") { name }
+    deleteUser(id: 1)
+  }
+  ```
+
+### 2. Query Complexity Analysis
+To protect the server from expensive deeply-nested queries (N+1 attacks), Asok runs static analysis on every incoming selection set before execution.
+
+- Scalar fields add **1 point**.
+- List fields multiply their children's score by their `limit` argument (or **10** if not provided).
+
+Queries exceeding the limit are instantly rejected with `400 Bad Request`.
+
+```python
+app.config["GRAPHQL_MAX_COMPLEXITY"] = 100  # Default: 100
+```
+
+### 3. GraphQL Playground (GraphiQL)
+When `DEBUG = True`, visiting `GET /graphql` in your browser opens the interactive **GraphiQL Explorer** — write queries, inspect the schema, and test mutations live.
+
+In production (`DEBUG = False`), `GET /graphql` returns `405 Method Not Allowed`. Only `POST` requests are accepted.
+
+### 4. Real-time Subscriptions over WebSockets
+GraphQL Subscriptions use the standard `graphql-ws` WebSocket sub-protocol (registered automatically on the `/graphql` WS path).
+
+* **Subscription fields**: Every ORM model automatically exposes three subscription hooks:
+  - `{model}Created` — fires on `Model.create()`
+  - `{model}Updated` — fires on `Model.save()` (update)
+  - `{model}Deleted` — fires on `Model.delete()`
+
+```graphql
+subscription {
+  postCreated { id title author { name } }
+}
+```
+
+* **Event relay**: ORM model operations emit internal events (`model:created`, `model:updated`, `model:deleted`). The GraphQL WS layer listens to these events, resolves the matching subscription fields, and pushes `next` frames to all connected subscribers.
+
+### Configuration Reference
+
+| Key | Description | Default |
+|---|---|---|
+| `GRAPHQL_MAX_COMPLEXITY` | Maximum allowed query complexity score. Requests above this are rejected. | `100` |
+| `GRAPHQL_ENABLED` | Show "GraphQL Explorer" link in the `/docs` sidebar. | `False` |
+| `GRAPHQL_PATH` | Path used for the docs sidebar link. Does not change the actual endpoint. | `"/graphql"` |
+
 ---
 [← Previous: Admin Interface](30-admin-interface.md) | [Documentation](README.md) | [Next: WebSockets →](32-websockets.md)

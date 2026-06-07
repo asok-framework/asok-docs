@@ -114,9 +114,9 @@ Asok provides built-in support for **Nonces**. You can access a unique cryptogra
 
 ---
 
-## 7. Security Audit Results (v0.1.6)
+## 7. Security Audit Results (v0.3.0)
 
-The following notes summarize the main security mechanisms currently implemented in Asok v0.1.6:
+The following notes summarize the main security mechanisms currently implemented in Asok v0.3.0:
 
 ### SQL Injection Protection ✅
 
@@ -167,6 +167,31 @@ The following notes summarize the main security mechanisms currently implemented
 - **HMAC Signing**: Session IDs are signed to prevent tampering
 - **Secure RNG**: Uses `secrets` module for cryptographically secure random generation.
 
+### Data Encryption (GDPR / PCI-DSS) ✅
+
+Asok provides a native `Field.EncryptedString()` for storing sensitive data (SSNs, credit card numbers, phone numbers, API keys) transparently encrypted in the database.
+
+- **Algorithm**: AES-256 via the `cryptography` package's Fernet engine (authenticated encryption — also protects integrity).
+- **Key Derivation**: The encryption key is derived from the application's `SECRET_KEY` using SHA-256, then base64url-encoded to produce a valid 32-byte Fernet key.
+- **Transparent**: Values are automatically encrypted on `save()` and decrypted on `__init__()` (when loading from the DB). Application code always sees plaintext.
+- **Graceful Degradation**: If decryption fails (e.g., key rotation or mismatch), the method returns the raw ciphertext instead of crashing, and logs an error for investigation.
+- **Non-queryable by design**: Fernet tokens are non-deterministic (ciphertext differs each time), so direct database queries or indexes on encrypted columns are not possible — by design.
+
+```python
+from asok import Model, Field
+
+class Customer(Model):
+    name = Field.String()
+    ssn  = Field.EncryptedString()   # Encrypted transparently
+
+c = Customer.create(name="Alice", ssn="123-45-6789")
+print(c.ssn)  # "123-45-6789" — plaintext in Python
+# In the DB: "gAAAAAB..." — Fernet ciphertext
+```
+
+> [!IMPORTANT]
+> The `cryptography` library must be installed: `pip install "asok[security]"`
+
 ### Zero-Eval Content Security Policy ✅
 
 - **Least Privilege Principle**: Asok implements a Content Security Policy that completely disables `'unsafe-eval'` by default in production.
@@ -203,6 +228,7 @@ The following notes summarize the main security mechanisms currently implemented
 | Path Traversal | ✅ Protected |
 | Authentication | ✅ Hardened |
 | Session Management | ✅ Hardened |
+| Encrypted Fields (GDPR/PCI-DSS) | ✅ `EncryptedString` — AES-256 Fernet, key derived from `SECRET_KEY` |
 | Command Injection | ✅ No direct runtime exposure |
 | Log Injection | ✅ Protected |
 | Input Validation | ✅ Comprehensive |

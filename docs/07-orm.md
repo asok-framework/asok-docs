@@ -77,14 +77,19 @@ The first argument to a scope is always the current `Query` object.
 |---|---|---|
 | `Field.String(max_length=255)` | TEXT | Short text — `<input type="text">` in admin / `Form.from_model()`. `max_length` defaults to 255 |
 | `Field.Text(wysiwyg=False)` | TEXT | Long text — `<textarea>` in admin. Pass `wysiwyg=True` for rich text editor. |
+| `Field.SearchableText()` | TEXT | Full-text search field, automatically indexed via FTS5. Use `Model.search()` for ranked results. |
 | `Field.Slug(populate_from="title", always_update=False)` | TEXT | URL-friendly string. Set `always_update=True` to regenerate it every time the source field changes. |
 | `Field.Email(max_length=255)` | TEXT | Validated email — `<input type="email">` and **rejected on save** if invalid |
 | `Field.Integer()` | INTEGER | |
-| `Field.Float(precision=2)` | REAL | `precision` controls form input `step` (e.g. `step="0.01"`). Alias: `Field.Double()` |
+| `Field.Float(precision=2)` | REAL | `precision` controls form input `step` (e.g. `step="0.01"`). |
 | `Field.Boolean()` | INTEGER | 0/1 — rendered as `<input type="checkbox">` |
 | `Field.Date()` | TEXT | ISO format |
 | `Field.DateTime()` | TEXT | ISO format |
+| `Field.Time()` | TEXT | Time-only value (HH:MM:SS) |
 | `Field.Password()` | TEXT | Auto-hashed (PBKDF2-SHA256, 600k) |
+| `Field.EncryptedString()` | TEXT | Symmetrically encrypted using AES-256 (Fernet) with the app's `SECRET_KEY`. Requires `pip install "asok[security]"` |
+| `Field.URL()` | TEXT | URL with format validation |
+| `Field.Color()` | TEXT | Hex color code — rendered as `<input type="color">` |
 | `Field.ForeignKey(Model)` | INTEGER | FK to another model. Use `dropdown=True` for rich select in forms. |
 | `Field.Dropdown(choices)` | TEXT | Fixed choices (list of tuples `(value, label)`) — renders as a premium searchable dropdown. |
 | `Field.File(upload_to='dir')` | TEXT | Stores filename, files saved under uploads/ |
@@ -525,6 +530,32 @@ class User(Model):
 user = User.create(email='a@b.com', password='secret')
 user.check_password('password', 'secret')  # True
 ```
+
+## Encrypted fields
+
+For storing sensitive information in the database (e.g. credit cards, SSNs, personal phone numbers) in compliance with GDPR or PCI-DSS, use `Field.EncryptedString()`.
+
+Values are symmetrically encrypted using AES-256 (via the `cryptography` package's Fernet engine) using the application's `SECRET_KEY` when saving to the database, and automatically decrypted when loaded.
+
+```python
+class Customer(Model):
+    name = Field.String()
+    ssn = Field.EncryptedString()  # Automatically encrypted/decrypted
+
+customer = Customer.create(name="John", ssn="123-45-6789")
+
+# In memory, the attribute is plaintext:
+print(customer.ssn)  # "123-45-6789"
+
+# In the database, the value is securely encrypted:
+# e.g., "gAAAAABmX..."
+```
+
+> [!WARNING]
+> Because encrypted fields use non-deterministic AES encryption (the ciphertext differs each time), you cannot perform direct database queries or index searches on encrypted columns (e.g. `Customer.where('ssn', '123-45-6789').get()`). Querying must be done on another field or by filtering in Python.
+
+> [!NOTE]
+> The `cryptography` library is required for encrypted fields. Install it using `pip install cryptography` or `pip install "asok[security]"`.
 
 ## Slug auto-generation
 

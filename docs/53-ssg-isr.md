@@ -87,7 +87,46 @@ Asok solves this transparently:
 
 ---
 
-## 4. Building and Deploying
+## 4. SSG/ISR and Islands Architecture (Selective Hydration)
+
+When pages are statically generated (SSG/ISR), the browser receives raw static HTML instantly. To make parts of a static page interactive (e.g., shopping carts, comment sections, dynamic filters), Asok uses the **Islands Architecture**.
+
+You can embed stateful reactive components within static pages and control exactly **when** and **how** they become interactive using `client:` hydration attributes. This ensures your static pages load in sub-milliseconds without blocking the browser thread with unnecessary JavaScript.
+
+### Hydration Strategies
+
+Asok supports three hydration strategies:
+
+#### 1. `client:load` (Immediate Hydration)
+*   **Behavior**: Hydrates the component as soon as the page load completes.
+*   **When to use**: Use this for critical, above-the-fold interactive components that the user is likely to interact with immediately.
+    *   *Examples*: Shopping cart widgets in headers, search autocomplete bars, interactive navigation menus, main image carousels, or hero calculators.
+*   **Usage**:
+    ```html
+    {{ component('HeaderCart', client='load') }}
+    ```
+
+#### 2. `client:visible` (Hydration on Viewport Entry)
+*   **Behavior**: Remains static HTML until the component enters the browser's viewport (using an `IntersectionObserver` background listener).
+*   **When to use**: Use this for elements located below-the-fold (scroll required). This drastically reduces initial load time, network payloads, and WebSocket connection overhead by deferring interactivity until the user actually reaches the component.
+    *   *Examples*: Comments sections, review modules, related product carousels, footer newsletter forms, or interactive Google/Leaflet maps.
+*   **Usage**:
+    ```html
+    {{ component('CommentsSection', client='visible') }}
+    ```
+
+#### 3. `client:idle` (Hydration during Browser Idle)
+*   **Behavior**: Hydrates the component during browser idle periods (using `requestIdleCallback` with a 2-second timeout fallback).
+*   **When to use**: Use this for lower-priority or secondary widgets that are visible on the page but do not require immediate interactivity. This keeps the main thread free for critical layout rendering.
+    *   *Examples*: Sidebar recommendations, dynamic chat widgets, background analytics trackers, or social sharing counters.
+*   **Usage**:
+    ```html
+    {{ component('NewsletterSignup', client='idle') }}
+    ```
+
+---
+
+## 5. Building and Deploying
 
 During compilation, the production pipeline will automatically build your static site:
 
@@ -99,3 +138,4 @@ This compiles your Python modules to optimized bytecode, minifies static assets,
 
 To serve the generated pages in production, ensure the cache directory is preserved across deployments:
 - Local cache path: `.asok/ssg_cache/`
+

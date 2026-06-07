@@ -54,14 +54,30 @@ Watches `.py`, `.html`, `.json`, `.css`, `.js` files and **`.env`** across the p
 
 ### `asok migrate`
 
-Apply pending database migrations. Supports status checking, rollbacks, faking, and database routing.
+Apply pending database migrations. Supports status checking, rollbacks, faking, target versioning, and database routing.
 
 ```bash
 asok migrate                     # Apply all pending on the default database
 asok migrate --status            # Show applied vs pending migrations
 asok migrate --rollback          # Undo the last batch of migrations
+asok migrate --rollback --steps 3 # Undo exactly the last 3 migrations
+asok migrate --to=0002_add_posts # Migrate up to or rollback down to a specific migration
+asok migrate --reset             # Rollback all applied migrations in the database
 asok migrate --fake              # Mark pending migrations as applied in tracking table
 asok migrate --database=replica  # Apply migrations to a specific database DSN/backend
+```
+
+### `asok db <command>`
+
+Introspect database schema and query execution plan details.
+
+* `asok db schema`: List all database tables, columns, data types, and primary/foreign keys.
+* `asok db explain "<query>"`: Show the execution/query plan of a given SQL query using the active database engine.
+
+```bash
+asok db schema                   # Inspect Default Database Schema
+asok db schema --database=replica # Inspect specific database schema
+asok db explain "SELECT * FROM users" # Explain query on default database
 ```
 
 ### `asok dumpdata`

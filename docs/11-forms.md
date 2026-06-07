@@ -996,5 +996,72 @@ def render(request: Request):
     return request.html('page.html', form=form)
 ```
 
+## Client-Side Live Validation with Asok Directives
+
+If you want to validate form fields in real-time as the user types (without waiting for a server round-trip), you can use Asok's reactive directives.
+
+Because of **Zero-Eval Security** (Python AST parsing), we should only declare simple properties in `asok-state` and write the validation logic directly inside reactive attributes like `asok-show`, `asok-class`, or `asok-bind:disabled`.
+
+### Live Validation Example
+
+This example demonstrates how to perform live client-side validation on field length, email structure, and numeric ranges.
+
+```html
+<div asok-state="{ name: '', email: '', age: '' }">
+  <form method="POST">
+    {{ request.csrf_input() }}
+
+    <!-- 1. Text Field with length validation (Max 30 chars) -->
+    <div>
+      <label for="name">Name:</label>
+      <input type="text" id="name" asok-model="name" 
+             asok-class:border-red-500="name.length > 30">
+      
+      <!-- Show warning only if constraint is violated -->
+      <span asok-show="name.length > 30" style="color: red; font-size: 0.875rem;">
+        Name cannot exceed 30 characters (current: <span asok-text="name.length"></span>).
+      </span>
+    </div>
+
+    <!-- 2. Email Field validation -->
+    <div style="margin-top: 15px;">
+      <label for="email">Email:</label>
+      <input type="email" id="email" asok-model="email" 
+             asok-class:border-red-500="email.length > 0 && !email.includes('@')">
+      
+      <span asok-show="email.length > 0 && !email.includes('@')" style="color: red; font-size: 0.875rem;">
+        Please enter a valid email address.
+      </span>
+    </div>
+
+    <!-- 3. Numeric range validation (Min 18) -->
+    <div style="margin-top: 15px;">
+      <label for="age">Age:</label>
+      <input type="number" id="age" asok-model="age" 
+             asok-class:border-red-500="age.length > 0 && (isNaN(age) || Number(age) < 18)">
+      
+      <span asok-show="age.length > 0 && (isNaN(age) || Number(age) < 18)" style="color: red; font-size: 0.875rem;">
+        You must be at least 18 years old.
+      </span>
+    </div>
+
+    <!-- 4. Dynamically disable button until all fields are valid -->
+    <div style="margin-top: 20px;">
+      <button type="submit" 
+              asok-bind:disabled="!name || name.length > 30 || !email || !email.includes('@') || !age || isNaN(age) || Number(age) < 18">
+        Submit
+      </button>
+    </div>
+  </form>
+</div>
+```
+
+### Key Directives Used:
+*   **`asok-model`**: Binds the input field value to the local reactive state variables.
+*   **`asok-class:class-name="..."`**: Conditionally adds a CSS class (like `border-red-500` or `input-error`) when the validation expression resolves to true.
+*   **`asok-show`**: Displays helper error labels only when inputs are invalid.
+*   **`asok-bind:disabled`**: Blocks form submission until the state meets all requirements.
+
 ---
 [← Previous: Native Vector Search](10-vector-search.md) | [Documentation](README.md) | [Next: Advanced Forms Features →](12-advanced-forms.md)
+

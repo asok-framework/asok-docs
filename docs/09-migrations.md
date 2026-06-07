@@ -77,15 +77,34 @@ MIGRATION STATUS
   [ ] 0003_create_posts_table
 ```
 
-## 5. Rolling Back
+## 5. Rolling Back & Target Migrations
 
-If you need to undo changes, you can roll back the **last batch** of migrations:
+Asok provides flexible options to undo schema changes, target specific versions, or reset the database completely:
 
+### Revert the last batch
+By default, rolling back reverts the most recent batch of migrations:
 ```bash
 asok migrate --rollback
 ```
-
 This will execute the `down()` function of every migration in the most recent batch and remove them from the tracking table.
+
+### Revert a specific number of migrations
+You can specify exactly how many migrations you want to roll back (regardless of their batch number) using `--steps`:
+```bash
+asok migrate --rollback --steps 3
+```
+
+### Migrate or Rollback to a specific version
+You can force the database to align with a specific migration name or prefix using `--to`. If the target migration is currently applied, Asok will roll back any migrations applied *after* it. If it is pending, Asok will apply all migrations *up to and including* it:
+```bash
+asok migrate --to=0002_add_user_bio
+```
+
+### Reset all migrations
+To rollback all applied migrations in reverse chronological order and return to an empty database state:
+```bash
+asok migrate --reset
+```
 
 ## 6. Advanced Options
 

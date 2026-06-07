@@ -1,10 +1,11 @@
 # Asok Documentation
 
-> **Latest Version: v0.1.7**
+> **Latest Version: v0.3.0**
 >
+> * **Encrypted Fields**: New `Field.EncryptedString()` stores sensitive data (SSN, API keys, card numbers) encrypted with AES-256 (Fernet) using the application's `SECRET_KEY`. Fully transparent: plaintext in Python, ciphertext in the database. Install with `pip install "asok[security]"`.
+> * **Distributed Rate Limiting**: The rate limiter now automatically uses Redis or file cache backends when configured, enabling consistent cross-worker and multi-node limiting in production.
+> * **Python 3.14 Support**: Added official Python 3.14 classifier and tested compatibility.
 > * **Module Restructuring**: Reorganized monolithic files into clean, modular packages (`asok/core/`, `asok/orm/`, `asok/cli/`, etc.) to improve maintainability with 100% backward compatibility.
-> * **Asset Compilation**: Pre-compiled minified assets for admin, API, and developer toolbar. Added official Python 3.13 support.
-> * **New Test Suites**: Enhanced coverage with tests for AJAX CSRF rotation, SPA reactivity, API static files, and developer toolbar.
 
 
 
@@ -78,5 +79,4 @@ Welcome to the Asok Framework documentation. This guide is organized sequentiall
 51. [Async Concurrency](51-async-concurrency.md) — Dual ASGI/WSGI and async controller/ORM support.
 52. [Request Context](52-request-context.md) — `current_request` proxy: access the active request from anywhere.
 53. [SSG & ISR](53-ssg-isr.md) — Static Site Generation and Incremental Static Regeneration.
-
-
+54. [Extension System](54-extension-system.md) — Reusable packages: custom routes, template directories, assets, and CLI commands.

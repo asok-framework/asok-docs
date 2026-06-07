@@ -82,6 +82,85 @@ def on_disconnect(conn):
     ws.broadcast("/chat", "Someone left the chat")
 ```
 
+## Advanced Features
+
+Asok includes built-in operators for handling common real-time features like presence tracking, room join authorization, typing indicators, and read receipts. These features leverage standard browser `CustomEvent` dispatching.
+
+### 1. User Presence Tracking
+
+Presence tracking monitors logged-in user connections across tabs. Multiple open tabs/connections for the same user are reference-counted to ensure accurate status reports.
+
+* **Server-side query APIs**:
+  - `ws.get_online_users()`: Returns a list of active online user IDs.
+  - `ws.is_user_online(user_id)`: Returns `True` if the user is online, otherwise `False`.
+* **Client-side query message**:
+  Clients can fetch the list of online users by sending:
+  ```json
+  {"op": "get_presence"}
+  ```
+  The server responds with a `presence_list` broadcast:
+  ```json
+  {"op": "broadcast", "type": "presence_list", "users": [101, 102]}
+  ```
+* **Real-time broadcasts**:
+  When a user transitions from offline to online (or vice-versa), the server broadcasts a status event to all active connections:
+  - **Online**: `{"op": "broadcast", "type": "presence", "user_id": 42, "status": "online"}`
+  - **Offline**: `{"op": "broadcast", "type": "presence", "user_id": 42, "status": "offline"}`
+
+These messages trigger a native JS custom event on the frontend document:
+```javascript
+document.addEventListener("asok:ws-broadcast", (e) => {
+    const data = e.detail;
+    if (data.type === "presence") {
+        console.log(`User ${data.user_id} is now ${data.status}`);
+    }
+});
+```
+
+### 2. Room Join Authorization
+
+Secure rooms by intercepting join requests before a connection is subscribed.
+
+Register a room authorizer callback using the `@ws.room_authorizer` decorator:
+```python
+@ws.room_authorizer
+def authorize_room_join(conn, room):
+    if room.startswith("admin:"):
+        return conn.user and getattr(conn.user, "is_admin", False)
+    return True
+```
+
+If authorization fails, the server sends a broadcast error back to the requester:
+```json
+{"op": "broadcast", "type": "error", "room": "admin:secrets", "message": "Unauthorized or invalid room join request..."}
+```
+
+### 3. Typing Indicators
+
+Clients can broadcast typing indicators to room subscribers. 
+
+* **Outgoing client message**:
+  ```json
+  {"op": "typing", "room": "chat-room", "typing": true}
+  ```
+* **Incoming broadcast (sent to all other subscribers in the room)**:
+  ```json
+  {"op": "broadcast", "type": "typing", "room": "chat-room", "user_id": 42, "typing": true}
+  ```
+
+### 4. Read Receipts
+
+Deliver message read receipts instantly to other room members.
+
+* **Outgoing client message**:
+  ```json
+  {"op": "receipt", "room": "chat-room", "message_id": 123, "status": "read"}
+  ```
+* **Incoming broadcast (sent to all other subscribers in the room)**:
+  ```json
+  {"op": "broadcast", "type": "receipt", "room": "chat-room", "message_id": 123, "user_id": 42, "status": "read"}
+  ```
+
 ## The `Connection` Object
 
 Each handler receives a `Connection` object representing the client:

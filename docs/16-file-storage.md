@@ -66,7 +66,8 @@ photo.save(
     destination="uploads/",
     validate=True,  # Enable MIME validation (default: True)
     allowed_types=['image/jpeg', 'image/png'],  # Whitelist of MIME types
-    secure_filename=True  # Rename with UUID (default: True)
+    secure_filename=True,  # Rename with UUID (default: True)
+    private=True  # Restrict permissions to owner-only (default: False)
 )
 ```
 
@@ -74,6 +75,7 @@ photo.save(
 - `validate` (bool): Enable/disable validation. Default: `True`
 - `allowed_types` (list): Whitelist of allowed MIME types. If `None`, accepts all validated types (⚠️ warning logged)
 - `secure_filename` (bool): Rename file with UUID for security. Default: `True`
+- `private` (bool): Restrict permissions to owner-only (local `0o600` instead of `0o644`, or S3 `"private"` ACL). Default: `False`
 
 ### Supported File Types (50+ formats)
 
@@ -183,7 +185,7 @@ media.save("gallery/", allowed_types=allowed)
    photo.save("uploads/")  # → uploads/a3f2b9c1-4567-89ab-cdef.jpg
    ```
 
-4. **Restrictive Permissions**: Saved files get `0o644` (rw-r--r--) permissions
+4. **Restrictive Permissions**: Saved files get `0o644` (rw-r--r--) permissions by default, but can be locked down to `0o600` (rw-------, owner only) using `private=True` (e.g. for sensitive/non-public uploads).
 
 5. **Security Warnings**: Logs warning if `allowed_types` not specified
    ```python

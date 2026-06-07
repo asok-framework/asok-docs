@@ -46,6 +46,7 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 | `SESSION_SAMESITE` | str | `"Lax"`            | SameSite attribute for the session cookie (`Lax`, `Strict`, or `None`).                                                 |
 | `SESSION_SECURE`  | bool | *auto*             | Forces session cookie to be sent over HTTPS only. Defaults to `True` if not in `DEBUG`.                                 |
 | `REDIS_URL`       | str  | `None`             | Connection string for Redis backend (e.g., `redis://localhost:6379/0`). Also accepts `ASOK_REDIS_URL`.                  |
+| `MAGIC_LINK_TTL`  | int  | `3600`             | Expiration time for authentication magic links (in seconds, default 1 hour).                                            |
 
 ---
 
@@ -70,6 +71,8 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 | `CSP_REPORT_URI` | str | `None` | Endpoint URL to receive Content Security Policy (CSP) violation reports. |
 | `ETAG` | bool | `True` | Enables automatic conditional caching headers for responses. |
 | `TOOLBAR` | bool | `DEBUG` | Enables or disables the developer debugging toolbar. Also accepts `ASOK_TOOLBAR`. |
+| `RATE_LIMIT` | bool | `True` | Enables global request rate limiting. |
+| `RATE_LIMIT_PER_MINUTE` | int | `100` | Max requests allowed per IP per minute if rate limiting is enabled. |
 
 ---
 
@@ -145,7 +148,7 @@ Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL.
 
 ---
 
-## 12. API & Documentation UI
+## 12. API, GraphQL & UI
 
 | Key | Type | Default | Description |
 |---|---|---|---|
@@ -153,6 +156,10 @@ Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL.
 | `OPENAPI_PATH` | str | `"/openapi.json"` | The URL path for the generated OpenAPI specification. |
 | `API_TITLE` | str | *PROJECT_NAME* | The title shown in the documentation UI. |
 | `API_LOGO` | str | *SITE_LOGO* | URL of the logo shown in the documentation UI. |
+| `SITE_LOGO` | str | `None` | URL of the default site-wide logo (fallback for `API_LOGO`). |
+| `GRAPHQL_ENABLED` | bool | `False` | Enables the built-in GraphQL API and explorer interface. |
+| `GRAPHQL_PATH` | str | `"/graphql"` | URL endpoint path where GraphQL queries/subscriptions are served. |
+| `GRAPHQL_MAX_COMPLEXITY` | int | `100` | Statically checks query complexity to prevent DOS/abuse. |
 
 ---
 

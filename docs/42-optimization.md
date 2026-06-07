@@ -95,7 +95,7 @@ GZIP_MIN_SIZE=500  # Minimum size in bytes to trigger compression
 
 ## 6. Smart Conditional Asset Injection
 
-Asok automatically reduces the JavaScript payload of your pages by only loading the reactive engines when they are actually needed.
+Asok automatically reduces the JavaScript and CSS payload of your pages by only loading the reactive engines and widget-specific assets when they are actually needed.
 
 ### How it works
 - **Scan**: During the final rendering phase, Asok performs a lightning-fast scan of your HTML content.
@@ -104,6 +104,12 @@ Asok automatically reduces the JavaScript payload of your pages by only loading 
   - The **Reactive Engine** is only injected if `data-*` attributes are found.
   - The **Alive Engine** (WebSockets) is only injected if `ws-*` or component attributes are found.
 - **Result**: Static pages remain purely static with zero JavaScript overhead, while reactive pages maintain full functionality automatically.
+
+### Directives & Widgets Code-Splitting
+To keep reactive pages as lightweight as possible, Asok splits the assets of the reactive directives runtime:
+- **Core Directives Engine** (`asok_directives.min.js` and `asok_directives.min.css`): Contains only the core reactivity runtime and minimal directive-specific styling (like `asok-cloak`).
+- **Form Helper Widgets** (`asok_widgets.min.js` and `asok_widgets.min.css`): Contains all functions and styles for advanced form widgets (signatures, file dropzones, autocompletes, multi-select tags, tree items, toggles, tables, etc.).
+- **Conditional Loading**: The form widgets bundle (both JS and CSS) is dynamically injected only if any helper function (e.g. `Asok.`) or specific widget class/tag (e.g. `asok-dropdown`, `asok-table`, `asok-toggle`, `asok-badge`, `asok-pagination`) is detected in the page content. This ensures pages using simple reactive directives do not download the larger widgets bundle.
 
 ## 7. Scoped Assets (Page-specific Optimization)
 

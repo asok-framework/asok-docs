@@ -550,6 +550,66 @@ class SystemLog(Model):
 ```
 
 ---
+
+### 3. Read Replicas (Read/Write Splitting)
+
+Asok supports separating read and write traffic by routing writes to a primary database and reads to a pool of read replicas.
+
+**Configuration in `.env`**:
+```env
+DATABASE_URL=postgresql://primary-db-host/prod_db
+DATABASE_REPLICAS=postgresql://replica-1-host/prod_db,postgresql://replica-2-host/prod_db
+DATABASE_LOAD_BALANCING_STRATEGY=round-robin
+```
+
+* **Read replicas**: Set `DATABASE_REPLICAS` to a comma-separated list of DSN connection URLs.
+* **Load Balancing**: Set `DATABASE_LOAD_BALANCING_STRATEGY` to either `round-robin` (default) or `random` to specify how read traffic is distributed across replicas.
+* **Transaction Pinning**: When inside an active transaction (e.g., `with Model.transaction():`), all read queries are automatically pinned to the primary database to ensure consistency and prevent replication lag issues.
+
+---
+
+### 4. Database Sharding
+
+Database sharding distributes your data across multiple distinct databases (shards). Asok provides both configuration and programmatic API targeting for shards.
+
+**Configuration in `.env`**:
+```env
+# Define shards as a JSON string mapping shard name to connection URL and replicas
+DATABASE_SHARDS='{"shard1": {"url": "sqlite:///shard1.db", "replicas": ["sqlite:///shard1_replica.db"]}, "shard2": "sqlite:///shard2.db"}'
+```
+
+Alternatively, you can configure shards using prefix-based environment variables:
+```env
+DATABASE_SHARD_SHARD1_URL=sqlite:///shard1.db
+DATABASE_SHARD_SHARD1_REPLICAS=sqlite:///shard1_replica.db
+```
+
+**Targeting Shards in Code**:
+Use the `.on(shard_name)` builder method on models or queries to target a specific shard:
+
+```python
+# Create an object on a specific shard
+user = User.on("shard1").create(name="Alice", email="alice@example.com")
+
+# Query records on a specific shard
+users = User.on("shard1").where("active", 1).get()
+
+# Save/Update/Delete operations preserve the shard on the model instance
+user.name = "Alice Updated"
+user.save()  # Automatically routes to shard1
+```
+
+**Relation Shard Propagation**:
+When accessing relationship properties on a model instance targeted to a shard, Asok automatically routes the relation queries to the same shard:
+
+```python
+user = User.on("shard1").find(id=1)
+
+# Fetches posts from shard1 automatically!
+user_posts = user.posts
+```
+
+---
 [← Previous: ORM Basics](07-orm.md) | [Documentation](README.md) | [Next: Database Migrations →](09-migrations.md)
 
 
