@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+@theme {
+  --container-7xl: 96rem;
+}

@@ -173,18 +173,23 @@
 
             <div class="h-px w-full" style="background: var(--border-primary)"></div>
 
-            {% if request.params.docs_menu %}
+            {% if request.params.docs_menu_categorized %}
             <div class="flex-1 overflow-y-auto">
-                <p class="text-[10px] font-black uppercase tracking-[0.2em] mb-4" style="color: var(--text-muted)">
-                    Documentation Menu</p>
                 {% block mobile_docs_menu %}
-                <div id="mobile_docs_menu" class="space-y-1">
-                    {% for item in request.params.docs_menu %}
-                    <a href="/docs/{{ item.slug }}" data-block="main,title,mobile_docs_menu" data-push-url
-                        class="sidebar-link {% if request.params.slug == item.slug %}active{% endif %} group flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm border border-transparent">
-                        <span class="sidebar-dot w-1 h-1 rounded-full shrink-0"></span>
-                        {{ item.title }}
-                    </a>
+                <div id="mobile_docs_menu" class="space-y-6">
+                    {% for cat in request.params.docs_menu_categorized %}
+                    <div class="space-y-1">
+                        <p class="px-3 text-[10px] font-black uppercase tracking-[0.2em] mb-2" style="color: var(--text-muted)">
+                            {{ cat.category }}
+                        </p>
+                        {% for item in cat.pages %}
+                        <a href="/docs/{{ item.slug }}" data-block="main,title,mobile_docs_menu" data-push-url
+                            class="sidebar-link {% if request.params.slug == item.slug %}active{% endif %} group flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-sm border border-transparent">
+                            <span class="sidebar-dot w-1 h-1 rounded-full shrink-0"></span>
+                            {{ item.title }}
+                        </a>
+                        {% endfor %}
+                    </div>
                     {% endfor %}
                 </div>
                 {% endblock %}

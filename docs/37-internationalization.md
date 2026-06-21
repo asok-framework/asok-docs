@@ -1,5 +1,7 @@
 # Internationalization (i18n)
 
+> **Keywords:** translation keys, i18n locales, language translation, translation files
+
 Asok supports multiple languages out of the box using JSON locale files.
 
 ## Setup

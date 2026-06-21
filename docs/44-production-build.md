@@ -1,5 +1,7 @@
 # Production Build System
 
+> **Keywords:** production bundle, compile static assets, packaging, asset build
+
 Asok provides a build pipeline for generating optimized distributions for production environments. The `asok build` command handles asset minification and bytecode compilation.
 
 ## The `asok build` Command

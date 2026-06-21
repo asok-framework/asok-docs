@@ -5,6 +5,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.5.0] - 2026-06-21
+
+### ⚡ Major Release: Zero-Eval Security & Framework-Wide Complexity Reductions
+
+This release focuses on **absolute frontend security** and **long-term framework maintainability**. It introduces the **Zero-Eval Client Directives Engine** (completely eliminating client-side `eval` execution) and completes a comprehensive **Framework-Wide Code Complexity Reduction** campaign. Every core module, validation dispatcher, ORM helper, and template compiler state has been optimized to strictly conform to Grade A cyclomatic complexity metrics, ensuring superior runtime performance and maintainability.
+
+---
+
+### Added
+- **Zero-Eval Client Directives Engine**: Introduced a secure client-side reactive directive compiler featuring a custom-built Python-based JavaScript AST scanner and parser (`_js_scanner.py`, `_js_parser.py`, `_expr_validator.py`). This engine parses client expressions, compiles them to clean DOM updates, and eliminates the use of dangerous `eval` calls.
+- **Distributed Scheduler & Locks**: Integrated Redis-based distributed locking inside `asok/scheduler.py` to prevent duplicate execution of cron schedules across multiple clustered application instances.
+- **Model Relationship & Lifecycle Events**: Decoupled ORM relationship management (`_model_relations.py`) and implemented robust event hooks for model lifecycle events (specifically delete event triggers, enabling clean manual or automatic cascading deletions of database records and linked files).
+- **Self-Hosted Webfonts**: Added self-hosted WOFF2 fonts for the admin panel and documentation templates (`/fonts/` subdirectory in both admin and API static directories) to support zero-external-network dependencies.
+
+### Improved
+- **Framework-Wide Code Complexity Reductions**: Refactored, simplified, and modularized code across the entire framework (routing engine, forms, ORM database engine, validation dispatchers, WebSocket, templates, and request managers) to ensure every function and method strictly conforms to Grade A cyclomatic complexity, facilitating long-term maintenance and reducing performance overhead.
+- **Redis Worker Architecture**: Upgraded the background task worker (`worker.py`) to utilize a concurrent `ThreadPoolExecutor` for parallel execution of task payloads, along with dead-letter queue (DLQ) capabilities and configurable exponential backoff retries.
+- **Template Sandbox Isolation**: Refactored the template compiler into discrete components (`_compiler_state.py`, `_preprocess_helpers.py`, `_statement_compiler.py`) to isolate sandbox environments and state compiling, preventing scope leakage.
+- **API & GraphQL Authorization**: Integrated explicit `GRAPHQL_AUTHORIZE` and `OPENAI_AUTHORIZE` configuration gates in `graphql.py` and `openapi.py` to secure schema query and API documentation pages.
+- **Validation Rules Dispatcher**: Refactored rule validation to use a dedicated dispatch helper (`_rule_dispatch.py`) for clean validation pipelines.
+
+### Fixed
+- **SPA Blank Page on Load**: Resolved a template routing/rendering bug in `TemplateMixin._yield_block_item` where using a template context variable named `content` collided with the internal generator argument, resulting in blank pages upon first load.
+- **Documentation Code Blocks Parsing**: Fixed a `SyntaxError: Unexpected token ')'` bug in `precompile_directives()` where code blocks containing example `asok-*` attributes in markdown files were incorrectly compiled as active client-side directives; introduced code/pre/script block masking before compilation.
+- **WebSocket Mock Compatibility**: Fixed a crash in event listeners where mock WebSocket connections without `_rooms` properties caused error logs.
+- **Test Suite Isolation**: Restructured test suites to separate SQLite connection states, preventing lockups and dirty states in test executions.
+
+### Security
+- **Session Replay Protection & Revocation**: Added strict session token replay checks and revocation triggers to invalidate old session tokens immediately on reuse or authentication transitions.
+- **CSRF Verification Hardening**: Added strict validation of `Origin` and `Referer` headers on write requests inside the CSRF middleware.
+- **Static File serving containment**: Enforced absolute canonical path verification on static file routes to completely block traversal outside allowed static and media directories.
+- **Directive expression validation**: Integrated expression security validator (`_expr_validator.py`) to enforce safety limits on client directive definitions before compile.
+
+
 ## [0.4.0] - 2026-06-07
 
 ### Added

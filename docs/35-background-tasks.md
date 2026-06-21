@@ -1,5 +1,7 @@
 # Background Tasks
 
+> **Keywords:** non blocking tasks, task worker, background queue, thread pool, async execution
+
 Run heavy functions in background threads so your pages respond instantly. Asok manages a thread pool automatically for you.
 
 ## Usage
@@ -11,15 +13,25 @@ The recommended way to dispatch background tasks is via the `app.background()` m
 def post(request):
     app = request.environ.get("asok.app")
     
-    def heavy_task(data):
-        # Process payment, send receipt, etc.
-        pass
-
     # Dispatch to background pool
     app.background(heavy_task, data=request.form)
     
     request.flash('success', 'Order processing!')
     request.redirect('/success')
+```
+
+### Advanced Dispatching (Redis Backend Only)
+
+When using the Redis backend, you can fine-tune how tasks are processed:
+
+* **Queues / Priorities**: Route tasks to specific queues using the `_queue` argument (e.g. `_queue="high"`). By default, `"default"` routes to the standard queue `asok:queue`. Other queues map to `asok:queue:{queue_name}`.
+* **Automatic Retries**: Enable automatic retries on failure using the `_retries` argument (e.g. `_retries=3`).
+* **Backoff Multiplier**: Configure retry delay spacing using `_backoff` (default: `2`). Retries use exponential backoff: `delay = backoff ** retry_count` seconds.
+
+Example:
+```python
+# Dispatch task to the high-priority queue with 3 retries and 3s exponential backoff base
+app.background(heavy_task, data, _queue="high", _retries=3, _backoff=3)
 ```
 
 ## 2. Configuration & Backends
@@ -35,11 +47,15 @@ For production environments, you should switch to the **Redis distributed task q
 | `ASOK_QUEUE_BACKEND` | `"local"` | Queue backend: `"local"` (thread pool) or `"redis"`. |
 | `REDIS_URL` | `None` | Redis connection URL (e.g. `redis://localhost:6379/0`). Also accepts `ASOK_REDIS_URL`. |
 | `BG_WORKERS` | `10` | Max threads in local pool (only applies when backend is `local`). |
+| `ASOK_WORKER_CONCURRENCY` | `1` | Number of concurrent execution threads in the Redis worker pool. |
+| `ASOK_WORKER_QUEUES` | `"high,default,low"` | Comma-separated list of queue names to pull from (in order of priority). |
 
 Example in `.env` for production:
 ```env
 ASOK_QUEUE_BACKEND=redis
 REDIS_URL=redis://localhost:6379/0
+ASOK_WORKER_CONCURRENCY=4
+ASOK_WORKER_QUEUES=high,default,low
 ```
 
 ### Running the Worker (Redis Mode Only)
@@ -97,12 +113,37 @@ from asok import background
 background(my_function, arg1, key=val)
 ```
 
-## Error handling
+## Error handling & Job Tracking
 
-Errors in background tasks are **logged**, not raised. The user never sees a 500 error from a background task.
+### Result Backend
+
+When you dispatch a background task using the Redis backend, the task's future holds a `job_id` property. You can use this ID to inspect the status of the job in Redis:
+
+```python
+future = app.background(my_heavy_task)
+job_id = future.job_id  # UUID of the job
+```
+
+Each job has a corresponding Redis key `asok:job:{job_id}` containing status metadata with a 24-hour expiration (TTL). The state transitions through the following lifecycle:
+* `pending`: The task is enqueued and waiting to be picked up by a worker.
+* `running`: A worker has started executing the task.
+* `completed`: The task finished successfully. The key stores the return value of the task function in the `result` field.
+* `retrying`: The task failed, and has been scheduled for a retry (stored in `asok:delayed_tasks`).
+* `failed`: The task failed permanently (all retries exhausted). The key stores the exception traceback in the `error` field.
+
+Errors in background tasks are **logged**, not raised to the user. The user never sees a 500 error from a background task:
 
 ```
 [2026-04-04 14:32:01] ERROR asok.background: Background task send_webhook failed: ConnectionError(...)
+```
+
+### Dead Letter Queue (DLQ)
+
+If a task fails repeatedly and runs out of retry attempts, Asok automatically routes the job payload to the **Dead Letter Queue** (`asok:dlq`). This isolates failing jobs and prevents them from clogging up active processing queues.
+
+You can inspect the status of all queues, including the DLQ, at any time using the status command:
+```bash
+asok worker status
 ```
 
 ## Common use cases

@@ -1,5 +1,7 @@
 # Scoped JS & CSS
 
+> **Keywords:** scoped js, scoped css, component assets, isolated css, page styles, page script
+
 Asok provides an automatic scoping system for page-specific assets. This allows you to write JavaScript and CSS that only affects a single page, preventing style leakage and variable collisions without any external build tools.
 
 ## 1. Automatic Detection

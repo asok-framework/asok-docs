@@ -1,5 +1,7 @@
 # Advanced ORM Features
 
+> **Keywords:** sql indexes, select related, union queries, intersect queries, subqueries, complex filtering, join tables, database relationships, raw sql queries
+
 Asok's ORM is designed to be powerful yet lightweight. This guide covers advanced field types and query patterns added for professional applications.
 
 ## 1. Advanced Field Types

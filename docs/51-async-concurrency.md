@@ -1,5 +1,7 @@
 # Async & Concurrency
 
+> **Keywords:** async await, concurrent queries, async database, asgi wsgi concurrency
+
 Asok supports dual-core ASGI/WSGI operation. This allows you to deploy Asok applications under ASGI servers (like Uvicorn) for high-concurrency workloads, while maintaining 100% backward compatibility with traditional WSGI deployments (like Gunicorn).
 
 Additionally, Asok supports `async def` page controllers, asynchronous middlewares, and non-blocking asynchronous ORM operations.

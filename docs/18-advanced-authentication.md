@@ -1,5 +1,7 @@
 # Advanced Authentication
 
+> **Keywords:** magic links, oauth2 github google, login token, api tokens, bearer token, social authentication
+
 Asok provides built-in tools for modern authentication methods like Magic Links and OAuth2 (Google, GitHub, etc.) without adding extra framework-specific packages.
 
 ## 1. Magic Links (Passwordless)

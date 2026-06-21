@@ -1,5 +1,7 @@
 # Form Actions
 
+> **Keywords:** inline form submissions, action routing, form actions, server actions, client post
+
 Native Form Actions allow you to handle form submissions without writing complex routing logic. Instead of manually checking `if request.method == "POST"` in your `render` function, you can define specific action functions that Asok will call automatically.
 
 Form Actions follow Asok's philosophy: **simple, explicit, and secure by default**.
@@ -51,6 +53,7 @@ def action_create(request: Request):
 ```
 
 `src/pages/page.html`:
+
 ```html
 <h1>New Post</h1>
 
@@ -142,6 +145,7 @@ def action_archive(request: Request):
         </button>
     </form>
 </div>
+```
 
 ## Using `data-action` (Recommended for AJAX)
 

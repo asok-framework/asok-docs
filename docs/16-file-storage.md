@@ -1,5 +1,7 @@
 # File Storage
 
+> **Keywords:** file upload, upload directories, serving files, secure downloads, storage backend, multipart form
+
 ## UploadedFile
 
 Multipart file uploads are parsed into `UploadedFile` objects available on `request.files`.

@@ -1,5 +1,7 @@
 # Serialization (Schema)
 
+> **Keywords:** json serialization, serialize model, schemas, api serialization, model json, custom serializer
+
 The `Schema` class (found in `asok.validation`) allows you to define how your data (Models or Dicts) should be transformed into JSON-serializable structures (`dump`) and how raw data should be extracted and cleaned (`load`).
 
 ## Basic Example

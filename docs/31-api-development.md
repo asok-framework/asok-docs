@@ -1,5 +1,7 @@
 # API Development
 
+> **Keywords:** rest api, json endpoints, api documentation, openapi swagger, automatic api docs, swagger ui
+
 Asok provides tools for building robust JSON APIs with consistent response formats and automatic documentation.
 
 ## Standard Responses
@@ -116,6 +118,19 @@ app.config["DOCS"] = False
 ```
 When disabled, the `/docs` and `/openapi.json` endpoints will return a `404 Not Found` error.
 
+### Securing the OpenAPI Specification
+
+By default, `/openapi.json` is public. You can restrict access to the OpenAPI specification endpoint by providing an authorization hook:
+
+```python
+def require_admin(request):
+    return request.user and request.user.has_role("admin")
+
+app.config["OPENAPI_AUTHORIZE"] = require_admin
+```
+
+The hook receives the current `Request` and must return `True` to allow access. Returning `False` produces a `403 Forbidden` response.
+
 ### Branding & Customization
 
 You can customize the appearance of your API documentation via your application configuration or `.env` file. Asok will automatically fall back to global project settings (`PROJECT_NAME`, `SITE_LOGO`) if API-specific ones aren't provided.
@@ -134,6 +149,7 @@ app.config["API_LOGO"] = "uploads/images/django.svg"
 | `API_DESCRIPTION` | Verbose description shown in the Introduction section. | Generic Asok description |
 | `DOCS_PATH` | The URL path where the documentation is served. | `/docs` |
 | `OPENAPI_PATH` | The URL path where the raw JSON spec is served. | `/openapi.json` |
+| `OPENAPI_AUTHORIZE` | Hook `(request) -> bool` to secure access to the JSON spec endpoint. | `None` |
 
 ### The "Try it out" Suite
 
@@ -252,6 +268,8 @@ app.config["GRAPHQL_PATH"] = "/graphql"       # Optional, /graphql is the defaul
 The GraphQL engine automatically maps your ORM models to GraphQL types, queries, and mutations — with **zero code to write**:
 
 * **Object Types**: Mapped 1:1 from ORM models (fields and relations — `HasMany`, `BelongsTo`, `BelongsToMany`, `MorphMany`).
+  - Fields declared with `hidden=True` or `is_password=True` (e.g. `PasswordField`) are **excluded from the schema entirely** — they cannot be queried or returned.
+  - Fields declared with `protected=True` are **excluded from mutation arguments** — they cannot be set via `createX` or `updateX` mutations.
 * **Root Queries**:
   - **List query** — plural form of the table name, with optional `limit`, `offset`, and field filters:
     ```graphql
@@ -270,7 +288,32 @@ The GraphQL engine automatically maps your ORM models to GraphQL types, queries,
   }
   ```
 
-### 2. Query Complexity Analysis
+### 2. Authentication & Authorization
+
+**Mutations are blocked by default.** To enable them you must either configure an authorization hook or explicitly opt in to unauthenticated mutations (development/internal tools only).
+
+#### Option A — Authorization hook (recommended)
+
+```python
+def require_login(request):
+    return request.user is not None
+
+app.config["GRAPHQL_AUTHORIZE"] = require_login
+```
+
+The hook receives the current `Request` and must return `True` to allow access. Returning `False` produces a `403 Forbidden` response. The hook applies to **all** GraphQL requests (queries and mutations).
+
+For WebSocket subscriptions the same hook is evaluated at connection time (`connection_init` message).
+
+#### Option B — Opt-in unauthenticated mutations
+
+Only use this for internal tools, demos, or development environments where the endpoint is not publicly reachable.
+
+```python
+app.config["GRAPHQL_ALLOW_UNAUTHENTICATED_MUTATIONS"] = True
+```
+
+### 3. Query Complexity Analysis
 To protect the server from expensive deeply-nested queries (N+1 attacks), Asok runs static analysis on every incoming selection set before execution.
 
 - Scalar fields add **1 point**.
@@ -282,12 +325,12 @@ Queries exceeding the limit are instantly rejected with `400 Bad Request`.
 app.config["GRAPHQL_MAX_COMPLEXITY"] = 100  # Default: 100
 ```
 
-### 3. GraphQL Playground (GraphiQL)
+### 4. GraphQL Playground (GraphiQL)
 When `DEBUG = True`, visiting `GET /graphql` in your browser opens the interactive **GraphiQL Explorer** — write queries, inspect the schema, and test mutations live.
 
 In production (`DEBUG = False`), `GET /graphql` returns `405 Method Not Allowed`. Only `POST` requests are accepted.
 
-### 4. Real-time Subscriptions over WebSockets
+### 5. Real-time Subscriptions over WebSockets
 GraphQL Subscriptions use the standard `graphql-ws` WebSocket sub-protocol (registered automatically on the `/graphql` WS path).
 
 * **Subscription fields**: Every ORM model automatically exposes three subscription hooks:
@@ -307,7 +350,10 @@ subscription {
 
 | Key | Description | Default |
 |---|---|---|
+| `GRAPHQL_AUTHORIZE` | Callable `(request) -> bool`. Guards all GraphQL requests. Mutations are blocked if this is not set and `GRAPHQL_ALLOW_UNAUTHENTICATED_MUTATIONS` is not `True`. | `None` |
+| `GRAPHQL_ALLOW_UNAUTHENTICATED_MUTATIONS` | Set to `True` to allow mutations without an auth hook. Not recommended for public endpoints. | `False` |
 | `GRAPHQL_MAX_COMPLEXITY` | Maximum allowed query complexity score. Requests above this are rejected. | `100` |
+| `GRAPHQL_MAX_DEPTH` | Maximum allowed query nesting depth. | `20` |
 | `GRAPHQL_ENABLED` | Show "GraphQL Explorer" link in the `/docs` sidebar. | `False` |
 | `GRAPHQL_PATH` | Path used for the docs sidebar link. Does not change the actual endpoint. | `"/graphql"` |
 

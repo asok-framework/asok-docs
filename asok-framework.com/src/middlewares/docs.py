@@ -1,10 +1,57 @@
 import os
 import re
+from collections import OrderedDict
 
 from models.docs_index import DocsIndex
 
 # Global flag to ensure documentation is indexed only once per process lifetime
 _indexed = False
+
+CATEGORIES = [
+    {
+        "name": "Foundations",
+        "range": range(1, 7), # 01 - 06
+    },
+    {
+        "name": "Database & ORM",
+        "range": range(7, 11), # 07 - 10
+    },
+    {
+        "name": "Forms & Data",
+        "range": range(11, 17), # 11 - 16
+    },
+    {
+        "name": "Security & Auth",
+        "range": range(17, 24), # 17 - 23
+    },
+    {
+        "name": "Reactive UI",
+        "range": range(24, 30), # 24 - 29
+    },
+    {
+        "name": "Internal Tools",
+        "range": range(30, 37), # 30 - 36
+    },
+    {
+        "name": "Operations & Tools",
+        "range": range(37, 47), # 37 - 46
+    },
+    {
+        "name": "References & Advanced",
+        "range": range(47, 55), # 47 - 54
+    }
+]
+
+
+def _get_category_name(slug):
+    match = re.match(r"^(\d+)-", slug)
+    if not match:
+        return "Other"
+    num = int(match.group(1))
+    for cat in CATEGORIES:
+        if num in cat["range"]:
+            return cat["name"]
+    return "Other"
 
 
 def _index_docs(docs_dir):
@@ -48,6 +95,7 @@ def handle(request, next):
     """
     # Initialize empty menu to prevent template crashes if the docs directory is missing
     request.params["docs_menu"] = []
+    request.params["docs_menu_categorized"] = []
 
     # Skip processing for API routes
     if request.path.startswith('/api/'):
@@ -74,4 +122,21 @@ def handle(request, next):
 
         request.params["docs_menu"] = menu
 
+        # Group menu items into categories
+        categorized = OrderedDict()
+        for cat in CATEGORIES:
+            categorized[cat["name"]] = []
+        categorized["Other"] = []
+
+        for item in menu:
+            cat_name = _get_category_name(item["slug"])
+            categorized[cat_name].append(item)
+
+        request.params["docs_menu_categorized"] = [
+            {"category": name, "pages": items}
+            for name, items in categorized.items()
+            if items
+        ]
+
     return next(request)
+

@@ -1,5 +1,7 @@
 # CORS & Gzip
 
+> **Keywords:** cross origin requests, response compression, gzip encoding, cors headers, middleware cors, compress response
+
 ## CORS (Cross-Origin Resource Sharing)
 
 Enable CORS to allow requests from other domains (useful for APIs consumed by a frontend on a different port/domain).

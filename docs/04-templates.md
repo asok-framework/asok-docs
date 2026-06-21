@@ -1,5 +1,7 @@
 # Templates
 
+> **Keywords:** template engine, custom filters, template inheritance, layouts, extends, include, block, macros, variables, conditional statements, loops, jinja templates
+
 Asok features a powerful, built-in template engine with an elegant, intuitive syntax. Designed for performance and security, it requires no external dependencies.
 
 ## Template Files
@@ -355,6 +357,7 @@ Import and use in any template:
 {{ button("Click me") }}
 {{ button("Delete", "danger") }}
 {{ card("Hello", "World") }}
+```
 
 ### Advanced Macros — `call`
 

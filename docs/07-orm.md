@@ -1,4 +1,9 @@
+# ORM Basics
+
+> **Keywords:** database model, database queries, sql orm, sqlite database, insert records, filter query, save model, delete model, database objects, active record
+
 Asok includes a powerful, built-in ORM supporting **SQLite** (default, zero dependencies), **PostgreSQL**, and **MySQL**.
+
 
 By default, SQLite is used and a `db.sqlite3` file is created automatically. Database tables are auto-created or updated from your model definitions on application start.
 

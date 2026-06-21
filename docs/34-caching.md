@@ -1,5 +1,7 @@
 # Caching
 
+> **Keywords:** cache decorator, file cache, memory cache, invalidate cache, redis cache, cache lifespan
+
 Asok comes with a built-in caching system. It can speed up your application by caching HTTP responses, database queries, and template fragments.
 
 ## 1. Template Fragment Caching
@@ -59,6 +61,8 @@ To ensure cache consistency across all worker processes, you **should** use eith
 
 #### Option A: Redis backend (Recommended)
 Redis is ideal for high-performance production sites. It is fast, handles TTL natively, and shares cache values across all processes/servers.
+
+Asok automatically configures a connection and socket timeout of **5.0 seconds** (`socket_timeout=5.0`, `socket_connect_timeout=5.0`) when communicating with Redis to prevent the application from blocking if the Redis server goes down or becomes slow.
 
 Install the optional package:
 ```bash

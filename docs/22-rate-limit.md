@@ -1,5 +1,7 @@
 # Rate Limit
 
+> **Keywords:** rate limiter, prevent brute force, client limit, rate limit key, request throttling, slide window, redis rate limit
+
 Protect your application from brute-force attacks and abuse with Asok's built-in rate limiter.
 
 ## Quick Start (Decorator)

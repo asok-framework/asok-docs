@@ -20,3 +20,4 @@ class Counter(Component):
 
     def render(self):
         return self.html("counter.asok")
+    

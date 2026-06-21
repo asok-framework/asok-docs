@@ -1,5 +1,7 @@
 # Sessions
 
+> **Keywords:** session store, session cookie, cookie expiration, file session, memory session, session lifespan, session lifetime
+
 Server-side sessions with signed cookie IDs.
 
 ## Usage

@@ -1,5 +1,7 @@
 # Asok Directives
 
+> **Keywords:** client side reactivity, reactive directives, asok click, asok model, asok show, asok text, frontend directives
+
 Asok includes native reactive directives for building interactive UIs without custom JavaScript. These directives are automatically processed by a lightweight, built-in runtime (~5KB).
 
 ## Production Requirements & Zero-Eval Security

@@ -1,5 +1,7 @@
 # Authentication
 
+> **Keywords:** user login, logout, registration, user models, passwords, hash password, authenticate user
+
 Asok has built-in session-based authentication. No external package needed.
 
 ## Setup

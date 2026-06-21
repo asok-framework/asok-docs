@@ -1,5 +1,7 @@
 # Component API Reference
 
+> **Keywords:** live component API, component lifecycle, component methods, state properties
+
 Detailed reference for the `asok.Component` class and its lifecycle methods.
 
 ## Scaffolding

@@ -1,5 +1,7 @@
 # HTML Streaming
 
+> **Keywords:** response streaming, html streaming, partial rendering, low latency ttfb, chunked response
+
 Asok provides native support for HTML streaming (Chunked Transfer Encoding). This allows you to serve HTML in chunks as they are generated, rather than waiting for the entire page to be rendered.
 
 ## Usage

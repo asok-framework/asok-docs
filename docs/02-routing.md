@@ -1,5 +1,7 @@
 # Routing
 
+> **Keywords:** dynamic urls, routing params, index files, pure html, custom error pages, page.py, static files, url parameters, index.py
+
 Asok uses a **file-based router**. The directory structure of `src/pages/` defines your URLs.
 
 ## Basic routing

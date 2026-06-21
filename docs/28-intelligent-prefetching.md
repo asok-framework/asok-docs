@@ -1,5 +1,7 @@
 # Intelligent Prefetching
 
+> **Keywords:** page prefetch, fast transitions, prefetch link, hover prefetch
+
 Asok's Reactive Engine includes a prefetching system that can reduce navigation latency by background-loading HTML fragments before the user clicks a link.
 
 ## How it works

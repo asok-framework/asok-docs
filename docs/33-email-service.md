@@ -1,5 +1,7 @@
 # Email Service
 
+> **Keywords:** send mail, smtp config, mail templates, background email, email queue
+
 Send emails using the Python standard library (`smtplib`). No external package.
 
 Emails are sent **in a background thread** by default — your page responds instantly without waiting for the SMTP server.

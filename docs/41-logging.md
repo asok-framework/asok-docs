@@ -1,5 +1,7 @@
 # Logging
 
+> **Keywords:** application logs, logging levels, debug logging, log rotation, error logging
+
 Asok provides a centralized, configuration-aware logging system out of the box.
 
 ## 1. Application Logger

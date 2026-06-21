@@ -1,5 +1,7 @@
 # Optimization
 
+> **Keywords:** minify css, webp optimization, performance tips, assets optimization, compression
+
 Asok includes a built-in optimization engine for production builds.
 
 ### Build-Time Optimization

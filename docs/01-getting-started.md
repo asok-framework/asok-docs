@@ -1,5 +1,7 @@
 # Getting Started
 
+> **Keywords:** installation, setup, create project, CLI, folder structure, interactive CLI, dev server, running locally, sqlite
+
 Asok is a **zero-dependency** Python framework designed for speed, security, and a unified development experience through intuitive file-based routing and native client-side reactivity.
 
 ## Installation

@@ -1,5 +1,7 @@
 # Deployment
 
+> **Keywords:** gunicorn config, nginx config, systemd service, deploy production, reverse proxy, ssl tls deployment
+
 Asok is designed to be straightforward to deploy. The framework focuses on a documented production stack using **Gunicorn**, **Nginx**, and **SystemD**.
 
 ## 1. Automated Deployment
@@ -121,5 +123,221 @@ sudo ausearch -m avc -ts recent | audit2allow -M asok_fix
 sudo semodule -i asok_fix.pp
 ```
 
+## 6. Docker Deployment
+
+Deploying with Docker simplifies environment configuration and ensures consistency across development, staging, and production environments. The recommended structure uses **Docker Compose** to manage both the ASGI application container (Gunicorn/Uvicorn) and an Nginx reverse-proxy container.
+
+### Dockerfile
+
+Create a `Dockerfile` at the root of your project:
+
+```dockerfile
+# Use a lightweight official Python image
+FROM python:3.12-slim
+
+# Environment variables to optimize Python inside Docker
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PORT=8000
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir gunicorn uvicorn
+
+# Copy the rest of the project source code
+COPY . .
+
+# Security: Run the application as a non-root user
+RUN useradd -u 1000 appuser \
+    && mkdir -p .asok/sessions .asok/cache src/partials/uploads \
+    && chown -R appuser:appuser /app \
+    && chmod -R 775 /app
+
+USER appuser
+
+# Expose the internal application port
+EXPOSE 8000
+
+# Start server using Gunicorn supervising Uvicorn workers
+CMD ["gunicorn", "wsgi:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000"]
+```
+
+### .dockerignore
+
+Create a `.dockerignore` file to exclude local folders from the build context:
+
+```dockerignore
+.git
+.github
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+db.sqlite3-shm
+db.sqlite3-wal
+.asok
+.env
+.DS_Store
+.ruff_cache
+```
+
+### Docker Compose Configuration (`docker-compose.yml`)
+
+The compose setup coordinates the ASGI app and the Nginx web server. To ensure that static assets (CSS, JS, images) are kept in sync across image updates (since Docker named volumes do not automatically overwrite files once initialized), we use a shared volume to copy assets to Nginx during startup. SQLite and user uploads are persisted in separate dedicated volumes.
+
+```yaml
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: asok_app
+    restart: always
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=your_production_secret_key_here
+      - DATABASE_URL=sqlite:///app/db_data/db.sqlite3
+    volumes:
+      # Shared volume to transfer static assets to Nginx
+      - static_volume:/app/static_volume_shared
+      # Persistent volume for user uploads
+      - uploads_volume:/app/src/partials/uploads
+      # Persistent volume for SQLite database
+      - db_volume:/app/db_data
+    # Sync assets, run migrations, and start server on startup
+    entrypoint: >
+      sh -c "
+      mkdir -p /app/static_volume_shared &&
+      cp -rf /app/src/partials/css /app/src/partials/js /app/src/partials/images /app/static_volume_shared/ &&
+      asok migrate &&
+      gunicorn wsgi:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000
+      "
+
+  nginx:
+    image: nginx:alpine
+    container_name: asok_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - static_volume:/usr/share/nginx/html/static:ro
+      - uploads_volume:/usr/share/nginx/html/uploads:ro
+    depends_on:
+      - app
+
+volumes:
+  static_volume:
+  uploads_volume:
+  db_volume:
+```
+
+### Nginx Configuration (`nginx.conf`)
+
+Add a `nginx.conf` at your project root. Notice that Asok serves static folders directly at the root (`/css/`, `/js/`, `/images/`, `/uploads/`), which Nginx maps to the shared volumes:
+
+```nginx
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log warn;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+    sendfile on;
+    keepalive_timeout 65;
+
+    # Gzip Compression
+    gzip on;
+    gzip_disable "msie6";
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml application/json application/javascript application/xml+rss image/svg+xml;
+
+    server {
+        listen 80;
+        server_name localhost; # Replace with your domain name
+
+        # Static CSS files served directly by Nginx
+        location /css/ {
+            alias /usr/share/nginx/html/static/css/;
+            expires 30d;
+            add_header Cache-Control "public, no-transform";
+            access_log off;
+        }
+
+        # Static JavaScript files served directly by Nginx
+        location /js/ {
+            alias /usr/share/nginx/html/static/js/;
+            expires 30d;
+            add_header Cache-Control "public, no-transform";
+            access_log off;
+        }
+
+        # Static image assets served directly by Nginx
+        location /images/ {
+            alias /usr/share/nginx/html/static/images/;
+            expires 30d;
+            add_header Cache-Control "public, no-transform";
+            access_log off;
+        }
+
+        # User uploaded media assets served directly by Nginx
+        location /uploads/ {
+            alias /usr/share/nginx/html/uploads/;
+            expires 30d;
+            add_header Cache-Control "public, no-transform";
+        }
+
+        # Forward all other requests to the ASGI Python application
+        location / {
+            proxy_pass http://app:8000;
+            
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            # WebSocket support (required for Asok sockets & SSE)
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+
+            # Disable buffering for SSE (real-time stream) compatibility
+            proxy_buffering off;
+
+            client_max_body_size 10M;
+        }
+    }
+}
+```
+
+### Launching the Stack
+
+To build and start your application container stack in the background, run:
+
+```bash
+docker compose up -d --build
+```
+
 ---
 [← Previous: CLI Reference](38-cli-reference.md) | [Documentation](README.md) | [Next: Testing →](40-testing.md)
+

@@ -1,5 +1,7 @@
 # Data Tables
 
+> **Keywords:** data tables, paginate records, table search, sort columns, dynamic table
+
 Asok provides a powerful, professional `Table` component for rendering data with built-in support for sorting, searching, pagination, and bulk actions.
 
 ## Basic Usage

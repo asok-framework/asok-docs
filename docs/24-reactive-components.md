@@ -1,5 +1,7 @@
 # Reactive Components
 
+> **Keywords:** live components, reactive ui, state management, websocket components, realtime ui, component class
+
 Reactive (Live) Components allow you to build interactive UI elements that update in real-time without manual JavaScript. They are isomorphic: rendered on the server as HTML, but reactive via WebSockets.
 
 ## Overview

@@ -1,5 +1,7 @@
 # Database Migrations
 
+> **Keywords:** make migration, run migrations, rollback migration, schema changes, database versioning, migration tool
+
 Asok includes a professional, version-controlled migration system that allows you to manage your database schema evolution with confidence. It features **automatic change detection**, batch tracking, and atomic rollbacks.
 
 ## 1. Concept

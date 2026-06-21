@@ -1,5 +1,7 @@
 # Utilities
 
+> **Keywords:** helper functions, utility classes, string formatting, cryptography utility, humanize data
+
 Asok provides several built-in utilities to simplify common tasks in web development, all accessible via the `asok.utils` package.
 
 ## Humanize

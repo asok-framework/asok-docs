@@ -1,5 +1,7 @@
 # Admin Interface
 
+> **Keywords:** admin panel, admin panel custom, 2fa authentication, roles permissions, audit log, impersonate user, media library
+
 A Django-style admin interface, auto-generated from your models. Zero config to start, deeply customizable when you need it.
 
 ## Quick Start

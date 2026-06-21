@@ -1,5 +1,7 @@
 # Transitions
 
+> **Keywords:** ui transitions, animations, live transitions, fade slide transitions
+
 Asok provides a native transition system to add **smooth animations** to your UI. Transitions work with the Reactive Engine, WebSockets, and SPA navigation.
 
 ## Overview

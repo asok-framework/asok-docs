@@ -1,15 +1,41 @@
 # Asok Documentation
 
-> **Latest Version: v0.4.0**
+> **Latest Version: v0.5.0**
 >
-> * **Community Extensions System**: Fully modular plug-and-play extension architecture allowing third-party packages to register custom controllers, templates, static assets, and custom CLI commands.
-> * **Hybrid SSR & Hydration (Islands, SSG & ISR)**: High-performance pre-rendering supporting Static Site Generation (`asok build`) and Incremental Static Regeneration (ISR) with selective islands hydration.
-> * **GraphQL & API Versioning**: Native GraphQL engine with schema auto-generation, complexity validation, and professional API version negotiation (URL and header-based).
-> * **Advanced WebSockets & Multi-DB**: Real-time user presence, authorized rooms, replica-router split for database replica routing (read master/replica query routing).
+> * **Zero-Eval Client Directives**: Advanced, secure client-side reactive directives powered by a custom JavaScript AST scanner and parser (completely eliminating dangerous `eval`).
+> * **Framework-Wide Complexity Optimization**: Entire codebase refactored and modularized to strictly satisfy Grade A cyclomatic complexity, maximizing runtime performance and maintainability.
+> * **Persistent Workers & Distributed Scheduler**: Distributed lock-protected scheduled tasks (cron) and concurrency-resilient worker instances with background thread pools.
+> * **Production-Hardened Security**: ORM delete lifecycle events, session replay protection, strict CSRF Origin/Referer verification, and sandboxed template engines.
 
 
 
 Welcome to the Asok Framework documentation. This guide is organized sequentially to take you from a total beginner to an advanced contributor.
+
+## ⚡ Quick Reference: How do I...
+
+If you are looking for a specific topic, here is a quick mapping of common developer tasks to their respective documentation pages:
+
+| Task | Relevant Guide | Key Concepts |
+|---|---|---|
+| **Create and run a new app** | [Getting Started](01-getting-started.md) | `asok create`, `asok dev` |
+| **Define dynamic URLs / routing** | [Routing](02-routing.md) | Dynamic parameters `[id:int]`, request methods |
+| **Get query params, cookies or request headers** | [Request Handling](03-request.md) | `request.args`, `request.cookies`, `request.headers` |
+| **Define custom pages / extend templates** | [Templates](04-templates.md) | Template inheritance, blocks, standard filters |
+| **Protect routes, execute pre/post request logic** | [Middleware](05-middleware.md) | Middlewares, hook system |
+| **Configure databases and run SQL queries** | [ORM Basics](07-orm.md) & [Advanced ORM](08-advanced-orm.md) | Models, `Model.filter()`, complex queries, indexes |
+| **Manage database schemas & run migrations** | [Migrations](09-migrations.md) | `asok make migration`, `asok migrate` |
+| **Perform semantic or vector searches** | [Native Vector Search](10-vector-search.md) | `Field.Vector()`, cosine similarity |
+| **Handle form submissions & validation** | [Forms](11-forms.md) & [Validation](14-validation.md) | Declarative forms, `Form.validate()`, rules |
+| **Log users in & protect pages** | [Authentication](17-authentication.md) & [Sessions](19-sessions.md) | User authentication, session backend |
+| **Implement OAuth2, Magic Links or API Keys** | [Advanced Authentication](18-advanced-authentication.md) | Social login, bearer tokens |
+| **Rate limit endpoints to prevent abuse** | [Rate Limit](22-rate-limit.md) | Rate limiting, redis/local bucket |
+| **Build dynamic, stateful UI components** | [Reactive Components](24-reactive-components.md) | Live components, reactive state |
+| **Implement real-time features (websockets)** | [WebSockets](32-websockets.md) | WebSocket server, custom handlers |
+| **Send emails in the background** | [Email Service](33-email-service.md) | SMTP email client, background threads |
+| **Run background tasks / cron jobs** | [Background Tasks](35-background-tasks.md) & [Scheduled Tasks](36-scheduler.md) | Background workers, cron scheduler |
+| **Configure Gunicorn, Nginx & Nginx TLS** | [Deployment](39-deployment.md) | Production configs, systemd services |
+| **Write unit tests for my app** | [Testing](40-testing.md) | `TestClient`, request assertions |
+
 
 ## 🟢 Foundations
 01. [Getting Started](01-getting-started.md) — Installation and your first app.

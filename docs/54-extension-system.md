@@ -1,5 +1,7 @@
 # Extension System
 
+> **Keywords:** custom packages, pluggable extensions, plugin system, add package routes, templates hook
+
 Asok includes a modular extension system allowing the community and third-party packages to extend the framework's capabilities. With extensions, you can package and distribute reusable controllers, layout templates, static assets, and custom CLI commands.
 
 ---

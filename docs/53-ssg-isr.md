@@ -1,5 +1,7 @@
 # SSG & ISR (Static Site Generation & Incremental Static Regeneration)
 
+> **Keywords:** static site generation, incremental static regeneration, static generation, dynamic caching, static export
+
 Asok supports hybrid rendering strategies, allowing you to pre-render pages into static HTML at build time (SSG) and incrementally regenerate them in the background (ISR) for the ultimate balance between performance and dynamic features.
 
 ---

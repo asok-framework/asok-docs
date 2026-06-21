@@ -1,5 +1,7 @@
 # Configurations
 
+> **Keywords:** environment variables, .env, app config, settings, env casting, settings dictionary, config variables
+
 Asok is designed to require minimal configuration for common use-cases, but it provides a comprehensive set of options that can be tuned via environment variables or directly in your `wsgi.py` / `asgi.py` file.
 
 ---
@@ -112,6 +114,8 @@ Configure where and how files uploaded via forms are saved on the server.
 | `ASOK_QUEUE_BACKEND` | str | `"local"` | Tasks queue backend: `"local"` (in-process thread pool) or `"redis"` (Redis list queue). |
 | `BG_WORKERS` | int | `10` | Maximum background threads in the local thread pool. |
 | `REDIS_URL` | str | `None` | Redis connection URL (e.g. `redis://localhost:6379/0`). Also accepts `ASOK_REDIS_URL`. |
+| `ASOK_WORKER_CONCURRENCY` | int | `1` | Number of concurrent execution threads in the Redis worker pool. |
+| `ASOK_WORKER_QUEUES` | str | `"high,default,low"` | Comma-separated list of queue names to poll from in order of priority. |
 
 ---
 
@@ -154,12 +158,16 @@ Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL.
 |---|---|---|---|
 | `DOCS_PATH` | str | `"/docs"` | The URL path where the auto-generated docs are served. |
 | `OPENAPI_PATH` | str | `"/openapi.json"` | The URL path for the generated OpenAPI specification. |
+| `OPENAPI_AUTHORIZE` | callable | `None` | Hook `(request) -> bool` that guards access to the `/openapi.json` spec endpoint only. If not set, the spec is public. |
 | `API_TITLE` | str | *PROJECT_NAME* | The title shown in the documentation UI. |
 | `API_LOGO` | str | *SITE_LOGO* | URL of the logo shown in the documentation UI. |
 | `SITE_LOGO` | str | `None` | URL of the default site-wide logo (fallback for `API_LOGO`). |
-| `GRAPHQL_ENABLED` | bool | `False` | Enables the built-in GraphQL API and explorer interface. |
-| `GRAPHQL_PATH` | str | `"/graphql"` | URL endpoint path where GraphQL queries/subscriptions are served. |
-| `GRAPHQL_MAX_COMPLEXITY` | int | `100` | Statically checks query complexity to prevent DOS/abuse. |
+| `GRAPHQL_ENABLED` | bool | `False` | Show "GraphQL Explorer" link in the `/docs` sidebar. |
+| `GRAPHQL_PATH` | str | `"/graphql"` | Path used for the docs sidebar link. Does not change the actual endpoint. |
+| `GRAPHQL_AUTHORIZE` | callable | `None` | Hook `(request) -> bool` that guards all GraphQL requests. **Mutations are blocked by default if this is not set** and `GRAPHQL_ALLOW_UNAUTHENTICATED_MUTATIONS` is not `True`. |
+| `GRAPHQL_ALLOW_UNAUTHENTICATED_MUTATIONS` | bool | `False` | Set to `True` to allow mutations without an auth hook. Not recommended for public endpoints. |
+| `GRAPHQL_MAX_COMPLEXITY` | int | `100` | Statically checks query complexity to prevent abuse. |
+| `GRAPHQL_MAX_DEPTH` | int | `20` | Maximum allowed query nesting depth. |
 
 ---
 

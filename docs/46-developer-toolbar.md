@@ -1,5 +1,7 @@
 # Developer Toolbar (Asok Console)
 
+> **Keywords:** sql profiler, debug toolbar, query logs, ajax spa inspector, developer metrics
+
 Asok includes a premium built-in developer toolbar that appears in your browser when `DEBUG = True`. 
 
 Designed with a modern, translucent aesthetic, it allows you to monitor your application's state in real-time without leaving your UI.

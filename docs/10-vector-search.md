@@ -1,5 +1,7 @@
 # Native Vector Search
 
+> **Keywords:** semantic search, vector search, embeddings, similarity search, vector distance, cosine similarity, sqlite vector
+
 Asok includes a built-in **native Vector Search** implementation that avoids heavy external dependencies or extensions where possible. This makes it a practical option for building AI-powered features like semantic search, recommendation engines, and RAG (Retrieval-Augmented Generation) applications.
 
 ## 1. Defining a Vector Field

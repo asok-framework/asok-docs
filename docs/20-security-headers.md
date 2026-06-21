@@ -1,5 +1,7 @@
 # Security Headers
 
+> **Keywords:** csp content security policy, referrer policy, frame options, hsts strict transport, zero-eval security, xss protection, x-frame-options
+
 In production, Asok automatically adds security headers to every response.
 
 ## Default headers

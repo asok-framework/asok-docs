@@ -1,5 +1,7 @@
 # Static Versioning
 
+> **Keywords:** cache busting, static assets hash, assets versioning, version query param
+
 In production, `static()` appends a content hash to static URLs for cache busting.
 
 ## Usage

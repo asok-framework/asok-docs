@@ -1,5 +1,7 @@
 # Request Handling
 
+> **Keywords:** query params, cookies, request headers, client IP, browser user agent, geolocation, json body, rendering html, partial block swap, redirects, csrf input, internationalization, exception handling, abort 404, global request proxy, current_request, query arguments, client info, redirect back, referer, flash messages, cookies dict
+
 Every `render()` function receives a `Request` object. It handles input, output, auth, and more.
 
 ## Reading input

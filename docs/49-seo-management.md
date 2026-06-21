@@ -1,5 +1,7 @@
 # SEO & Metadata Management
 
+> **Keywords:** metadata tags, open graph, twitter card, search engine optimization, meta tags, sitemap xml
+
 Asok provides a powerful, SvelteKit-inspired system for managing page metadata (titles, meta tags, social share properties) directly from your Python logic or templates.
 
 ## 1. The `meta` object

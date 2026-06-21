@@ -1,5 +1,7 @@
 # WebSockets
 
+> **Keywords:** websocket connections, websocket handlers, real time api, websocket server
+
 Asok includes a minimal, standard-library-only WebSocket server (RFC 6455). It runs in a background daemon thread alongside the WSGI server and shares the same session and authentication system.
 
 ## Setup

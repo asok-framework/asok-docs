@@ -1,5 +1,7 @@
 # Request Context & `current_request`
 
+> **Keywords:** thread safe proxy, request context, thread context, request data
+
 Asok uses a **context-local request proxy** to make the current HTTP request available anywhere in your code — without threading issues and without passing `request` as a function argument everywhere.
 
 ## The problem it solves

@@ -1,5 +1,7 @@
 # Tailwind CSS
 
+> **Keywords:** tailwind config, tailwind theme, customizing css, tailwind import
+
 Asok ships with optional, opt-in Tailwind CSS v4 support. The Tailwind standalone binary is downloaded into your project (no Node.js, no npm) and runs automatically during dev and build.
 
 ## Quick start

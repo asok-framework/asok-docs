@@ -1,5 +1,7 @@
 # Middleware
 
+> **Keywords:** request lifecycle, middleware hooks, adding middleware, custom middleware, lifecycle.py, post-request, pre-request
+
 Middleware lets you run code before and after every request. Create a file in `src/middlewares/` — it's loaded automatically.
 
 ## Create a middleware

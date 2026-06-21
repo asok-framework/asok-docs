@@ -1,5 +1,7 @@
 # Forms
 
+> **Keywords:** form builder, form validation, html forms, form fields, post form, form validation rules, forms dictionary
+
 Asok provides a declarative form system that generates HTML and handles validation automatically.
 
 ## Basic usage
@@ -131,7 +133,31 @@ For complex components (Dropdown, Toggle, Select, etc.), you can target sub-elem
 ) }}
 ```
 
-This ensures full customizability for Tailwind CSS at every level of nesting.
+## CSRF & Hidden Fields Shortcuts
+
+When rendering forms in your templates, you can use these shortcuts to simplify your HTML markup:
+
+### 1. CSRF Input Shortcut
+Instead of calling `{{ request.csrf_input() }}`, you can use the form's native `csrf` property to render the hidden CSRF input field:
+
+```html
+<form method="POST">
+    {{ form.csrf }}
+    <!-- other fields -->
+</form>
+```
+
+### 2. Hidden Fields Group Shortcut
+If you have multiple hidden fields in your form, you can render them all at once (including the CSRF token) using the `hidden_fields` property:
+
+```html
+<form method="POST">
+    {{ form.hidden_fields }}
+    <!-- visible fields -->
+</form>
+```
+
+This renders a list of `<input type="hidden">` tags for all hidden fields declared in your form schema, plus the required CSRF token.
 
 ## Field types
 
@@ -1058,7 +1084,7 @@ This example demonstrates how to perform live client-side validation on field le
 
 ### Key Directives Used:
 *   **`asok-model`**: Binds the input field value to the local reactive state variables.
-*   **`asok-class:class-name="..."`**: Conditionally adds a CSS class (like `border-red-500` or `input-error`) when the validation expression resolves to true.
+*   **`asok-class:class-name`** (value = a JS boolean expression): Conditionally adds a CSS class (like `border-red-500` or `input-error`) when the validation expression resolves to true.
 *   **`asok-show`**: Displays helper error labels only when inputs are invalid.
 *   **`asok-bind:disabled`**: Blocks form submission until the state meets all requirements.
 

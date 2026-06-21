@@ -1,5 +1,7 @@
 # Security Audit
 
+> **Keywords:** security report, vulnerability audit, security hardening, audit log, security features
+
 Asok includes built-in security measures. This document summarizes the protections integrated into the framework to help protect applications from common web vulnerabilities.
 
 ## Executive Summary
