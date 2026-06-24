@@ -55,7 +55,6 @@ Exceptions in scheduled tasks are caught and logged automatically. The task will
 
 In a production environment, you typically deploy Asok with a multi-process web server like **Gunicorn** or **Uvicorn** (configured with multiple workers).
 
-> [!WARNING]
 > Since the built-in scheduler runs in local background threads (daemon threads), a copy of the scheduler will start inside **each** worker process.
 > 
 > If you run Gunicorn with 4 workers, your scheduled tasks will run **4 times in parallel** (one in each worker). This can cause duplicate database entries, double emails, or resource conflicts.

@@ -207,7 +207,6 @@ Scaffold new project components:
 - `asok make page Dashboard`
 - `asok make component SearchBar`
 
-> [!NOTE]
 > To generate database migrations, use the specialized [asok make migration <name>](#asok-make-migration-name) command instead.
 
 

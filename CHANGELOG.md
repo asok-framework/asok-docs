@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+
+## [0.5.1] - 2026-06-24
+
+### Fixed
+- **CLI createsuperuser Pivot Table Provisioning**: Resolved a database table error/warning in the `createsuperuser` command where attempting to attach the admin role failed if the `role_user` pivot table did not exist. The command now dynamically checks for the `role_user` table and automatically provisions it across all supported database engines.
+- **Documentation Roadmap Width**: Converted the Markdown comparison table in `README.md` to HTML with a `100% width` layout to ensure correct full-width rendering in all markdown engines.
+
+
 ## [0.5.0] - 2026-06-21
 
 ### ⚡ Major Release: Zero-Eval Security & Framework-Wide Complexity Reductions

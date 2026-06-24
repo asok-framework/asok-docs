@@ -109,6 +109,17 @@ if (mobileMenuToggle && mobileMenu) {
             body.style.overflow = '';
         });
     }
+
+    // Close mobile menu if window is resized above mobile breakpoint (1024px)
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 1024) {
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                if (menuIconPath) menuIconPath.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+                body.style.overflow = '';
+            }
+        }
+    });
 }
 
 // Handle Escape key

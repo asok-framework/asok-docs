@@ -30,6 +30,7 @@ You do not need to configure it separately — it is active by default for all `
 ## Verification
 
 To see it in action:
+
 1. Open your browser's **Network tab**.
 2. Hover over a link with `data-block`.
 3. You will see a `fetch` request occur immediately.

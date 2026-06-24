@@ -556,10 +556,8 @@ print(customer.ssn)  # "123-45-6789"
 # e.g., "gAAAAABmX..."
 ```
 
-> [!WARNING]
 > Because encrypted fields use non-deterministic AES encryption (the ciphertext differs each time), you cannot perform direct database queries or index searches on encrypted columns (e.g. `Customer.where('ssn', '123-45-6789').get()`). Querying must be done on another field or by filtering in Python.
 
-> [!NOTE]
 > The `cryptography` library is required for encrypted fields. Install it using `pip install cryptography` or `pip install "asok[security]"`.
 
 ## Slug auto-generation

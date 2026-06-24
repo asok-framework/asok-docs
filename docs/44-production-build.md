@@ -42,7 +42,6 @@ For maximum safety, you should follow a strict migration lifecycle:
 | `--keep-source` | Keep original `.py` files alongside `.pyc` files. | `False` |
 | `--with-db` | Include the current `db.sqlite3` in the build. | `False` |
 
-> [!TIP]
 > **Portfolio Tip**: Use `--with-db` if you want to ship a pre-populated database (e.g., for a portfolio) without running an admin or seeders in production.
 
 ### Note on `.gitignore`
