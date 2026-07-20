@@ -5,14 +5,14 @@
 <p align="center">
   <a href="https://github.com/asok-framework/asok-docs/stargazers"><img src="https://img.shields.io/github/stars/asok-framework/asok-docs?style=for-the-badge&color=ffd700" alt="GitHub Stars"></a>
   <a href="https://github.com/asok-framework/asok-docs/blob/main/LICENSE"><img src="https://img.shields.io/github/license/asok-framework/asok-docs?style=for-the-badge&color=4169e1" alt="License"></a>
-  <a href="https://asok-framework.com"><img src="https://img.shields.io/badge/Documentation-Online-success?style=for-the-badge&logo=googledocs&logoColor=white" alt="Documentation"></a>
+  <a href="https://asok-framework.github.io/asok-docs/"><img src="https://img.shields.io/badge/Documentation-Python%20Docs-success?style=for-the-badge&logo=sphinx&logoColor=white" alt="Documentation"></a>
 </p>
 
 ---
 
 # 📖 Asok Documentation & Website
 
-Welcome to the official repository for the **Asok Framework** documentation and website. This repository hosts the source code for [asok-framework.com](https://asok-framework.com) and the complete set of documentation files.
+Welcome to the official repository for the **Asok Framework** documentation and website. This repository hosts the source code for [asok-framework.com](https://asok-framework.com), the standard Python library documentation, and all documentation files.
 
 **Asok** is a Python-first micro-framework with minimal external dependencies, designed for speed, simplicity, and professional web development.
 
@@ -22,18 +22,20 @@ Welcome to the official repository for the **Asok Framework** documentation and 
 
 ## 🌐 Official Channels
 
+- 🐍 **[Python Library Documentation](https://asok-framework.github.io/asok-docs/)** — Standard Sphinx & MyST Python documentation suite.
 - 🏠 **[Official Website](https://asok-framework.com)** — The primary entry point and showcases.
-- 📚 **[Full Documentation](https://asok-framework.com/docs)** — Every detail of the framework explained.
+- 📚 **[Website Docs](https://asok-framework.com/docs)** — Every detail of the framework explained on site.
 - 🚀 **[GitHub Framework](https://github.com/asok-framework/asok)** — The core framework repository.
 
 ---
 
 ## 📁 Repository Structure
 
-This repository is organized into two main parts:
+This repository is organized into the following parts:
 
-- 📂 **[`docs/`](docs/)**: The complete source files for the documentation (Markdown).
-- 📂 **[`asok-framework.com/`](asok-framework.com/)**: The source code for the official website, built with Asok itself.
+- 📂 **[`python_docs/`](python_docs/)**: Standard Python library documentation (Sphinx, MyST Parser, Furo theme).
+- 📂 **[`docs/`](docs/)**: Source Markdown files used by the website renderer.
+- 📂 **[`asok-framework.com/`](asok-framework.com/)**: Source code for the official website, built with Asok itself.
 - 📂 **[`icons/`](icons/)**: Visual assets, logos, and brand identity files.
 
 ---
