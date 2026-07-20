@@ -3,6 +3,7 @@ import markdown
 import re
 from asok import Request
 
+SSG = True
 
 def render(request: Request):
     """

@@ -225,6 +225,12 @@ db.sqlite3-wal
 .asok/
 
 src/migrations/
-.DS_Store 
+.DS_Store
 
 .obsidian/
+
+# Sphinx Documentation Build & Virtual Environments
+python_docs/_build/
+python_docs/venv/
+python_docs/.venv/
+

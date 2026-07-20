@@ -12,6 +12,8 @@ _NAV_RE = re.compile(
     re.MULTILINE
 )
 
+SSG = True
+
 def render(request: Request):
     """
     Renders a dynamic documentation page from a markdown file based on the URL slug.

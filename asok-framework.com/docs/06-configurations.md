@@ -1,0 +1,232 @@
+# Configurations
+
+> **Keywords:** environment variables, .env, app config, settings, env casting, settings dictionary, config variables
+
+Asok is designed to require minimal configuration for common use-cases, but it provides a comprehensive set of options that can be tuned via environment variables or directly in your `wsgi.py` / `asgi.py` file.
+
+---
+
+## 1. Core Settings
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `DEBUG` | bool | `False` | Enables detailed error pages and auto-reloading. Set to `True` for development. |
+| `SECRET_KEY` | str | *auto* | Used for signing cookies, tokens, and CSRF protection. **Required (min 32 chars)** in production. |
+| `INDEX` | str | `"page"` | The name of the default entry point file in your page directories. |
+| `LOCALE` | str | `"en"` | The default language code for translations. |
+| `PROJECT_NAME` | str | `"Asok App"` | The display name of your project. |
+| `VERSION` | str | `"0.1.0"` | Your application's current version. |
+| `ASOK_WRITE_BYTECODE` | bool | `False` | Set to `true` to allow Python to write `.pyc` files (disabled by default for a cleaner project). |
+| `AUTH_MODEL` | str | `"User"` | The class name of the User model used for authentication (e.g., `'User'`). |
+| `ASOK_ENV` | str | `None` | Environment mode (e.g., `"production"`). If set to `"production"`, stricter security rules apply. |
+
+---
+
+## 2. Server & Routing
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `APP_URL` | str | `None` | The base URL of your app (e.g., `https://example.com`). **Mandatory in production** for Magic Links. |
+| `ASOK_PORT` | int | `8000` | The default port for the `asok dev` and `asok preview` commands. |
+| `WS_PORT` | int | `8001` | The port used by the built-in WebSocket server. |
+| `WS_ALLOWED_ORIGINS` | list/str | `None` | Comma-separated list of allowed origins for WebSocket connections. If not set, falls back to `CORS_ORIGINS`. |
+| `MAX_CONTENT_LENGTH` | int | `10485760` | Maximum allowed size (in bytes) for request bodies (default 10 MB). |
+| `TRUSTED_PROXIES` | list/str | `None` | List of IP addresses (or `"*"` ) to trust for the `X-Forwarded-For` header. |
+| `ASOK_DOCS` | bool | `DEBUG` | Alias for `DOCS`. Set to `false` to hide the documentation UI entirely. |
+| `DOCS` | bool | `DEBUG` | Enables or disables the automatic documentation UI. |
+
+---
+
+## 3. Session Management
+
+| Key               | Type | Default            | Description                                                                                                             |
+| ----------------- | ---- | ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| `SESSION_BACKEND` | str  | `"memory"`         | Storage backend for sessions: `"memory"`, `"file"`, or `"redis"`. **`"file"` or `"redis"` recommended for production.** |
+| `SESSION_PATH`    | str  | `".asok/sessions"` | Directory path for file-based session storage.                                                                          |
+| `SESSION_MAX_AGE` | int  | `2592000`          | Max age for the session cookie (in seconds, default 30 days).                                                           |
+| `SESSION_TTL`     | int  | `86400`            | Server-side session expiration time (in seconds, default 24 hours).                                                     |
+| `SESSION_SAMESITE` | str | `"Lax"`            | SameSite attribute for the session cookie (`Lax`, `Strict`, or `None`).                                                 |
+| `SESSION_SECURE`  | bool | *auto*             | Forces session cookie to be sent over HTTPS only. Defaults to `True` if not in `DEBUG`.                                 |
+| `REDIS_URL`       | str  | `None`             | Connection string for Redis backend (e.g., `redis://localhost:6379/0`). Also accepts `ASOK_REDIS_URL`.                  |
+| `MAGIC_LINK_TTL`  | int  | `3600`             | Expiration time for authentication magic links (in seconds, default 1 hour).                                            |
+
+---
+
+## 4. Caching System
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `ASOK_CACHE_BACKEND` | str | `"memory"` | Caching backend: `"memory"`, `"file"`, or `"redis"`. **`"file"` or `"redis"` recommended for production.** |
+| `ASOK_CACHE_PATH` | str | `".asok/cache"` | Directory path for file-based caching. |
+
+---
+
+## 5. Security & CORS
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `CSRF` | bool | `True` | Enables global Cross-Site Request Forgery protection for forms. |
+| `CORS_ORIGINS` | list/str | `None` | Allowed origins for cross-domain requests. Use `"*"` for all. |
+| `SECURITY_HEADERS` | bool/dict | `True` | Enables default security headers (CSP, HSTS, etc.). Can be customized with a dict. |
+| `CSP` | dict | `{}` | Dictionary of custom Content Security Policy (CSP) directives to extend or override defaults. |
+| `CSP_UNSAFE_EVAL` | bool | `False` | Optional. Forces `'unsafe-eval'` in CSP script-src. Asok directives and Live Components do not require it by default in production. |
+| `CSP_REPORT_URI` | str | `None` | Endpoint URL to receive Content Security Policy (CSP) violation reports. |
+| `ETAG` | bool | `True` | Enables automatic conditional caching headers for responses. |
+| `TOOLBAR` | bool | `DEBUG` | Enables or disables the developer debugging toolbar. Also accepts `ASOK_TOOLBAR`. |
+| `RATE_LIMIT` | bool | `True` | Enables global request rate limiting. |
+| `RATE_LIMIT_PER_MINUTE` | int | `100` | Max requests allowed per IP per minute if rate limiting is enabled. |
+
+---
+
+## 6. Performance & Optimization
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `GZIP` | bool | `False` | Enables transparent Gzip compression for text-based responses. |
+| `GZIP_MIN_SIZE` | int | `500` | Minimum response size (in bytes) to trigger Gzip compression. |
+| `HTML_MINIFY` | bool | `!DEBUG` | Enables aggressive whitespace removal for HTML responses. |
+| `IMAGE_OPTIMIZATION` | bool | `False` | Enables automatic WebP conversion for uploaded/served images. |
+| `IMAGE_KEEP_ORIGINAL` | bool | `True` | Retains the original uploaded file when generating optimized versions. |
+
+---
+
+## 7. File Storage & Uploads
+
+Configure where and how files uploaded via forms are saved on the server.
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `ASOK_STORAGE_BACKEND` | str | `"local"` | Storage backend: `"local"` (local disk uploads) or `"s3"` (Amazon S3 or compatible cloud storage). |
+| `ASOK_S3_BUCKET` | str | `None` | The name of the S3 bucket. Also accepts `S3_BUCKET`. |
+| `ASOK_S3_REGION` | str | `None` | The S3 region. Also accepts `AWS_DEFAULT_REGION`. |
+| `ASOK_S3_ENDPOINT` | str | `None` | Optional S3 endpoint URL (useful for custom endpoints like MinIO, DigitalOcean Spaces). |
+| `AWS_ACCESS_KEY_ID` | str | `None` | AWS access key credential. |
+| `AWS_SECRET_ACCESS_KEY` | str | `None` | AWS secret key credential. |
+| `ASOK_S3_CUSTOM_DOMAIN` | str | `None` | Optional custom CDN domain mapping (e.g. `cdn.myapp.com`) to prefix file URLs. |
+| `ASOK_SERVE_STATIC_FROM_S3` | bool | `False` | Optional. Set to `true` to serve static assets from the S3 bucket rather than local directories. |
+
+---
+
+## 8. Background Tasks & Queue
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `ASOK_QUEUE_BACKEND` | str | `"local"` | Tasks queue backend: `"local"` (in-process thread pool) or `"redis"` (Redis list queue). |
+| `BG_WORKERS` | int | `10` | Maximum background threads in the local thread pool. |
+| `REDIS_URL` | str | `None` | Redis connection URL (e.g. `redis://localhost:6379/0`). Also accepts `ASOK_REDIS_URL`. |
+| `ASOK_WORKER_CONCURRENCY` | int | `1` | Number of concurrent execution threads in the Redis worker pool. |
+| `ASOK_WORKER_QUEUES` | str | `"high,default,low"` | Comma-separated list of queue names to poll from in order of priority. |
+
+---
+
+## 9. Database & ORM
+
+Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL.
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `DATABASE_URL` | str | `"sqlite:///db.sqlite3"` | Connection DSN. Can be SQLite (`sqlite:///db.sqlite3`), PostgreSQL (`postgresql://user:pass@host:5432/dbname`), or MySQL (`mysql://user:pass@host:3306/dbname`). |
+
+---
+
+## 10. Email Configuration
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `MAIL_HOST` | str | `"localhost"` | SMTP server hostname. |
+| `MAIL_PORT` | int | `587` | SMTP server port. |
+| `MAIL_USERNAME` | str | `None` | Username for SMTP authentication. |
+| `MAIL_PASSWORD` | str | `None` | Password for SMTP authentication. |
+| `MAIL_FROM` | str | `"noreply@..."` | Default sender address. |
+| `MAIL_TLS` | bool | `True` | Use TLS for secure email transmission. |
+
+---
+
+## 11. Logging
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `LOG_LEVEL` | str | `"DEBUG"` | Minimal logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`). |
+| `LOG_FILE` | str | `None` | Optional path to a file for persistent logging. |
+| `LOG_FORMAT` | str | `"text"` | Format of logs: `"text"` or `"json"` for structured logging. |
+
+---
+
+## 12. API, GraphQL & UI
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `DOCS_PATH` | str | `"/docs"` | The URL path where the auto-generated docs are served. |
+| `OPENAPI_PATH` | str | `"/openapi.json"` | The URL path for the generated OpenAPI specification. |
+| `OPENAPI_AUTHORIZE` | callable | `None` | Hook `(request) -> bool` that guards access to the `/openapi.json` spec endpoint only. If not set, the spec is public. |
+| `API_TITLE` | str | *PROJECT_NAME* | The title shown in the documentation UI. |
+| `API_LOGO` | str | *SITE_LOGO* | URL of the logo shown in the documentation UI. |
+| `SITE_LOGO` | str | `None` | URL of the default site-wide logo (fallback for `API_LOGO`). |
+| `GRAPHQL_ENABLED` | bool | `False` | Show "GraphQL Explorer" link in the `/docs` sidebar. |
+| `GRAPHQL_PATH` | str | `"/graphql"` | Path used for the docs sidebar link. Does not change the actual endpoint. |
+| `GRAPHQL_AUTHORIZE` | callable | `None` | Hook `(request) -> bool` that guards all GraphQL requests. **Mutations are blocked by default if this is not set** and `GRAPHQL_ALLOW_UNAUTHENTICATED_MUTATIONS` is not `True`. |
+| `GRAPHQL_ALLOW_UNAUTHENTICATED_MUTATIONS` | bool | `False` | Set to `True` to allow mutations without an auth hook. Not recommended for public endpoints. |
+| `GRAPHQL_MAX_COMPLEXITY` | int | `100` | Statically checks query complexity to prevent abuse. |
+| `GRAPHQL_MAX_DEPTH` | int | `20` | Maximum allowed query nesting depth. |
+
+---
+
+## 13. Admin Interface
+
+The Admin interface is initialized by passing parameters to the `Admin` extension class in `wsgi.py`.
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `site_name` | str | `"Asok Admin"` | Branding title shown in the sidebar and page titles. |
+| `url_prefix` | str | `"/admin"` | The URL path where the admin interface is served. |
+| `default_locale`| str | `"en"` | Default language for the admin interface. |
+| `favicon` | str | `None` | Path to a custom logo/favicon (resolves to `src/partials/` if path provided). |
+| `login_rate_limit`| tuple | `(5, 900)` | Bruteforce protection: `(max_attempts, window_seconds)`. |
+
+---
+
+## 14. Mandatory Production Settings
+
+When running Asok in production (`DEBUG=False`), certain configurations are strictly enforced to ensure the security of your application. The framework will raise a `RuntimeError` on startup if these are missing or insecure.
+
+### Required Variables
+
+| Key | Requirement | Rationale |
+|---|---|---|
+| **`SECRET_KEY`** | Must be at least **32 characters** | Used for HMAC signing of sessions, CSRF tokens, and secure cookies. |
+| **`APP_URL`** | Must be a valid URL (e.g., `https://example.com`) | Required to prevent Host Header Injection and to generate absolute URLs for Magic Links. |
+
+### How to Configure
+
+You can define your configurations in two ways. Asok will merge them, with `wsgi.py` settings taking precedence over `.env`.
+
+#### Option A: Using a `.env` file (Recommended)
+
+Create a `.env` file in your project root. This is the preferred method for sensitive secrets.
+
+```env
+DEBUG=false
+SECRET_KEY=your-ultra-secure-64-character-key-here
+APP_URL=https://myapp.com
+DATABASE_URL=sqlite:///data/prod.db
+```
+
+#### Option B: In your `wsgi.py`
+
+You can set configurations directly on the `app` instance using the `config` dictionary.
+
+```python
+from asok import Asok
+
+app = Asok()
+
+# Production overrides
+app.config["DEBUG"] = False
+app.config["SECRET_KEY"] = "your-ultra-secure-64-character-key-here"
+app.config["APP_URL"] = "https://myapp.com"
+```
+
+> In production, `DEBUG` defaults to `False`. You only need to set it to `True` explicitly in your development environment.
+
+---
+[← Previous: Middleware](05-middleware.md) | [Documentation](README.md) | [Next: ORM Basics →](07-orm.md)

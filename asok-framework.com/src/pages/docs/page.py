@@ -1,5 +1,7 @@
 from asok import Request
 
+SSG = True
+
 def render(request: Request):
     if not request.params.get("docs_menu"):
         return "No documentation found.", 404
