@@ -15,6 +15,7 @@ user-guide/index
 api-reference/index
 advanced/index
 deployment/index
+changelog
 ```
 
 ## ⚡ Quick Reference

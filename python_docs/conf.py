@@ -12,8 +12,8 @@ import sys
 project = 'Asok Framework'
 copyright = '2026, Mpia M. and the Asok Community'
 author = 'Mpia M. & Asok Community'
-release = '0.5.0'
-version = '0.5'
+release = '0.6.0'
+version = '0.6'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -29,7 +29,7 @@ extensions = [
 ]
 
 templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'venv', '.venv', '**/venv/**', '**/.venv/**']
 
 # Source file suffixes
 source_suffix = {
@@ -38,6 +38,28 @@ source_suffix = {
 }
 
 master_doc = 'index'
+
+# LaTeX configuration for XeLaTeX (Unicode/Emoji support)
+latex_engine = 'xelatex'
+latex_use_xindy = False
+latex_elements = {
+    'extraclassoptions': 'openany,oneside',
+    'preamble': r'''
+\usepackage{newunicodechar}
+\newunicodechar{📚}{}
+\newunicodechar{⚡}{}
+\newunicodechar{🚀}{}
+\newunicodechar{📝}{}
+\newunicodechar{📊}{}
+\newunicodechar{🔒}{}
+\newunicodechar{✨}{}
+\newunicodechar{🛠}{}
+\newunicodechar{🔐}{}
+\newunicodechar{ℹ}{}
+\newunicodechar{✅}{}
+\newunicodechar{❌}{}
+''',
+}
 
 # MyST Parser configuration
 myst_enable_extensions = [

@@ -2,7 +2,7 @@ import enum
 from asok import Model, Field
 
 
-class AnnouncementType(enum.Enum):
+class AnnouncementType(enum.StrEnum):
     INFO = "info"
     SUCCESS = "success"
     WARNING = "warning"

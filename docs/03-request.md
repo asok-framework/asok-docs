@@ -338,6 +338,7 @@ Use `request.shared(name)` to retrieve any shared variable's resolved value for 
 ```python
 def render(request):
     user = request.shared('user')  # Resolves and returns the user object
+```
 
 ## Error Handling & Exceptions
 

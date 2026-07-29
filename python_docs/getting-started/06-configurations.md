@@ -4,6 +4,8 @@
 
 Asok is designed to require minimal configuration for common use-cases, but it provides a comprehensive set of options that can be tuned via environment variables or directly in your `wsgi.py` / `asgi.py` file.
 
+---
+
 ## 1. Core Settings
 
 | Key | Type | Default | Description |
@@ -18,6 +20,8 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 | `AUTH_MODEL` | str | `"User"` | The class name of the User model used for authentication (e.g., `'User'`). |
 | `ASOK_ENV` | str | `None` | Environment mode (e.g., `"production"`). If set to `"production"`, stricter security rules apply. |
 
+---
+
 ## 2. Server & Routing
 
 | Key | Type | Default | Description |
@@ -31,6 +35,8 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 | `ASOK_DOCS` | bool | `DEBUG` | Alias for `DOCS`. Set to `false` to hide the documentation UI entirely. |
 | `DOCS` | bool | `DEBUG` | Enables or disables the automatic documentation UI. |
 
+---
+
 ## 3. Session Management
 
 | Key               | Type | Default            | Description                                                                                                             |
@@ -43,6 +49,9 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 | `SESSION_SECURE`  | bool | *auto*             | Forces session cookie to be sent over HTTPS only. Defaults to `True` if not in `DEBUG`.                                 |
 | `REDIS_URL`       | str  | `None`             | Connection string for Redis backend (e.g., `redis://localhost:6379/0`). Also accepts `ASOK_REDIS_URL`.                  |
 | `MAGIC_LINK_TTL`  | int  | `3600`             | Expiration time for authentication magic links (in seconds, default 1 hour).                                            |
+| `LOGIN_MESSAGE`    | str  | `None`             | Custom message displayed when an unauthenticated user is redirected to the login page.                                  |
+
+---
 
 ## 4. Caching System
 
@@ -50,6 +59,8 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 |---|---|---|---|
 | `ASOK_CACHE_BACKEND` | str | `"memory"` | Caching backend: `"memory"`, `"file"`, or `"redis"`. **`"file"` or `"redis"` recommended for production.** |
 | `ASOK_CACHE_PATH` | str | `".asok/cache"` | Directory path for file-based caching. |
+
+---
 
 ## 5. Security & CORS
 
@@ -66,6 +77,8 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 | `RATE_LIMIT` | bool | `True` | Enables global request rate limiting. |
 | `RATE_LIMIT_PER_MINUTE` | int | `100` | Max requests allowed per IP per minute if rate limiting is enabled. |
 
+---
+
 ## 6. Performance & Optimization
 
 | Key | Type | Default | Description |
@@ -75,6 +88,8 @@ Asok is designed to require minimal configuration for common use-cases, but it p
 | `HTML_MINIFY` | bool | `!DEBUG` | Enables aggressive whitespace removal for HTML responses. |
 | `IMAGE_OPTIMIZATION` | bool | `False` | Enables automatic WebP conversion for uploaded/served images. |
 | `IMAGE_KEEP_ORIGINAL` | bool | `True` | Retains the original uploaded file when generating optimized versions. |
+
+---
 
 ## 7. File Storage & Uploads
 
@@ -91,6 +106,8 @@ Configure where and how files uploaded via forms are saved on the server.
 | `ASOK_S3_CUSTOM_DOMAIN` | str | `None` | Optional custom CDN domain mapping (e.g. `cdn.myapp.com`) to prefix file URLs. |
 | `ASOK_SERVE_STATIC_FROM_S3` | bool | `False` | Optional. Set to `true` to serve static assets from the S3 bucket rather than local directories. |
 
+---
+
 ## 8. Background Tasks & Queue
 
 | Key | Type | Default | Description |
@@ -101,13 +118,22 @@ Configure where and how files uploaded via forms are saved on the server.
 | `ASOK_WORKER_CONCURRENCY` | int | `1` | Number of concurrent execution threads in the Redis worker pool. |
 | `ASOK_WORKER_QUEUES` | str | `"high,default,low"` | Comma-separated list of queue names to poll from in order of priority. |
 
+---
+
 ## 9. Database & ORM
 
-Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL.
+Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL, alongside built-in point-in-time recovery database backups.
 
 | Key | Type | Default | Description |
 |---|---|---|---|
 | `DATABASE_URL` | str | `"sqlite:///db.sqlite3"` | Connection DSN. Can be SQLite (`sqlite:///db.sqlite3`), PostgreSQL (`postgresql://user:pass@host:5432/dbname`), or MySQL (`mysql://user:pass@host:3306/dbname`). |
+| `DATABASE_BACKUP_ENABLED` | bool | `True` | Enables or disables automated database backup operations and background backup scheduling. |
+| `DATABASE_BACKUP_URL` | str | `None` | Optional custom backup target database DSN (defaults to primary `DATABASE_URL`). |
+| `DATABASE_BACKUP_PATH` | str | `None` | Custom directory path for saving backup snapshot files (defaults to `.asok/backups` or relative to DB file). |
+| `DATABASE_BACKUP_MAX_SNAPSHOTS` | int | `10` | Maximum number of historic point-in-time recovery backup snapshots to keep before automatic rotation. |
+| `DATABASE_BACKUP_INTERVAL` | str/int | `None` | Optional interval string for recurring background backups (e.g. `"24h"`, `"12h"`, `"3600"`). |
+
+---
 
 ## 10. Email Configuration
 
@@ -120,6 +146,8 @@ Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL.
 | `MAIL_FROM` | str | `"noreply@..."` | Default sender address. |
 | `MAIL_TLS` | bool | `True` | Use TLS for secure email transmission. |
 
+---
+
 ## 11. Logging
 
 | Key | Type | Default | Description |
@@ -127,6 +155,8 @@ Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL.
 | `LOG_LEVEL` | str | `"DEBUG"` | Minimal logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`). |
 | `LOG_FILE` | str | `None` | Optional path to a file for persistent logging. |
 | `LOG_FORMAT` | str | `"text"` | Format of logs: `"text"` or `"json"` for structured logging. |
+
+---
 
 ## 12. API, GraphQL & UI
 
@@ -145,6 +175,8 @@ Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL.
 | `GRAPHQL_MAX_COMPLEXITY` | int | `100` | Statically checks query complexity to prevent abuse. |
 | `GRAPHQL_MAX_DEPTH` | int | `20` | Maximum allowed query nesting depth. |
 
+---
+
 ## 13. Admin Interface
 
 The Admin interface is initialized by passing parameters to the `Admin` extension class in `wsgi.py`.
@@ -156,6 +188,8 @@ The Admin interface is initialized by passing parameters to the `Admin` extensio
 | `default_locale`| str | `"en"` | Default language for the admin interface. |
 | `favicon` | str | `None` | Path to a custom logo/favicon (resolves to `src/partials/` if path provided). |
 | `login_rate_limit`| tuple | `(5, 900)` | Bruteforce protection: `(max_attempts, window_seconds)`. |
+
+---
 
 ## 14. Mandatory Production Settings
 
@@ -176,7 +210,7 @@ You can define your configurations in two ways. Asok will merge them, with `wsgi
 
 Create a `.env` file in your project root. This is the preferred method for sensitive secrets.
 
-```bash
+```env
 DEBUG=false
 SECRET_KEY=your-ultra-secure-64-character-key-here
 APP_URL=https://myapp.com
@@ -199,3 +233,5 @@ app.config["APP_URL"] = "https://myapp.com"
 ```
 
 > In production, `DEBUG` defaults to `False`. You only need to set it to `True` explicitly in your development environment.
+
+

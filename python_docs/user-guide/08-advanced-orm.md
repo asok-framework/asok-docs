@@ -20,12 +20,12 @@ print(s.config["theme"]) # "dark" (automatically a dict)
 ```
 
 ### Enum Field
-Integrate with Python's standard `enum.Enum` for type-safe choices.
+Integrate with Python's standard `enum.StrEnum` for type-safe choices.
 ```python
 import enum
 from asok import Model, Field
 
-class Status(enum.Enum):
+class Status(enum.StrEnum):
     PENDING = "pending"
     ACTIVE = "active"
 

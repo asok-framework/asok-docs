@@ -136,6 +136,7 @@ In `wsgi.py` (optional):
 app = Asok()
 app.config['AUTH_MODEL'] = 'User'           # Default
 app.config['SESSION_MAX_AGE'] = 86400 * 30  # 30 days (default)
+app.config['LOGIN_MESSAGE'] = 'Please log in to access this page.' # Custom redirect flash message
 ```
 
 ---

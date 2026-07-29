@@ -54,6 +54,8 @@ The `escape` (alias `e`) filter forces escaping if needed.
 {{ html | striptags }}                → text without HTML tags
 {{ items | length }}                  → 3
 {{ date | date('%d/%m/%Y') }}         → "04/04/2026"
+{{ timestamp | epoch('%d/%m/%Y %H:%M') }} → "29/07/2026 14:30" (Unix epoch timestamp)
+{{ text | markdown | safe }}             → converts Markdown text into HTML
 {{ count | pluralize('item', 'items') }} → "items"
 {{ value | abs }}                      → absolute value
 {{ data | tojson }}                   → JSON string
@@ -63,16 +65,18 @@ The `escape` (alias `e`) filter forces escaping if needed.
 {{ value | escape }}                  → forced escape (alias: e)
 ```
 
-### Humanize Filters
+### Humanize & Utility Filters
 
 Asok includes a set of human-friendly formatting filters for common data types:
 
 | Filter | Example | Description |
 |---|---|---|
-| `time_ago` | `{{ user.created_at | time_ago }}` | "2 hours ago", "just now", "3 days ago" |
-| `filesize` | `{{ file.size | filesize }}` | "1.2 MB", "450 KB", "0 B" |
-| `intcomma` | `{{ 1200 | intcomma }}` | "1,200" (adds thousands separators) |
-| `duration` | `{{ seconds | duration }}` | "5m 20s", "1h 10m", "2d 4h" |
+| `time_ago` | `{{ user.created_at \| time_ago }}` | "2 hours ago", "just now", "3 days ago" |
+| `filesize` | `{{ file.size \| filesize }}` | "1.2 MB", "450 KB", "0 B" |
+| `intcomma` | `{{ 1200 \| intcomma }}` | "1,200" (adds thousands separators) |
+| `duration` | `{{ seconds \| duration }}` | "5m 20s", "1h 10m", "2d 4h" |
+| `epoch` | `{{ timestamp \| epoch('%d/%m/%Y %H:%M') }}` | "29/07/2026 14:30" (formats Unix epoch timestamps into date strings) |
+| `markdown` | `{{ content \| markdown \| safe }}` | Converts Markdown formatting into HTML with automatic link parsing |
 
 ### Base64 Image Filter (v0.1.4+)
 
@@ -827,7 +831,7 @@ Unlike `data-block` which relies on server round-trips, `asok-*` directives hand
 </div>
 ```
 
-For the full reference of all available directives, see the [Asok Directives](../advanced/29-asok-directives.md) documentation.
+For the full reference of all available directives, see the [Asok Directives](29-asok-directives.md) documentation.
 
 ## WebSocket helper
 
@@ -910,3 +914,6 @@ Templates are compiled to Python functions and cached automatically. The first r
 4. `exec()` to create a callable function
 
 On subsequent renders of the same template, the compiled function is reused directly — no parsing, no `exec()`. This makes template rendering as fast as calling a regular Python function.
+
+---
+[← Previous: Request Handling](03-request.md) | [Documentation](README.md) | [Next: Middleware →](05-middleware.md)

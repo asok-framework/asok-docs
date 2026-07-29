@@ -136,6 +136,22 @@ asok loaddata fixtures.json
 
 Existing records are updated (matched by primary key) using standard ORM `.save()`. Non-existent records are inserted using raw SQL statements to preserve the original primary key ID. The entire loading process is wrapped in a database transaction for performance and atomicity.
 
+### `asok backup [action]`
+
+Manage database backups, list point-in-time recovery snapshots, and execute disaster recovery restorations.
+
+* `asok backup run`: Perform an immediate database backup and create a point-in-time recovery snapshot.
+* `asok backup list`: List all available recovery snapshots (date, size, table count, total rows).
+* `asok backup restore`: Restore the database from the latest snapshot (or specify a target snapshot ID with `--snapshot=<id>`).
+* `asok backup status`: Display backup status and details of the most recent snapshot.
+
+```bash
+asok backup run                                      # Create a new backup snapshot
+asok backup list                                     # List available recovery snapshots
+asok backup restore --snapshot=snap_20260728_120000 # Restore a specific snapshot
+asok backup restore --force                          # Restore latest backup without confirmation prompt
+```
+
 ### `asok seed`
 
 Populate the database with test data:
@@ -293,3 +309,5 @@ Manage JavaScript and CSS assets in your project.
 
 * `asok assets --install`: Download the `esbuild` standalone binary for asset minification.
 * `asok assets --minify`: Minify JS/CSS assets in `src/partials` recursively.
+
+

@@ -121,11 +121,16 @@ Configure where and how files uploaded via forms are saved on the server.
 
 ## 9. Database & ORM
 
-Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL.
+Asok supports SQLite (default, zero dependencies), PostgreSQL, and MySQL, alongside built-in point-in-time recovery database backups.
 
 | Key | Type | Default | Description |
 |---|---|---|---|
 | `DATABASE_URL` | str | `"sqlite:///db.sqlite3"` | Connection DSN. Can be SQLite (`sqlite:///db.sqlite3`), PostgreSQL (`postgresql://user:pass@host:5432/dbname`), or MySQL (`mysql://user:pass@host:3306/dbname`). |
+| `DATABASE_BACKUP_ENABLED` | bool | `True` | Enables or disables automated database backup operations and background backup scheduling. |
+| `DATABASE_BACKUP_URL` | str | `None` | Optional custom backup target database DSN (defaults to primary `DATABASE_URL`). |
+| `DATABASE_BACKUP_PATH` | str | `None` | Custom directory path for saving backup snapshot files (defaults to `.asok/backups` or relative to DB file). |
+| `DATABASE_BACKUP_MAX_SNAPSHOTS` | int | `10` | Maximum number of historic point-in-time recovery backup snapshots to keep before automatic rotation. |
+| `DATABASE_BACKUP_INTERVAL` | str/int | `None` | Optional interval string for recurring background backups (e.g. `"24h"`, `"12h"`, `"3600"`). |
 
 ---
 

@@ -214,11 +214,17 @@ Conditional rendering (elements are removed from DOM):
 
 Iterate over arrays:
 
+```
+
+### Keyed Reconciliation (`asok-key`)
+
+To optimize DOM updates and preserve element state when list items are reordered, filtered, or mutated, use `asok-key` to specify a unique item identifier:
+
 ```html
-<div asok-state="{ items: ['Apple', 'Banana', 'Cherry'] }">
+<div asok-state="{ users: [{ id: 101, name: 'Alice' }, { id: 102, name: 'Bob' }] }">
   <ul>
-    <template asok-for="item in items">
-      <li><span asok-text="item"></span> (index: <span asok-text="index"></span>)</li>
+    <template asok-for="u in users" asok-key="u.id">
+      <li><span asok-text="u.name"></span></li>
     </template>
   </ul>
 </div>
@@ -353,6 +359,173 @@ Hide element until directives are initialized (prevents flash of unstyled conten
   <span asok-text="message"></span>
 </div>
 ```
+
+## Built-in Theme Management
+
+Asok provides a zero-JS declarative theme toggle system with native anti-FOUC (Flash of Unstyled Content) protection:
+
+```html
+<!-- Toggle between dark and light mode -->
+<button asok-theme-toggle>Toggle Theme</button>
+
+<!-- Specific mode triggers -->
+<button asok-theme-toggle="dark">Dark Mode</button>
+<button asok-theme-toggle="light">Light Mode</button>
+<button asok-theme-toggle="system">Follow OS Theme</button>
+
+<!-- Reactive Store Binding -->
+<div asok-bind:class="{ 'bg-dark text-white': $store.theme === 'dark' }">
+  Current theme: <span asok-text="$store.theme"></span>
+</div>
+```
+
+- **Anti-FOUC**: Injects a 3-line synchronous script in `<head>` that sets `color-scheme` and `data-theme` before the first browser paint.
+- **Persistence**: Theme choice (`dark`, `light`, `system`) is saved under `localStorage.getItem('asok-theme')`.
+- **JS API**: `window.Asok.setTheme('dark')`, `window.Asok.toggleTheme()`, `window.Asok.getTheme()`.
+
+## RGPD / GDPR Cookie Consent
+
+Manage cookie compliance declaratively with automatic script blocking:
+
+```html
+<!-- Cookie Consent Banner (auto-hidden once choice is saved) -->
+<div asok-cookie-banner class="cookie-banner">
+  <p>We use cookies to improve your experience.</p>
+  <button asok-cookie-accept class="btn btn-primary">Accept</button>
+  <button asok-cookie-reject class="btn btn-default">Decline</button>
+</div>
+
+<!-- Footer reset link -->
+<a href="#" asok-cookie-reset>Manage cookie preferences</a>
+
+<!-- Analytics script blocked until user accepts cookies -->
+<script type="text/plain" asok-cookie-script src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX"></script>
+```
+
+- **Reactive Store**: `$store.cookieConsent` returns `'accepted'`, `'rejected'`, or `'pending'`.
+- **JS API**: `window.Asok.acceptCookies()`, `window.Asok.rejectCookies()`, `window.Asok.resetCookieConsent()`.
+
+## Dismissible Elements & Announcements
+
+Per-element dismissals for announcements, alerts, and banners:
+
+```html
+{% for a in announcements %}
+<div asok-dismiss="announcement-{{ a.id }}" class="alert">
+  <span>{{ a.message }}</span>
+  <button asok-dismiss-trigger class="close-btn">&times;</button>
+</div>
+{% endfor %}
+```
+
+- **Persistence**: Remembers dismissal per key in `localStorage` under `asok-dismiss:key`.
+- **JS API**: `window.Asok.dismiss('key')`, `window.Asok.isDismissed('key')`.
+
+## Zero-JS UI Directives
+
+### `asok-copy` — Copy to Clipboard
+
+Copy static text, input field contents, target elements (`#id`), or code blocks (`<pre>`) with rich visual feedback:
+
+```html
+<!-- 1. Copy explicit text -->
+<button asok-copy="DISCOUNT20">Copy Code</button>
+
+<!-- 2. Copy from target input or element selector -->
+<button asok-copy="#input-field">Copy Input</button>
+
+<!-- 3. Text label swap on copy (swaps to "Copied!" for 2 seconds) -->
+<button asok-copy="SECRET" data-label="Copy" data-copied="Copied!">Copy</button>
+
+<!-- 4. Inside code blocks (auto-finds <pre> tag in parent .code-block) -->
+<div class="code-block">
+  <button asok-copy data-label="Copy" data-copied="Copied!">Copy</button>
+  <pre><code>print("Hello World")</code></pre>
+</div>
+```
+
+- **Automatic Target Resolution**: If `asok-copy` is empty on a button inside a `.code-block`, Asok automatically locates and copies the content of the contained `<pre>` or `<code>` tag.
+- **Visual Feedback**:
+  - Adds `.asok-copied` class to the button for 2 seconds.
+  - Automatically appends a `✓` checkmark via `.asok-copied::after` if no `data-copied` attribute is set.
+  - If `data-copied` (or `asok-copied-text`) is set, temporarily swaps button text to the custom label for 2 seconds before restoring the original text (`data-label` or `textContent`).
+- **Custom Event**: Dispatches `asok:copied` on `document` with `{ text, element }` details.
+
+### `asok-modal` — Accessible Modals
+Declarative modal management with automatic backdrop click and `Escape` key support:
+```html
+<button asok-modal-open="my-modal">Open Modal</button>
+
+<dialog asok-modal="my-modal" class="modal">
+  <h2>Modal Title</h2>
+  <p>Modal content...</p>  <button asok-modal-close>Close</button>
+</dialog>
+```
+
+### `asok-tabs` — Tabbed Interfaces
+Zero-code tabs with ARIA attribute management:
+```html
+<div asok-tabs>
+  <button asok-tab="tab1">Tab 1</button>
+  <button asok-tab="tab2">Tab 2</button>
+
+  <div asok-tab-panel="tab1">Content for Tab 1</div>
+  <div asok-tab-panel="tab2" style="display: none">Content for Tab 2</div>
+</div>
+```
+
+### `asok-scroll-top` & `asok-scroll-to` — Smooth Scrolling
+Smart back-to-top button (automatically hidden if content fits on screen or scroll position is near top):
+```html
+<button asok-scroll-top="300">Back to top</button>
+<button asok-scroll-to="#pricing">View Pricing</button>
+```
+
+### `asok-char-count` — Character Counter
+Live remaining character counter for inputs and textareas:
+```html
+<textarea id="bio" maxlength="200"></textarea>
+<span asok-char-count="#bio"></span>
+```
+
+### `asok-progress` — Top Navigation Progress Bar
+Declarative top page-loading progress bar:
+```html
+<div asok-progress class="fixed top-0 left-0 right-0 z-70 h-0.5 opacity-0 pointer-events-none transition-opacity duration-200">
+  <div class="h-full w-0 bg-accent shadow-[0_0_8px_var(--color-accent)] transition-[width] duration-700 ease-out"></div>
+</div>
+```
+
+- **Automatic Navigation Tracking**: Listens to internal link clicks, form submissions, SPA page transitions, and `asok:before`/`asok:success`/`asok:error` events.
+- **Smooth Fill**: Automatically animates fill width to 90% during request, and completes to 100% before fading out.
+- **JS API**: `window.Asok.startProgress()`, `window.Asok.finishProgress()`.
+
+## HTML Attribute Aliases & Data Attributes
+
+All Asok UI directives support standard `data-asok-*` and `data-*` prefixes for strict HTML5 validation compliance:
+
+| Feature / Utility | Primary Attribute | HTML5 `data-asok-*` Alias | HTML5 `data-*` Alias |
+|---|---|---|---|
+| **Theme Toggle** | `asok-theme-toggle` | `data-asok-theme-toggle` | `data-theme-toggle` |
+| **Cookie Banner** | `asok-cookie-banner` | `data-asok-cookie-banner` | `data-cookie-banner` |
+| **Cookie Accept** | `asok-cookie-accept` | `data-asok-cookie-accept` | `data-cookie-accept` |
+| **Cookie Reject** | `asok-cookie-reject` | `data-asok-cookie-reject` | `data-cookie-reject` |
+| **Cookie Reset** | `asok-cookie-reset` | `data-asok-cookie-reset` | `data-cookie-reset` |
+| **Cookie Script** | `asok-cookie-script` | `data-asok-cookie-script` | `data-cookie-script` |
+| **Dismissible UI** | `asok-dismiss` | `data-asok-dismiss` | `data-dismiss` |
+| **Dismiss Trigger** | `asok-dismiss-trigger` | `data-asok-dismiss-trigger` | `data-dismiss-trigger` |
+| **Copy Clipboard** | `asok-copy` | `data-asok-copy` | `data-copy` |
+| **Modal Dialog** | `asok-modal` | `data-asok-modal` | `data-modal` |
+| **Modal Open** | `asok-modal-open` | `data-asok-modal-open` | `data-modal-open` |
+| **Modal Close** | `asok-modal-close` | `data-asok-modal-close` | `data-modal-close` |
+| **Scroll Top** | `asok-scroll-top` | `data-asok-scroll-top` | `data-scroll-top` |
+| **Scroll To** | `asok-scroll-to` | `data-asok-scroll-to` | `data-scroll-to` |
+| **Char Counter** | `asok-char-count` | `data-asok-char-count` | `data-char-count` |
+| **Tab Group** | `asok-tabs` | `data-asok-tabs` | `data-tabs` |
+| **Tab Header** | `asok-tab` | `data-asok-tab` | `data-tab` |
+| **Tab Panel** | `asok-tab-panel` | `data-asok-tab-panel` | `data-tab-panel` |
+| **Page Progress** | `asok-progress` | `data-asok-progress` | `data-progress` |
+| **Keyed List** | `asok-key` | `asok-key-ref` | `data-key` |
 
 ## Special Variables
 

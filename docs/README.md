@@ -1,6 +1,6 @@
 # Asok Documentation
 
-> **Latest Version: v0.5.0**
+> **Latest Version: v0.6.0**
 >
 > * **Zero-Eval Client Directives**: Advanced, secure client-side reactive directives powered by a custom JavaScript AST scanner and parser (completely eliminating dangerous `eval`).
 > * **Framework-Wide Complexity Optimization**: Entire codebase refactored and modularized to strictly satisfy Grade A cyclomatic complexity, maximizing runtime performance and maintainability.

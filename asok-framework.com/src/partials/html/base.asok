@@ -63,7 +63,7 @@
         {% if announcements|length > 0 %}
             <div class="border-b" style="border-color: var(--border-secondary)">
                 {% for announcement in announcements %}
-                    <div asok-state="{ isAnnouncementOpen: true }" asok-show="isAnnouncementOpen" 
+                    <div asok-dismiss="announcement-{{ announcement.id }}" 
                         class="w-full transition-all duration-300 border-b border-transparent
                         {% if announcement.type.value == 'success' or announcement.type == 'success' %}
                             bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 border-b-emerald-500/10
@@ -88,11 +88,11 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 {% endif %}
-                                <span class="tracking-normal">{{ announcement.message }}</span>
+                                <span class="tracking-normal [&_a]:underline [&_a]:underline-offset-2 [&_a]:font-bold [&_a]:hover:opacity-80">{{ announcement.message|markdown|safe }}</span>
                             </div>
                             
                             {% if announcement.dismissible %}
-                                <button asok-on:click="isAnnouncementOpen = !isAnnouncementOpen" type="button" 
+                                <button asok-dismiss-trigger  type="button" 
                                     class="p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer text-current opacity-60 hover:opacity-100 shrink-0">
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />

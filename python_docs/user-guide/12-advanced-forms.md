@@ -23,13 +23,13 @@ form = Form({
 ## 2. ORM Integration
 
 ### Enum Support
-Automatically generate a dropdown from any Python `enum.Enum` class:
+Automatically generate a dropdown from any Python `enum.StrEnum` class:
 
 ```python
 import enum
 from asok import Form
 
-class TaskStatus(enum.Enum):
+class TaskStatus(enum.StrEnum):
     TODO = "todo"
     PROGRESS = "progress"
     DONE = "done"
